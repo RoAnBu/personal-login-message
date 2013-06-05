@@ -1,0 +1,11 @@
+name: PLM
+version: 0.4 ALPHA r1
+author: FantasticSkyThrow
+softdepend: [Vault, GeoIPTools, VanishNoPacket]
+
+main: com.gmail.fantasticskythrow.PLM
+
+commands:
+  plm:
+    description: Restores messages.txt or reloads Advanced Messages
+    usage: /<command> restore/reload
