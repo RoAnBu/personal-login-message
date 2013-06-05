@@ -69,7 +69,6 @@ public class PLMFile {
     
     public long getLastLogin(String playername) {
 	PConfig = YamlConfiguration.loadConfiguration(PLMFileData);
-//	System.out.println(PConfig.getLong(String.format("Players.%s", playername)));
 	if (errorStatus == false) {
 	    return PConfig.getLong(String.format("Players.%s", playername));
 	} else {

@@ -18,7 +18,7 @@ import com.gmail.fantasticskythrow.PLM;
 import com.gmail.fantasticskythrow.commands.PLMRestoreCommand;
 import com.gmail.fantasticskythrow.commands.ReloadCommand;
 import com.gmail.fantasticskythrow.configuration.MainConfiguration;
-import com.gmail.fantasticskythrow.other.HerochatManager;
+//import com.gmail.fantasticskythrow.other.HerochatManager;
 import com.gmail.fantasticskythrow.other.PublicMessagePrinter;
 import com.gmail.fantasticskythrow.other.VanishNoPacketManager;
 import com.gmail.fantasticskythrow.other.WelcomeMessagePrinter;
@@ -46,7 +46,7 @@ public class Messages implements Listener{
     private String second, seconds, minute, minutes, hour, hours, day, days, month, months, noLastLogin;
     private Player player;
     private VanishNoPacketManager vnpHandler;
-    private HerochatManager chHandler;
+//    private HerochatManager chHandler;
     
     /**
      * Provides the EventHandlers for PlayerJoinEvent and PlayerQuitEvent. Nothing is done by default, you have to call every method separately.
@@ -61,7 +61,7 @@ public class Messages implements Listener{
 	plmFile = new PLMFile(plugin);
 	iniTimeMessages();
 	vnpHandler = new VanishNoPacketManager(plugin);
-	chHandler = new HerochatManager(plugin);
+//	chHandler = new HerochatManager(plugin);
 	if (advancedStatus != true) {		//StandardMessages
 	    sm = new StandardMessages(plugin);
 	    PLMRestoreCommand rc = new PLMRestoreCommand(plugin);
@@ -88,7 +88,7 @@ public class Messages implements Listener{
 	plmFile = new PLMFile(plugin);
 	iniTimeMessages();
 	vnpHandler = new VanishNoPacketManager(plugin);
-	chHandler = new HerochatManager(plugin);
+//	chHandler = new HerochatManager(plugin);
 	if (advancedStatus == false) {	//StandardMessages
 	    sm = new StandardMessages(plugin);
 	    PLMRestoreCommand rc = new PLMRestoreCommand(plugin);
@@ -523,13 +523,6 @@ public class Messages implements Listener{
     }
     
     private String getReplacedPlayerlist(String text) {
-//	String m = "";
-//	Player[] playerlist = plugin.getServer().getOnlinePlayers();
-//	for (int i = 0; i < (playerlist.length - 1); i++) {
-//	    m = m + playerlist[i].getName() + ", ";
-//	}
-//	m = m + playerlist[playerlist.length - 1].getName();
-//	return text.replaceAll("%playerlist", m);
 	String m = "";
 	Player[] playerlist = plugin.getServer().getOnlinePlayers();
 	for (int i = 0; i < (playerlist.length - 1); i++) {
@@ -554,15 +547,6 @@ public class Messages implements Listener{
     }
     
     private String getReplacedChatplayerlist(String text) {
-//	    String m = "";
-//	    Player[] playerlist = plugin.getServer().getOnlinePlayers();
-//	    for (int i = 0; i < (playerlist.length - 1); i++) {
-//		Player p = playerlist[i];
-//		m = m + (this.chat.getPlayerPrefix(p) + p.getName() + this.chat.getPlayerSuffix(p)) + ", ";
-//	    }
-//	    Player p = playerlist[playerlist.length - 1];
-//	    m = m + (this.chat.getPlayerPrefix(p) + p.getName() + this.chat.getPlayerSuffix(p));
-//	    return text.replaceAll("%chatplayerlist", m);
 	if (chat != null) {
 	    String m = "";
 	    Player[] playerlist = plugin.getServer().getOnlinePlayers();
@@ -649,7 +633,6 @@ public class Messages implements Listener{
     private void printWelcomeMessage(Player p, AdvancedMessages am) {
 	String[] welcomeMessages = am.getWelcomeMessages(p);
 	if (welcomeMessages != null) {
-//	    System.out.println("messages != null");
 	    for (int i = 0; i < welcomeMessages.length; i++) {
 		welcomeMessages [i] = getReplacedPlayername(welcomeMessages[i]);
 		welcomeMessages [i] = getReplacedChatplayername(welcomeMessages[i]);
@@ -671,7 +654,6 @@ public class Messages implements Listener{
     private void printPublicMessages(Player p, AdvancedMessages am) {
 	String[] publicMessages = am.getPublicMessages(p);
 	if (publicMessages != null && ! vnpHandler.isVanished(player.getName())) {
-//	    System.out.println("messages != null");
 	    for (int i = 0; i < publicMessages.length; i++) {
 		publicMessages [i] = getReplacedPlayername(publicMessages[i]);
 		publicMessages [i] = getReplacedChatplayername(publicMessages[i]);
@@ -694,7 +676,6 @@ public class Messages implements Listener{
 		for (int i = 0; i < onlinePlayer.length; i++) {
 		    if (onlinePlayer[i].hasPermission("plm." + permission.getPlayerGroups(p)[0]) || onlinePlayer[i].hasPermission("plm.pm")) {
 			if (! onlinePlayer[i].getName().equalsIgnoreCase(p.getName())) {
-			    System.out.println(onlinePlayer.length);
 			    receivers[receiverCount] = onlinePlayer[i];
 			    receiverCount++;
 			}

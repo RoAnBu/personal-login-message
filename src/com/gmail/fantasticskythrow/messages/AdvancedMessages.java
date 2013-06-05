@@ -46,11 +46,8 @@ public class AdvancedMessages {
 	    advancedMessagesData = new File(plugin.getDataFolder(), "AdvancedMessages.yml");
 	    advancedMessagesYML = ExtendedYamlConfiguration.loadConfiguration(advancedMessagesData);
 	    if (settings.getFirstEnabled() == false) {
-//		advancedMessagesYML.set("Default.FM1", "%chatplayername &ejoined the game");
 		advancedMessagesYML.set("Default.JM1", "%chatplayername &ejoined the game");
 		advancedMessagesYML.set("Default.QM1", "%chatplayername &eleft the game");
-//		advancedMessagesYML.set("Default.BM1", "%chatplayername &ais back after %time");
-//		advancedMessagesYML.set("Default.BM1T", "-5");
     	    	advancedMessagesYML.set("Groups.examplegroup.JM1", "&4Admin %playername joined the game");
     	    	advancedMessagesYML.set("Groups.examplegroup.QM1", "&4Admin %playername left the game");
     	    	advancedMessagesYML.set("Groups.examplegroup.BM1", "&4Admin &a%playername is back after more than one day!");
