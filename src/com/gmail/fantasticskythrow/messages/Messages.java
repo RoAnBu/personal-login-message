@@ -707,8 +707,8 @@ public class Messages implements Listener{
 	     */
 	    else {
 		Player[] receivers = new Player[onlinePlayer.length - 1];
+		int b = 0;
 		for (int i = 0; i < onlinePlayer.length; i++) {
-		    int b = 0;
 		    int j = i - b;
 		    if (! onlinePlayer[i].getName().equalsIgnoreCase(p.getName())) {
 			receivers[j] = onlinePlayer[i];
