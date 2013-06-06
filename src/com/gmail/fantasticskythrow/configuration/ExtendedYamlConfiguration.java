@@ -10,22 +10,22 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-public class ExtendedYamlConfiguration extends YamlConfiguration{
+public class ExtendedYamlConfiguration extends YamlConfiguration {
 
-    public static YamlConfiguration loadConfiguration(File file) throws IllegalStateException{
-        Validate.notNull(file, "File cannot be null");
+	public static YamlConfiguration loadConfiguration(File file) throws IllegalStateException {
+		Validate.notNull(file, "File cannot be null");
 
-        YamlConfiguration config = new YamlConfiguration();
+		YamlConfiguration config = new YamlConfiguration();
 
-        try {
-            config.load(file);
-        } catch (FileNotFoundException ex) {
-        } catch (IOException ex) {
-            Bukkit.getLogger().log(Level.SEVERE, "Cannot load " + file, ex);
-        } catch (InvalidConfigurationException ex) {
-            throw new IllegalStateException(ex);
-        }
+		try {
+			config.load(file);
+		} catch (FileNotFoundException ex) {
+		} catch (IOException ex) {
+			Bukkit.getLogger().log(Level.SEVERE, "Cannot load " + file, ex);
+		} catch (InvalidConfigurationException ex) {
+			throw new IllegalStateException(ex);
+		}
 
-        return config;
-    }
+		return config;
+	}
 }
