@@ -12,12 +12,11 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import uk.org.whoami.geoip.GeoIPLookup;
-
 import com.gmail.fantasticskythrow.PLM;
 import com.gmail.fantasticskythrow.commands.PLMRestoreCommand;
 import com.gmail.fantasticskythrow.commands.ReloadCommand;
 import com.gmail.fantasticskythrow.configuration.MainConfiguration;
+import com.gmail.fantasticskythrow.other.PLMToolbox;
 //import com.gmail.fantasticskythrow.other.HerochatManager;
 import com.gmail.fantasticskythrow.other.PublicMessagePrinter;
 import com.gmail.fantasticskythrow.other.VanishNoPacketManager;
@@ -264,11 +263,11 @@ public class Messages implements Listener {
 		/*
 		 * Replace placeholders
 		 */
-		joinMessage = getReplacedPlayername(joinMessage);
-		joinMessage = getReplacedChatplayername(joinMessage);
-		joinMessage = getReplacedGroup(joinMessage);
-		joinMessage = getReplacedWorld(joinMessage);
-		joinMessage = getReplacedCountry(joinMessage);
+		joinMessage = PLMToolbox.getReplacedPlayername(joinMessage, player);
+		joinMessage = PLMToolbox.getReplacedChatplayername(joinMessage, chat, player);
+		joinMessage = PLMToolbox.getReplacedGroup(joinMessage, permission, player);
+		joinMessage = PLMToolbox.getReplacedWorld(joinMessage, player);
+		joinMessage = PLMToolbox.getReplacedCountry(joinMessage, plugin, player, plmFile);
 		/*
 		 * Replace %time when it was found in the string
 		 */
@@ -293,11 +292,11 @@ public class Messages implements Listener {
 		} else {
 			quitMessage = am.getQuitMessage(pl);
 		}
-		quitMessage = getReplacedPlayername(quitMessage);
-		quitMessage = getReplacedChatplayername(quitMessage);
-		quitMessage = getReplacedGroup(quitMessage);
-		quitMessage = getReplacedWorld(quitMessage);
-		quitMessage = getReplacedCountry(quitMessage);
+		quitMessage = PLMToolbox.getReplacedPlayername(quitMessage, player);
+		quitMessage = PLMToolbox.getReplacedChatplayername(quitMessage, chat, player);
+		quitMessage = PLMToolbox.getReplacedGroup(quitMessage, permission, player);
+		quitMessage = PLMToolbox.getReplacedWorld(quitMessage, player);
+		quitMessage = PLMToolbox.getReplacedCountry(quitMessage, plugin, player, plmFile);
 		return quitMessage;
 	}
 
@@ -339,16 +338,6 @@ public class Messages implements Listener {
 		}
 	}
 
-	private String getCapitalWord(String word) {
-		String b = "";
-		b = b + word.charAt(0);
-		word = word.replaceFirst(b, b.toUpperCase());
-		if (word.contains("_")) {
-			word = word.replaceAll("_", " ");
-		}
-		return word;
-	}
-
 	/**
 	 * Loads the time strings from config.yml
 	 */
@@ -364,60 +353,6 @@ public class Messages implements Listener {
 		month = cfg.month;
 		months = cfg.months;
 		noLastLogin = cfg.noLastLogin;
-	}
-
-	private String getReplacedPlayername(String text) {
-		return text.replaceAll("%playername", player.getName());
-	}
-
-	private String getReplacedChatplayername(String text) {
-		if (this.chat != null) {
-			String name = (String) (this.chat.getPlayerPrefix(player) + player.getName() + this.chat.getPlayerSuffix(player));
-			return text.replaceAll("%chatplayername", name);
-		} else if (this.chat == null && text.contains("%chatplayername")) {
-			System.out.println("[PLM] PLM was not able to identify a chat format for this player!");
-			return getReplacedPlayername(text.replaceAll("%chatplayername", "%playername"));
-		} else {
-			return text;
-		}
-	}
-
-	private String getReplacedGroup(String text) {
-		if (text.contains("%group") && this.permission != null) {
-			return text.replaceAll("%group", this.permission.getPlayerGroups(player)[0]);
-		} else if (text.contains("%group") && this.permission == null) {
-			return text.replaceAll("%group", "unknown group");
-		} else {
-			return text;
-		}
-	}
-
-	private String getReplacedWorld(String text) {
-		text = text.replaceAll("%world", player.getWorld().getName());
-		text = text.replaceAll("%World", getCapitalWord(player.getWorld().getName()));
-		return text;
-	}
-
-	private String getReplacedCountry(String text) {
-		if (text.contains("%country")) {
-			GeoIPLookup geoIP = plugin.getGeoIPLookup();
-			if (geoIP != null) {
-				String country = "";
-				country = plmFile.getCountryName(geoIP.getCountry(player.getAddress().getAddress()).getName());
-				if (country.equalsIgnoreCase("N/A")) {
-					country = "local network";
-				}
-				text = text.replaceAll("%country", country);
-				return text;
-			} else {
-				System.out.println("[PLM] You used %country but GeoIPTools is not installed or no database is initialized");
-				System.out.println("[PLM] Use /geoupdate if it's installed");
-				text = text.replaceAll("%country", "unknown");
-				return text;
-			}
-		} else {
-			return text;
-		}
 	}
 
 	/**
@@ -515,128 +450,20 @@ public class Messages implements Listener {
 		return message;
 	}
 
-	private String getReplacedPlayerlist(String text) {
-		String m = "";
-		Player[] playerlist = plugin.getServer().getOnlinePlayers();
-		for (int i = 0; i < (playerlist.length - 1); i++) {
-			Player p = playerlist[i];
-			if (!vnpHandler.isVanished(p.getName())) {
-				m = m + p.getName() + ", ";
-			}
-		}
-		Player p = playerlist[playerlist.length - 1];
-		if (!vnpHandler.isVanished(p.getName())) {
-			m = m + p.getName();
-		} else {
-			StringBuffer s1 = new StringBuffer();
-			s1.append(m);
-			m = s1.reverse().toString();
-			m = m.replaceFirst(" ,", "");
-			StringBuffer s2 = new StringBuffer();
-			s2.append(m);
-			m = s2.reverse().toString();
-		}
-		return text.replaceAll("%playerlist", m);
-	}
-
-	private String getReplacedChatplayerlist(String text) {
-		if (chat != null) {
-			String m = "";
-			Player[] playerlist = plugin.getServer().getOnlinePlayers();
-			for (int i = 0; i < (playerlist.length - 1); i++) {
-				Player p = playerlist[i];
-				if (!vnpHandler.isVanished(p.getName())) {
-					m = m + (this.chat.getPlayerPrefix(p) + p.getName() + this.chat.getPlayerSuffix(p)) + ", ";
-				}
-			}
-			Player p = playerlist[playerlist.length - 1];
-			if (!vnpHandler.isVanished(p.getName())) {
-				m = m + (this.chat.getPlayerPrefix(p) + p.getName() + this.chat.getPlayerSuffix(p));
-			} else {
-				StringBuffer s1 = new StringBuffer();
-				s1.append(m);
-				m = s1.reverse().toString();
-				m = m.replaceFirst(" ,", "");
-				StringBuffer s2 = new StringBuffer();
-				s2.append(m);
-				m = s2.reverse().toString();
-			}
-			return text.replaceAll("%chatplayerlist", m);
-		} else {
-			return getReplacedPlayerlist(text.replaceAll("%chatplayerlist", "%playerlist"));
-		}
-	}
-
-	private String getReplacedGroupplayerlist(String text) {
-		if (permission != null) {
-			String m = "";
-			Player[] playerlist = plugin.getServer().getOnlinePlayers();
-			for (int i = 0; i < (playerlist.length - 1); i++) {
-				Player p = playerlist[i];
-				if (permission.getPlayerGroups(p)[0] == permission.getPlayerGroups(player)[0] && !vnpHandler.isVanished(p.getName())) {
-					m = m + p.getName() + ", ";
-				}
-			}
-			Player p = playerlist[playerlist.length - 1];
-			if (permission.getPlayerGroups(p)[0] == permission.getPlayerGroups(player)[0] && !vnpHandler.isVanished(p.getName())) {
-				m = m + p.getName();
-			} else {
-				StringBuffer s1 = new StringBuffer();
-				s1.append(m);
-				m = s1.reverse().toString();
-				m = m.replaceFirst(" ,", "");
-				StringBuffer s2 = new StringBuffer();
-				s2.append(m);
-				m = s2.reverse().toString();
-			}
-			return text.replaceAll("%groupplayerlist", m);
-		} else {
-			return text.replaceAll("%groupplayerlist", "&4ERROR");
-		}
-	}
-
-	private String getReplacedGroupchatplayerlist(String text) {
-		if (permission != null && chat != null) {
-			String m = "";
-			Player[] playerlist = plugin.getServer().getOnlinePlayers();
-			for (int i = 0; i < (playerlist.length - 1); i++) {
-				Player p = playerlist[i];
-				if (permission.getPlayerGroups(p)[0] == permission.getPlayerGroups(player)[0] && !vnpHandler.isVanished(p.getName())) {
-					m = m + (this.chat.getPlayerPrefix(p) + p.getName() + this.chat.getPlayerSuffix(p)) + ", ";
-				}
-			}
-			Player p = playerlist[playerlist.length - 1];
-			if (permission.getPlayerGroups(p)[0] == permission.getPlayerGroups(player)[0] && !vnpHandler.isVanished(p.getName())) {
-				m = m + (this.chat.getPlayerPrefix(p) + p.getName() + this.chat.getPlayerSuffix(p));
-			} else {
-				StringBuffer s1 = new StringBuffer();
-				s1.append(m);
-				m = s1.reverse().toString();
-				m = m.replaceFirst(" ,", "");
-				StringBuffer s2 = new StringBuffer();
-				s2.append(m);
-				m = s2.reverse().toString();
-			}
-			return text.replaceAll("%groupchatplayerlist", m);
-		} else {
-			return text.replaceAll("%groupchatplayerlist", "&4ERROR");
-		}
-	}
-
 	private void printWelcomeMessage(Player p, AdvancedMessages am) {
 		String[] welcomeMessages = am.getWelcomeMessages(p);
 		if (welcomeMessages != null) {
 			for (int i = 0; i < welcomeMessages.length; i++) {
-				welcomeMessages[i] = getReplacedPlayername(welcomeMessages[i]);
-				welcomeMessages[i] = getReplacedChatplayername(welcomeMessages[i]);
-				welcomeMessages[i] = getReplacedWorld(welcomeMessages[i]);
-				welcomeMessages[i] = getReplacedCountry(welcomeMessages[i]);
-				welcomeMessages[i] = getReplacedTime(welcomeMessages[i]);
-				welcomeMessages[i] = getReplacedPlayerlist(welcomeMessages[i]);
-				welcomeMessages[i] = getReplacedChatplayerlist(welcomeMessages[i]);
-				welcomeMessages[i] = getReplacedGroupplayerlist(welcomeMessages[i]);
-				welcomeMessages[i] = getReplacedGroupchatplayerlist(welcomeMessages[i]);
-				welcomeMessages[i] = getReplacedGroup(welcomeMessages[i]);
+				String m = welcomeMessages[i];
+				m = PLMToolbox.getReplacedPlayername(m, player);
+				m = PLMToolbox.getReplacedChatplayername(m, chat, player);
+				m = PLMToolbox.getReplacedWorld(m, player);
+				m = PLMToolbox.getReplacedCountry(m, plugin, player, plmFile);
+				m = getReplacedTime(m);
+				m = PLMToolbox.getReplacedPlayerlist(m, vnpHandler, plugin.getServer());
+				m = PLMToolbox.getReplacedChatplayerlist(m, chat, vnpHandler, plugin.getServer());
+				m = PLMToolbox.getReplacedGroupplayerlist(m, vnpHandler, permission, plugin.getServer(), player);
+				m = PLMToolbox.getReplacedGroupchatplayerlist(m, vnpHandler, permission, chat, plugin.getServer(), player);
 			}
 			int time = cfg.getDelay();
 			WelcomeMessagePrinter c = new WelcomeMessagePrinter();
@@ -648,16 +475,17 @@ public class Messages implements Listener {
 		String[] publicMessages = am.getPublicMessages(p);
 		if (publicMessages != null && !vnpHandler.isVanished(player.getName())) {
 			for (int i = 0; i < publicMessages.length; i++) {
-				publicMessages[i] = getReplacedPlayername(publicMessages[i]);
-				publicMessages[i] = getReplacedChatplayername(publicMessages[i]);
-				publicMessages[i] = getReplacedWorld(publicMessages[i]);
-				publicMessages[i] = getReplacedCountry(publicMessages[i]);
-				publicMessages[i] = getReplacedTime(publicMessages[i]);
-				publicMessages[i] = getReplacedPlayerlist(publicMessages[i]);
-				publicMessages[i] = getReplacedChatplayerlist(publicMessages[i]);
-				publicMessages[i] = getReplacedGroupplayerlist(publicMessages[i]);
-				publicMessages[i] = getReplacedGroupchatplayerlist(publicMessages[i]);
-				publicMessages[i] = getReplacedGroup(publicMessages[i]);
+				String m = publicMessages[i];
+				m = PLMToolbox.getReplacedPlayername(m, player);
+				m = PLMToolbox.getReplacedChatplayername(m, chat, player);
+				m = PLMToolbox.getReplacedWorld(m, player);
+				m = PLMToolbox.getReplacedCountry(m, plugin, player, plmFile);
+				m = getReplacedTime(m);
+				m = PLMToolbox.getReplacedPlayerlist(m, vnpHandler, plugin.getServer());
+				m = PLMToolbox.getReplacedChatplayerlist(m, chat, vnpHandler, plugin.getServer());
+				m = PLMToolbox.getReplacedGroupplayerlist(m, vnpHandler, permission, plugin.getServer(), player);
+				m = PLMToolbox.getReplacedGroupchatplayerlist(m, vnpHandler, permission, chat, plugin.getServer(), player);
+				m = PLMToolbox.getReplacedGroup(m, permission, player);
 			}
 			Player[] onlinePlayer = plugin.getServer().getOnlinePlayers();
 			/*
