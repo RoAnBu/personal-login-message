@@ -426,6 +426,7 @@ public class Messages implements Listener {
 				m = PLMToolbox.getReplacedChatplayerlist(m, chat, vnpHandler, plugin.getServer());
 				m = PLMToolbox.getReplacedGroupplayerlist(m, vnpHandler, permission, plugin.getServer(), player);
 				m = PLMToolbox.getReplacedGroupchatplayerlist(m, vnpHandler, permission, chat, plugin.getServer(), player);
+				welcomeMessages[i] = m;
 			}
 			int time = cfg.getDelay();
 			WelcomeMessagePrinter c = new WelcomeMessagePrinter();
@@ -448,6 +449,7 @@ public class Messages implements Listener {
 				m = PLMToolbox.getReplacedGroupplayerlist(m, vnpHandler, permission, plugin.getServer(), player);
 				m = PLMToolbox.getReplacedGroupchatplayerlist(m, vnpHandler, permission, chat, plugin.getServer(), player);
 				m = PLMToolbox.getReplacedGroup(m, permission, player);
+				publicMessages[i] = m;
 			}
 			Player[] onlinePlayer = plugin.getServer().getOnlinePlayers();
 			/*
