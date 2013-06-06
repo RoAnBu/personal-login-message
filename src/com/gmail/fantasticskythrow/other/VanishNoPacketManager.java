@@ -2,6 +2,7 @@ package com.gmail.fantasticskythrow.other;
 
 import java.util.HashMap;
 
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.kitteh.vanish.staticaccess.VanishNoPacket;
 import org.kitteh.vanish.staticaccess.VanishNotLoadedException;
@@ -13,11 +14,26 @@ public class VanishNoPacketManager {
 	private PLM plugin;
 	private final HashMap<String, Boolean> players;
 
-	public VanishNoPacketManager(PLM plugin) {
+	//	public VanishNoPacketManager(PLM plugin) {
+	//		this.plugin = plugin;
+	//		Plugin pl = plugin.getServer().getPluginManager().getPlugin("VanishNoPacket");
+	//		if (pl != null) {
+	//			players = new HashMap<String, Boolean>();
+	//		} else {
+	//			players = null;
+	//		}
+	//	}
+
+	public VanishNoPacketManager(PLM plugin, Player[] onlinePlayers) {
 		this.plugin = plugin;
 		Plugin pl = plugin.getServer().getPluginManager().getPlugin("VanishNoPacket");
 		if (pl != null) {
 			players = new HashMap<String, Boolean>();
+			for (Player p : onlinePlayers) {
+				if (p != null) {
+					players.put(p.getName(), false);
+				}
+			}
 		} else {
 			players = null;
 		}

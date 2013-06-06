@@ -65,7 +65,7 @@ public class Messages implements Listener {
 		chat = plugin.getChat();
 		plmFile = new PLMFile(plugin);
 		iniTimeMessages();
-		vnpHandler = new VanishNoPacketManager(plugin);
+		vnpHandler = new VanishNoPacketManager(plugin, plugin.getServer().getOnlinePlayers());
 		// chHandler = new HerochatManager(plugin);
 		if (advancedStatus != true) { // StandardMessages
 			sm = new StandardMessages(plugin);
@@ -95,7 +95,7 @@ public class Messages implements Listener {
 		chat = plugin.getChat();
 		plmFile = new PLMFile(plugin);
 		iniTimeMessages();
-		vnpHandler = new VanishNoPacketManager(plugin);
+		vnpHandler = new VanishNoPacketManager(plugin, plugin.getServer().getOnlinePlayers());
 		// chHandler = new HerochatManager(plugin);
 		if (advancedStatus == false) { // StandardMessages
 			sm = new StandardMessages(plugin);
