@@ -85,7 +85,7 @@ public class PLMToolbox {
 	 * @return the replaced string if chat is available. Otherwise it will return the normal playername. %chatplayername won't exist after this.
 	 */
 	public static String getReplacedChatplayername(String text, Chat chat, Player player) {
-		if (chat != null) {
+		if (chat != null && text.contains("%chatplayername")) {
 			String name = (String) (chat.getPlayerPrefix(player) + player.getName() + chat.getPlayerSuffix(player));
 			return text.replaceAll("%chatplayername", name);
 		} else if (chat == null && text.contains("%chatplayername")) {
@@ -163,27 +163,31 @@ public class PLMToolbox {
 	 * @return the replaced %playerlist
 	 */
 	public static String getReplacedPlayerlist(String text, VanishNoPacketManager vnpHandler, Server server) {
-		String m = "";
-		Player[] playerlist = server.getOnlinePlayers();
-		for (int i = 0; i < (playerlist.length - 1); i++) {
-			Player p = playerlist[i];
-			if (!vnpHandler.isVanished(p.getName())) {
-				m = m + p.getName() + ", ";
+		if (text.contains("%playerlist")) {
+			String m = "";
+			Player[] playerlist = server.getOnlinePlayers();
+			for (int i = 0; i < (playerlist.length - 1); i++) {
+				Player p = playerlist[i];
+				if (!vnpHandler.isVanished(p.getName())) {
+					m = m + p.getName() + ", ";
+				}
 			}
-		}
-		Player p = playerlist[playerlist.length - 1];
-		if (!vnpHandler.isVanished(p.getName())) {
-			m = m + p.getName();
+			Player p = playerlist[playerlist.length - 1];
+			if (!vnpHandler.isVanished(p.getName())) {
+				m = m + p.getName();
+			} else {
+				StringBuffer s1 = new StringBuffer();
+				s1.append(m);
+				m = s1.reverse().toString();
+				m = m.replaceFirst(" ,", "");
+				StringBuffer s2 = new StringBuffer();
+				s2.append(m);
+				m = s2.reverse().toString();
+			}
+			return text.replaceAll("%playerlist", m);
 		} else {
-			StringBuffer s1 = new StringBuffer();
-			s1.append(m);
-			m = s1.reverse().toString();
-			m = m.replaceFirst(" ,", "");
-			StringBuffer s2 = new StringBuffer();
-			s2.append(m);
-			m = s2.reverse().toString();
+			return text;
 		}
-		return text.replaceAll("%playerlist", m);
 	}
 
 	/**
@@ -195,30 +199,34 @@ public class PLMToolbox {
 	 * @return the replaced %chatplayerlist or %playerlist if chat is null
 	 */
 	public static String getReplacedChatplayerlist(String text, Chat chat, VanishNoPacketManager vnpHandler, Server server) {
-		if (chat != null) {
-			String m = "";
-			Player[] playerlist = server.getOnlinePlayers();
-			for (int i = 0; i < (playerlist.length - 1); i++) {
-				Player p = playerlist[i];
-				if (!vnpHandler.isVanished(p.getName())) {
-					m = m + (chat.getPlayerPrefix(p) + p.getName() + chat.getPlayerSuffix(p)) + ", ";
+		if (text.contains("chatplayerlist")) {
+			if (chat != null) {
+				String m = "";
+				Player[] playerlist = server.getOnlinePlayers();
+				for (int i = 0; i < (playerlist.length - 1); i++) {
+					Player p = playerlist[i];
+					if (!vnpHandler.isVanished(p.getName())) {
+						m = m + (chat.getPlayerPrefix(p) + p.getName() + chat.getPlayerSuffix(p)) + ", ";
+					}
 				}
-			}
-			Player p = playerlist[playerlist.length - 1];
-			if (!vnpHandler.isVanished(p.getName())) {
-				m = m + (chat.getPlayerPrefix(p) + p.getName() + chat.getPlayerSuffix(p));
+				Player p = playerlist[playerlist.length - 1];
+				if (!vnpHandler.isVanished(p.getName())) {
+					m = m + (chat.getPlayerPrefix(p) + p.getName() + chat.getPlayerSuffix(p));
+				} else {
+					StringBuffer s1 = new StringBuffer();
+					s1.append(m);
+					m = s1.reverse().toString();
+					m = m.replaceFirst(" ,", "");
+					StringBuffer s2 = new StringBuffer();
+					s2.append(m);
+					m = s2.reverse().toString();
+				}
+				return text.replaceAll("%chatplayerlist", m);
 			} else {
-				StringBuffer s1 = new StringBuffer();
-				s1.append(m);
-				m = s1.reverse().toString();
-				m = m.replaceFirst(" ,", "");
-				StringBuffer s2 = new StringBuffer();
-				s2.append(m);
-				m = s2.reverse().toString();
+				return getReplacedPlayerlist(text.replaceAll("%chatplayerlist", "%playerlist"), vnpHandler, server);
 			}
-			return text.replaceAll("%chatplayerlist", m);
 		} else {
-			return getReplacedPlayerlist(text.replaceAll("%chatplayerlist", "%playerlist"), vnpHandler, server);
+			return text;
 		}
 	}
 
@@ -233,30 +241,34 @@ public class PLMToolbox {
 	 * @return the replaced %groupplayerlist if a group was found. Otherwise it will return "&4ERROR"
 	 */
 	public static String getReplacedGroupplayerlist(String text, VanishNoPacketManager vnpHandler, Permission permission, Server server, Player player) {
-		if (permission != null) {
-			String m = "";
-			Player[] playerlist = server.getOnlinePlayers();
-			for (int i = 0; i < (playerlist.length - 1); i++) {
-				Player p = playerlist[i];
-				if (permission.getPlayerGroups(p)[0] == permission.getPlayerGroups(player)[0] && !vnpHandler.isVanished(p.getName())) {
-					m = m + p.getName() + ", ";
+		if (text.contains("%groupplayerlist")) {
+			if (permission != null) {
+				String m = "";
+				Player[] playerlist = server.getOnlinePlayers();
+				for (int i = 0; i < (playerlist.length - 1); i++) {
+					Player p = playerlist[i];
+					if (permission.getPlayerGroups(p)[0] == permission.getPlayerGroups(player)[0] && !vnpHandler.isVanished(p.getName())) {
+						m = m + p.getName() + ", ";
+					}
 				}
-			}
-			Player p = playerlist[playerlist.length - 1];
-			if (permission.getPlayerGroups(p)[0] == permission.getPlayerGroups(player)[0] && !vnpHandler.isVanished(p.getName())) {
-				m = m + p.getName();
+				Player p = playerlist[playerlist.length - 1];
+				if (permission.getPlayerGroups(p)[0] == permission.getPlayerGroups(player)[0] && !vnpHandler.isVanished(p.getName())) {
+					m = m + p.getName();
+				} else {
+					StringBuffer s1 = new StringBuffer();
+					s1.append(m);
+					m = s1.reverse().toString();
+					m = m.replaceFirst(" ,", "");
+					StringBuffer s2 = new StringBuffer();
+					s2.append(m);
+					m = s2.reverse().toString();
+				}
+				return text.replaceAll("%groupplayerlist", m);
 			} else {
-				StringBuffer s1 = new StringBuffer();
-				s1.append(m);
-				m = s1.reverse().toString();
-				m = m.replaceFirst(" ,", "");
-				StringBuffer s2 = new StringBuffer();
-				s2.append(m);
-				m = s2.reverse().toString();
+				return text.replaceAll("%groupplayerlist", "&4ERROR");
 			}
-			return text.replaceAll("%groupplayerlist", m);
 		} else {
-			return text.replaceAll("%groupplayerlist", "&4ERROR");
+			return text;
 		}
 	}
 
@@ -274,30 +286,34 @@ public class PLMToolbox {
 	 */
 	public static String getReplacedGroupchatplayerlist(String text, VanishNoPacketManager vnpHandler, Permission permission, Chat chat,
 			Server server, Player player) {
-		if (permission != null && chat != null) {
-			String m = "";
-			Player[] playerlist = server.getOnlinePlayers();
-			for (int i = 0; i < (playerlist.length - 1); i++) {
-				Player p = playerlist[i];
-				if (permission.getPlayerGroups(p)[0] == permission.getPlayerGroups(player)[0] && !vnpHandler.isVanished(p.getName())) {
-					m = m + (chat.getPlayerPrefix(p) + p.getName() + chat.getPlayerSuffix(p)) + ", ";
+		if (text.contains("%groupchatplayerlist")) {
+			if (permission != null && chat != null) {
+				String m = "";
+				Player[] playerlist = server.getOnlinePlayers();
+				for (int i = 0; i < (playerlist.length - 1); i++) {
+					Player p = playerlist[i];
+					if (permission.getPlayerGroups(p)[0] == permission.getPlayerGroups(player)[0] && !vnpHandler.isVanished(p.getName())) {
+						m = m + (chat.getPlayerPrefix(p) + p.getName() + chat.getPlayerSuffix(p)) + ", ";
+					}
 				}
-			}
-			Player p = playerlist[playerlist.length - 1];
-			if (permission.getPlayerGroups(p)[0] == permission.getPlayerGroups(player)[0] && !vnpHandler.isVanished(p.getName())) {
-				m = m + (chat.getPlayerPrefix(p) + p.getName() + chat.getPlayerSuffix(p));
+				Player p = playerlist[playerlist.length - 1];
+				if (permission.getPlayerGroups(p)[0] == permission.getPlayerGroups(player)[0] && !vnpHandler.isVanished(p.getName())) {
+					m = m + (chat.getPlayerPrefix(p) + p.getName() + chat.getPlayerSuffix(p));
+				} else {
+					StringBuffer s1 = new StringBuffer();
+					s1.append(m);
+					m = s1.reverse().toString();
+					m = m.replaceFirst(" ,", "");
+					StringBuffer s2 = new StringBuffer();
+					s2.append(m);
+					m = s2.reverse().toString();
+				}
+				return text.replaceAll("%groupchatplayerlist", m);
 			} else {
-				StringBuffer s1 = new StringBuffer();
-				s1.append(m);
-				m = s1.reverse().toString();
-				m = m.replaceFirst(" ,", "");
-				StringBuffer s2 = new StringBuffer();
-				s2.append(m);
-				m = s2.reverse().toString();
+				return text.replaceAll("%groupchatplayerlist", "&4ERROR");
 			}
-			return text.replaceAll("%groupchatplayerlist", m);
 		} else {
-			return text.replaceAll("%groupchatplayerlist", "&4ERROR");
+			return text;
 		}
 	}
 }
