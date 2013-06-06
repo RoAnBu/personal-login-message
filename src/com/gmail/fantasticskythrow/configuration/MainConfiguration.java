@@ -9,7 +9,7 @@ public class MainConfiguration {
 	private PLM plugin;
 	private FileConfiguration cfg;
 
-	private boolean pluginStatus = true, usepermissionsGeneral, usepermissionsPM, fakejoinmessage, fakequitmessage, advancedStatus;
+	private boolean pluginStatus = true, usepermissionsGeneral, usepermissionsPM, fakejoinmessage, fakequitmessage, advancedStatus, debugStatus;
 	public String second, seconds, minute, minutes, hour, hours, day, days, month, months, noLastLogin;
 	private int delay;
 
@@ -26,6 +26,7 @@ public class MainConfiguration {
 			cfg = plugin.getConfig();
 			cfg.addDefault("general.enabled", "true");
 			cfg.addDefault("general.usepermissions", "false");
+			cfg.addDefault("general.debug", "false");
 			cfg.addDefault("advancedmessages.enabled", "false");
 			cfg.addDefault("advancedmessages.second", "second");
 			cfg.addDefault("advancedmessages.seconds", "seconds");
@@ -79,6 +80,10 @@ public class MainConfiguration {
 				advancedStatus = true;
 			else
 				advancedStatus = false;
+			if (cfg.getString("general.debug").equalsIgnoreCase("true"))
+				debugStatus = true;
+			else
+				debugStatus = false;
 			setInternalDelay();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -138,4 +143,7 @@ public class MainConfiguration {
 		return this.advancedStatus;
 	}
 
+	public boolean getDebugStatus() {
+		return debugStatus;
+	}
 }

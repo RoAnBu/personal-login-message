@@ -17,6 +17,7 @@ import com.gmail.fantasticskythrow.commands.PLMRestoreCommand;
 import com.gmail.fantasticskythrow.commands.ReloadCommand;
 import com.gmail.fantasticskythrow.configuration.MainConfiguration;
 import com.gmail.fantasticskythrow.other.PLMToolbox;
+import com.gmail.fantasticskythrow.other.PLMLogger;
 //import com.gmail.fantasticskythrow.other.HerochatManager;
 import com.gmail.fantasticskythrow.other.PublicMessagePrinter;
 import com.gmail.fantasticskythrow.other.VanishNoPacketManager;
@@ -46,6 +47,7 @@ public class Messages implements Listener {
 	private String second, seconds, minute, minutes, hour, hours, day, days, month, months, noLastLogin;
 	private Player player;
 	private VanishNoPacketManager vnpHandler;
+	private final PLMLogger plmLogger;
 
 	// private HerochatManager chHandler;
 
@@ -59,6 +61,7 @@ public class Messages implements Listener {
 	 */
 	public Messages(PLM p) { // Standard. Checks the AdvancedStatus itself, but not the issues
 		plugin = p;
+		plmLogger = plugin.getPLMLogger();
 		cfg = plugin.getCfg();
 		advancedStatus = cfg.getAdvancedStatus();
 		permission = plugin.getPermission();
@@ -89,6 +92,7 @@ public class Messages implements Listener {
 	 */
 	public Messages(PLM p, boolean as) {
 		plugin = p;
+		plmLogger = plugin.getPLMLogger();
 		cfg = plugin.getCfg();
 		advancedStatus = as;
 		permission = plugin.getPermission();
@@ -135,13 +139,13 @@ public class Messages implements Listener {
 				}
 			}
 		} catch (NullPointerException ne) {
-			System.out.println("[SEVERE] [PLM] A problem occurred at PlayerJoinEvent!");
+			plmLogger.logError("[PLM] A problem occurred at PlayerJoinEvent!");
 			ne.printStackTrace();
 			e.setJoinMessage(null);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			System.out.println("[PLM] An unknown error occurred at PlayerJoinEvent!");
-			System.out.println("[PLM] Please make sure that all configuration files are available");
+			plmLogger.logError("[PLM] An unknown error occurred at PlayerJoinEvent!");
+			plmLogger.logError("[PLM] Please make sure that all configuration files are available");
 		}
 	}
 
@@ -173,14 +177,14 @@ public class Messages implements Listener {
 				}
 				plmFile.setPlayerQuitTime(e.getPlayer().getName().toLowerCase());
 			} catch (NullPointerException ne) {
-				System.out.println("[SEVERE] [PLM] A problem occurred at PlayerQuitEvent!");
+				plmLogger.logError("[PLM] A problem occurred at PlayerQuitEvent!");
 				e.setQuitMessage(null);
 			}
 
 			catch (Exception ex) {
 				ex.printStackTrace();
-				System.out.println("[PLM] An unknown error occurred at PlayerQuitEvent!");
-				System.out.println("[PLM] Please make sure that all configuration files are available");
+				plmLogger.logError("[PLM] An unknown error occurred at PlayerQuitEvent!");
+				plmLogger.logError("[PLM] Please make sure that all configuration files are available");
 			}
 		}
 	}
@@ -198,14 +202,14 @@ public class Messages implements Listener {
 				e.setLeaveMessage(null);
 			}
 		} catch (NullPointerException ne) {
-			System.out.println("[SEVERE] [PLM] A problem occurred at PlayerKickEvent!");
+			plmLogger.logError("[PLM] A problem occurred at PlayerKickEvent!");
 			e.setLeaveMessage(null);
 		}
 
 		catch (Exception ex) {
 			ex.printStackTrace();
-			System.out.println("[PLM] An unknown error occurred at PlayerQuitEvent!");
-			System.out.println("[PLM] Please make sure that all configuration files are available");
+			plmLogger.logError("[PLM] An unknown error occurred at PlayerQuitEvent!");
+			plmLogger.logError("[PLM] Please make sure that all configuration files are available");
 		}
 	}
 
@@ -234,8 +238,8 @@ public class Messages implements Listener {
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			System.out.println("[PLM] An unknown error occurred at VanishStatusChangeEvent!");
-			System.out.println("[PLM] Please make sure that all configuration files are available");
+			plmLogger.logError("[PLM] An unknown error occurred at VanishStatusChangeEvent!");
+			plmLogger.logError("[PLM] Please make sure that all configuration files are available");
 		}
 	}
 

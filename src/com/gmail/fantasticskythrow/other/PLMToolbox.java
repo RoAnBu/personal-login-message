@@ -145,8 +145,8 @@ public class PLMToolbox {
 				text = text.replaceAll("%country", country);
 				return text;
 			} else {
-				System.out.println("[PLM] You used %country but GeoIPTools is not installed or no database is initialized");
-				System.out.println("[PLM] Use /geoupdate if it's installed");
+				plugin.getPLMLogger().logWarning("[PLM] You used %country but GeoIPTools is not installed or no database is initialized");
+				plugin.getPLMLogger().logWarning("[PLM] Use /geoupdate if it's installed");
 				text = text.replaceAll("%country", "unknown");
 				return text;
 			}

@@ -16,6 +16,7 @@ import com.gmail.fantasticskythrow.configuration.MainConfiguration;
 import com.gmail.fantasticskythrow.messages.Messages;
 import com.gmail.fantasticskythrow.other.Metrics;
 import com.gmail.fantasticskythrow.other.Metrics.Graph;
+import com.gmail.fantasticskythrow.other.PLMLogger;
 
 /**
  * Main class. Important things: Activate "Messages" and Listener, get configuration values, setup Vault and GeoIPTools and activate Metrics
@@ -29,6 +30,7 @@ public final class PLM extends JavaPlugin {
 	private Chat chat = null;
 	private Permission permission = null;
 	private MainConfiguration cfg;
+	private PLMLogger plmLogger;
 
 	/**
 	 * Setups all needed stuff like Vault, GeoIPTools, Metrics and configuration
@@ -36,6 +38,7 @@ public final class PLM extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		cfg = new MainConfiguration(this);
+		plmLogger = new PLMLogger(this);
 		if (cfg.getPluginStatus() == true) {
 			if (cfg.getAdvancedStatus() == false) { //Standard mode
 				try {
@@ -43,7 +46,7 @@ public final class PLM extends JavaPlugin {
 					setupPermissions();
 					m = new Messages(this);
 					this.getServer().getPluginManager().registerEvents(this.m, this);
-					System.out.println("[PLM] Personal Login Message is enabled");
+					plmLogger.logInfo("[PLM] Personal Login Message is enabled");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -51,19 +54,19 @@ public final class PLM extends JavaPlugin {
 				setupChat();
 				setupPermissions();
 				if (vaultErrorStatus == true || permission == null) { //If vault or permission/chat plugin is not available...
-					System.out.println("[PLM] Sorry, you need Vault and a compatible permissions plugin to use the advanced messages mode!");
+					plmLogger.logWarning("[PLM] Sorry, you need Vault and a compatible permissions plugin to use the advanced messages mode!");
 					m = new Messages(this, false);
 					this.getServer().getPluginManager().registerEvents(this.m, this);
-					System.out.println("[PLM] Personal Login Message is enabled");
+					plmLogger.logInfo("[PLM] Personal Login Message is enabled");
 				} else { //Activate AdvancedMessages, because vault is active and it's enabled
 					m = new Messages(this);
 					this.getServer().getPluginManager().registerEvents(this.m, this);
-					System.out.println("[PLM] Advanced messages mode is enabled");
+					plmLogger.logInfo("[PLM] Advanced messages mode is enabled");
 				}
 			}
 			activateMetrics();
 		} else { //Not activated
-			System.out.println("[PLM] Personal Login Message is not enabled in config");
+			plmLogger.logInfo("[PLM] Personal Login Message is not enabled in config");
 		}
 	}
 
@@ -72,7 +75,7 @@ public final class PLM extends JavaPlugin {
 	 */
 	@Override
 	public void onDisable() {
-		System.out.println("[PLM] Personal Login Message disabled");
+		plmLogger.logInfo("[PLM] Personal Login Message disabled");
 	}
 
 	//Plugin setup
@@ -85,13 +88,13 @@ public final class PLM extends JavaPlugin {
 			if (chatProvider != null) {
 				chat = chatProvider.getProvider();
 			} else {
-				System.out.println("[PLM] Found no chat plugin. Standard player format will be used.");
+				plmLogger.logInfo("[PLM] Found no chat plugin. Standard player format will be used.");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} catch (Error er) {
-			System.out.println("PLM was not able to find 'Vault'. Is it installed?");
-			System.out.println("[PLM] Using chat format is now disabled");
+			plmLogger.logWarning("PLM was not able to find 'Vault'. Is it installed?");
+			plmLogger.logWarning("[PLM] Using chat format is now disabled");
 			vaultErrorStatus = true;
 		}
 	}
@@ -107,13 +110,13 @@ public final class PLM extends JavaPlugin {
 			if (permissionProvider != null) {
 				permission = permissionProvider.getProvider();
 			} else {
-				System.out.println("[PLM] Found no permission plugin!");
+				plmLogger.logWarning("[PLM] Found no permission plugin!");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} catch (Error er) {
 			if (vaultErrorStatus == false)
-				System.out.println("[PLM] An unknown error occurred ");
+				plmLogger.logError("[PLM] An unknown error occurred ");
 		}
 	}
 
@@ -173,7 +176,7 @@ public final class PLM extends JavaPlugin {
 			});
 			metrics.start();
 		} catch (IOException e) {
-			System.out.println(e.getMessage());
+			plmLogger.logError(e.getMessage());
 		}
 	}
 
@@ -196,6 +199,10 @@ public final class PLM extends JavaPlugin {
 
 	public MainConfiguration getCfg() {
 		return cfg;
+	}
+
+	public PLMLogger getPLMLogger() {
+		return plmLogger;
 	}
 
 	public void reloadMessages() {

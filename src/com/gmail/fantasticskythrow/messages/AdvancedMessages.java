@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 
 import com.gmail.fantasticskythrow.PLM;
 import com.gmail.fantasticskythrow.configuration.ExtendedYamlConfiguration;
+import com.gmail.fantasticskythrow.other.PLMLogger;
 
 public class AdvancedMessages {
 
@@ -24,10 +25,12 @@ public class AdvancedMessages {
 	private DefaultSection defaultS;
 	private String[] welcomeMessages, publicMessages;
 	private final String[] emptyMessages;
+	private final PLMLogger plmLogger;
 
 	public AdvancedMessages(PLM p, PLMFile f) {
 		settings = f;
 		plugin = p;
+		plmLogger = plugin.getPLMLogger();
 		loadAdvancedMessagesFile();
 		emptyMessages = null;
 		if (!errorStatus) {
@@ -69,12 +72,12 @@ public class AdvancedMessages {
 			}
 		} catch (IllegalStateException ex) {
 			errorStatus = true;
-			System.out.println("[PLM] SEVERE! Couldn't read AdvancedMessages.yml");
-			System.out.println("[PLM] Please make sure that you used ' in front any special letter (%, &,...)");
-			System.out.println("[PLM] More information on PLM's BukkitDev page!");
+			plmLogger.logError("[PLM] Couldn't read AdvancedMessages.yml");
+			plmLogger.logInfo("[PLM] Please make sure that you used ' in front any special letter (%, &,...)");
+			plmLogger.logInfo("[PLM] More information on PLM's BukkitDev page!");
 		} catch (IOException io) {
-			System.out.println("[PLM] An error occurred while saving AdvancedMessages.yml");
-			System.out.println("[PLM] Please check whether PLM has all rights to do this!");
+			plmLogger.logError("[PLM] An error occurred while saving AdvancedMessages.yml");
+			plmLogger.logInfo("[PLM] Please check whether PLM has all rights to do this!");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -128,7 +131,7 @@ public class AdvancedMessages {
 				message = getReplacedWorld(message, p);
 				return message;
 			} else {
-				System.out.println("[PLM] No path found for " + p.getName() + ". Using default messages");
+				plmLogger.logWarning("[PLM] No path found for " + p.getName() + ". Using default messages");
 				return "&e%playername joined the game";
 			}
 		}
@@ -158,7 +161,7 @@ public class AdvancedMessages {
 			message = getReplacedWorld(message, p);
 			return message;
 		} else {
-			System.out.println("[PLM] No path found for " + p.getName() + ". Using default messages");
+			plmLogger.logWarning("[PLM] No path found for " + p.getName() + ". Using default messages");
 			return "&e%playername left the game";
 		}
 	}
