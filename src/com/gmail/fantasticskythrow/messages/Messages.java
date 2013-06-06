@@ -127,10 +127,10 @@ public class Messages implements Listener {
 			// chHandler.sendMessages("Minecity", test);
 			String message = getMessagesJoin(e.getPlayer());
 			boolean isVanished = vnpHandler.isVanished(e.getPlayer().getName());
-			if (getPermissionJoin(e.getPlayer()) && !message.equalsIgnoreCase("off") && !isVanished) {
+			if (PLMToolbox.getPermissionJoin(cfg.getUsePermGeneral(), player) && !message.equalsIgnoreCase("off") && !isVanished) {
 				e.setJoinMessage(ChatColor.translateAlternateColorCodes('&', message));
 			} else if (!isVanished) {
-				if (!getPermissionJoin(e.getPlayer()) || message.equalsIgnoreCase("off")) {
+				if (!PLMToolbox.getPermissionJoin(cfg.getUsePermGeneral(), player) || message.equalsIgnoreCase("off")) {
 					e.setJoinMessage(null);
 				}
 			}
@@ -166,9 +166,9 @@ public class Messages implements Listener {
 				this.player = e.getPlayer();
 				this.playername = e.getPlayer().getName().toLowerCase();
 				String message = getMessagesQuit(e.getPlayer());
-				if (getPermissionQuit(e.getPlayer()) && !(message.equalsIgnoreCase("off"))) {
+				if (PLMToolbox.getPermissionQuit(cfg.getUsePermGeneral(), player) && !(message.equalsIgnoreCase("off"))) {
 					e.setQuitMessage(ChatColor.translateAlternateColorCodes('&', message));
-				} else if (!getPermissionQuit(e.getPlayer()) || message.equalsIgnoreCase("off")) {
+				} else if (!PLMToolbox.getPermissionQuit(cfg.getUsePermGeneral(), player) || message.equalsIgnoreCase("off")) {
 					e.setQuitMessage(null);
 				}
 				plmFile.setPlayerQuitTime(e.getPlayer().getName().toLowerCase());
@@ -192,9 +192,9 @@ public class Messages implements Listener {
 			this.player = e.getPlayer();
 			this.playername = e.getPlayer().getName().toLowerCase();
 			String message = getMessagesQuit(e.getPlayer());
-			if (getPermissionQuit(e.getPlayer()) && !(message.equalsIgnoreCase("off"))) {
+			if (PLMToolbox.getPermissionQuit(cfg.getUsePermGeneral(), player) && !(message.equalsIgnoreCase("off"))) {
 				e.setLeaveMessage(ChatColor.translateAlternateColorCodes('&', message));
-			} else if (!getPermissionQuit(e.getPlayer()) || message.equalsIgnoreCase("off")) {
+			} else if (!PLMToolbox.getPermissionQuit(cfg.getUsePermGeneral(), player) || message.equalsIgnoreCase("off")) {
 				e.setLeaveMessage(null);
 			}
 		} catch (NullPointerException ne) {
@@ -217,7 +217,7 @@ public class Messages implements Listener {
 					this.player = e.getPlayer();
 					this.playername = e.getPlayer().getName().toLowerCase();
 					String message = getMessagesQuit(e.getPlayer());
-					if (getPermissionQuit(e.getPlayer()) && !(message.equalsIgnoreCase("off"))) {
+					if (PLMToolbox.getPermissionQuit(cfg.getUsePermGeneral(), player) && !(message.equalsIgnoreCase("off"))) {
 						plugin.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', message));
 					}
 					plmFile.setPlayerQuitTime(e.getPlayer().getName().toLowerCase());
@@ -227,7 +227,7 @@ public class Messages implements Listener {
 					this.player = e.getPlayer();
 					this.playername = e.getPlayer().getName().toLowerCase();
 					String message = getMessagesJoin(e.getPlayer());
-					if (getPermissionJoin(e.getPlayer()) && !message.equalsIgnoreCase("off")) {
+					if (PLMToolbox.getPermissionJoin(cfg.getUsePermGeneral(), player) && !message.equalsIgnoreCase("off")) {
 						plugin.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', message));
 					}
 				}
@@ -298,44 +298,6 @@ public class Messages implements Listener {
 		quitMessage = PLMToolbox.getReplacedWorld(quitMessage, player);
 		quitMessage = PLMToolbox.getReplacedCountry(quitMessage, plugin, player, plmFile);
 		return quitMessage;
-	}
-
-	/**
-	 * Checks whether the player has permission 'plm.join'
-	 * 
-	 * @param p
-	 *            Player - The player to check
-	 * @return true, if he has permission
-	 */
-	private boolean getPermissionJoin(Player p) {
-		if (this.cfg.getUsePermGeneral()) {
-			if (p.hasPermission("plm.join")) {
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return true;
-		}
-	}
-
-	/**
-	 * Checks whether the player has permission 'plm.quit'
-	 * 
-	 * @param p
-	 *            Player - The player to check
-	 * @return true, if he has permission
-	 */
-	private boolean getPermissionQuit(Player p) {
-		if (this.cfg.getUsePermGeneral()) {
-			if (p.hasPermission("plm.quit")) {
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return true;
-		}
 	}
 
 	/**
