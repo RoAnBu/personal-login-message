@@ -100,7 +100,8 @@ public final class PLM extends JavaPlugin {
 	}
 
 	/**
-	 * A try to find Vault and setup the hooked permission plugin. This is only called if setupChat() was successful. Any error here will be printed out in the
+	 * A try to find Vault and setup the hooked permission plugin. This is only called if setupChat() was successful.
+	 * Any error here will be printed out in the
 	 * console
 	 */
 	private void setupPermissions() {

@@ -243,16 +243,6 @@ public class Messages implements Listener {
 		}
 	}
 
-	/**
-	 * Replaces all constants apart from color codes
-	 * 
-	 * @param pl
-	 *            The wanted player
-	 * @return The join message without the constants (%chatplayername,
-	 *         %playername, %group). The constants are replaced in the correct
-	 *         format with the information delivered by the player. %group
-	 *         returns only the first group
-	 */
 	private String getMessagesJoin(Player pl) {
 		/*
 		 * Selects the class depending on the settings
@@ -281,15 +271,6 @@ public class Messages implements Listener {
 		return joinMessage;
 	}
 
-	/**
-	 * Replaces all constants apart from color codes
-	 * 
-	 * @param Player
-	 * @return The quit message without the constants (%chatplayername,
-	 *         %playername, %group). The constants are replaced in the correct
-	 *         format with the information delivered by the player. %group
-	 *         returns only the first group
-	 */
 	private String getMessagesQuit(Player pl) {
 		if (advancedStatus == false) {
 			quitMessage = sm.getQuitMessage();

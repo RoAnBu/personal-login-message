@@ -68,7 +68,7 @@ public class PLMToolbox {
 	}
 
 	/**
-	 * Simple replacement of %name
+	 * Simple replacement of %playername
 	 * @param text the text which can contain %name
 	 * @param player the player whose name is relevant
 	 * @return the replaced string

@@ -14,16 +14,6 @@ public class VanishNoPacketManager {
 	private PLM plugin;
 	private final HashMap<String, Boolean> players;
 
-	//	public VanishNoPacketManager(PLM plugin) {
-	//		this.plugin = plugin;
-	//		Plugin pl = plugin.getServer().getPluginManager().getPlugin("VanishNoPacket");
-	//		if (pl != null) {
-	//			players = new HashMap<String, Boolean>();
-	//		} else {
-	//			players = null;
-	//		}
-	//	}
-
 	public VanishNoPacketManager(PLM plugin, Player[] onlinePlayers) {
 		this.plugin = plugin;
 		Plugin pl = plugin.getServer().getPluginManager().getPlugin("VanishNoPacket");
@@ -39,6 +29,12 @@ public class VanishNoPacketManager {
 		}
 	}
 
+	/**
+	 * Checks whether the player is vanished or not (VanishNoPacket). It only connects to the VanishNoPacketPlugin and asks for the status.
+	 * If VNP is not available it'll return false
+	 * @param name the player's name, not only the lowercase name!
+	 * @return true if vanished, false anything else
+	 */
 	public boolean isVanished(String name) {
 		Plugin pl = plugin.getServer().getPluginManager().getPlugin("VanishNoPacket");
 		if (pl != null) {
