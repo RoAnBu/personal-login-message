@@ -52,49 +52,16 @@ public class Messages implements Listener {
 	// private HerochatManager chHandler;
 
 	/**
-	 * Provides the EventHandlers for PlayerJoinEvent and PlayerQuitEvent.
-	 * Nothing is done by default, you have to call every method separately.
+	 * Uses the given status to control whether AdvancedStatus should be enabled  or not.
 	 * 
-	 * @param p
-	 *            The main plugin object, in this case
-	 *            com.gmail.fantasticskythrow.main.PLM
+	 * @param plugin The main plugin alias JavaPlugin
+	 * @param advancedStatus Decide whether AdvancedStatus should be true or false
 	 */
-	public Messages(PLM p) { // Standard. Checks the AdvancedStatus itself, but not the issues
-		plugin = p;
+	public Messages(PLM plugin, boolean advancedStatus) {
+		this.plugin = plugin;
 		plmLogger = plugin.getPLMLogger();
 		cfg = plugin.getCfg();
-		advancedStatus = cfg.getAdvancedStatus();
-		permission = plugin.getPermission();
-		chat = plugin.getChat();
-		plmFile = new PLMFile(plugin);
-		iniTimeMessages();
-		vnpHandler = new VanishNoPacketManager(plugin, plugin.getServer().getOnlinePlayers());
-		// chHandler = new HerochatManager(plugin);
-		if (advancedStatus != true) { // StandardMessages
-			sm = new StandardMessages(plugin);
-			PLMRestoreCommand rc = new PLMRestoreCommand(plugin);
-			plugin.getCommand("plm").setExecutor(rc);
-		} else {
-			am = new AdvancedMessages(plugin, plmFile);
-			ReloadCommand reloadCommand = new ReloadCommand(plugin);
-			plugin.getCommand("plm").setExecutor(reloadCommand);
-		}
-	}
-
-	/**
-	 * Uses the given status to control whether AdvancedStatus should be enabled
-	 * or not.
-	 * 
-	 * @param p
-	 *            The main plugin alias JavaPlugin
-	 * @param as
-	 *            - Decide whether AdvancedStatus should be true or false
-	 */
-	public Messages(PLM p, boolean as) {
-		plugin = p;
-		plmLogger = plugin.getPLMLogger();
-		cfg = plugin.getCfg();
-		advancedStatus = as;
+		this.advancedStatus = advancedStatus;
 		permission = plugin.getPermission();
 		chat = plugin.getChat();
 		plmFile = new PLMFile(plugin);
@@ -105,7 +72,7 @@ public class Messages implements Listener {
 			sm = new StandardMessages(plugin);
 			PLMRestoreCommand rc = new PLMRestoreCommand(plugin);
 			plugin.getCommand("plm").setExecutor(rc);
-		} else {
+		} else { // Advanced messages mode
 			am = new AdvancedMessages(plugin, plmFile);
 			ReloadCommand reloadCommand = new ReloadCommand(plugin);
 			plugin.getCommand("plm").setExecutor(reloadCommand);

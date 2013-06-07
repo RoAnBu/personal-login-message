@@ -44,7 +44,7 @@ public final class PLM extends JavaPlugin {
 				try {
 					setupChat();
 					setupPermissions();
-					m = new Messages(this);
+					m = new Messages(this, cfg.getAdvancedStatus());
 					this.getServer().getPluginManager().registerEvents(this.m, this);
 					plmLogger.logInfo("[PLM] Personal Login Message is enabled");
 				} catch (Exception e) {
@@ -59,7 +59,7 @@ public final class PLM extends JavaPlugin {
 					this.getServer().getPluginManager().registerEvents(this.m, this);
 					plmLogger.logInfo("[PLM] Personal Login Message is enabled");
 				} else { //Activate AdvancedMessages, because vault is active and it's enabled
-					m = new Messages(this);
+					m = new Messages(this, cfg.getAdvancedStatus());
 					this.getServer().getPluginManager().registerEvents(this.m, this);
 					plmLogger.logInfo("[PLM] Advanced messages mode is enabled");
 				}
