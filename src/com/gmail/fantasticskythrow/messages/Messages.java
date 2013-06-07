@@ -444,7 +444,9 @@ public class Messages implements Listener {
 				Player[] receivers = new Player[onlinePlayer.length - 1];
 				int receiverCount = 0;
 				for (int i = 0; i < onlinePlayer.length; i++) {
-					if (onlinePlayer[i].hasPermission("plm." + permission.getPlayerGroups(p)[0]) || onlinePlayer[i].hasPermission("plm.pm")) {
+					Player pl = onlinePlayer[i];
+					if (pl.hasPermission("plm." + permission.getPlayerGroups(p)[0]) || pl.hasPermission("plm." + p.getName())
+							|| pl.hasPermission("plm.pm") || pl.hasPermission("plm." + p.getName().toLowerCase())) {
 						if (!onlinePlayer[i].getName().equalsIgnoreCase(p.getName())) {
 							receivers[receiverCount] = onlinePlayer[i];
 							receiverCount++;
