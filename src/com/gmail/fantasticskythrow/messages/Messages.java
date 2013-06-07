@@ -26,7 +26,7 @@ import com.gmail.fantasticskythrow.other.WelcomeMessagePrinter;
 import org.kitteh.vanish.event.VanishStatusChangeEvent;
 
 /**
- * Provides event listeners and creates the instanced which are needed to get
+ * Provides event listeners and creates the instances which are needed to get
  * the wanted string
  * 
  * @author Roman

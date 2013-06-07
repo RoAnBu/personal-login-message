@@ -122,7 +122,7 @@ public final class PLM extends JavaPlugin {
 	}
 
 	/**
-	 * Activates which are in an other package
+	 * Activates metrics which are in an other package
 	 */
 	private void activateMetrics() {
 		try {
