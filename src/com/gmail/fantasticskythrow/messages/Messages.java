@@ -5,12 +5,10 @@ import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.kitteh.vanish.event.VanishStatusChangeEvent;
 
 import com.gmail.fantasticskythrow.PLM;
 import com.gmail.fantasticskythrow.commands.PLMRestoreCommand;
@@ -23,8 +21,6 @@ import com.gmail.fantasticskythrow.other.PublicMessagePrinter;
 import com.gmail.fantasticskythrow.other.VanishNoPacketManager;
 import com.gmail.fantasticskythrow.other.WelcomeMessagePrinter;
 
-import org.kitteh.vanish.event.VanishStatusChangeEvent;
-
 /**
  * Provides event listeners and creates the instances which are needed to get
  * the wanted string
@@ -32,7 +28,7 @@ import org.kitteh.vanish.event.VanishStatusChangeEvent;
  * @author Roman
  * 
  */
-public class Messages implements Listener {
+public class Messages {
 
 	private PLM plugin;
 	private String joinMessage = "", quitMessage = "", playername;
@@ -86,12 +82,25 @@ public class Messages implements Listener {
 		am = new AdvancedMessages(plugin, plmFile);
 	}
 
-	@EventHandler(priority = EventPriority.HIGH)
+	public VanishNoPacketManager getVnpHandler() {
+		return vnpHandler;
+	}
+
+	protected PLMFile getPlmFile() {
+		return plmFile;
+	}
+
+	protected void setPlayer(Player p) {
+		this.player = p;
+		this.playername = p.getName().toLowerCase();
+	}
+
 	public void onPlayerJoinEvent(PlayerJoinEvent e) {
 		try {
 			vnpHandler.addJoinedPlayer(e.getPlayer().getName());
 			this.player = e.getPlayer();
 			this.playername = e.getPlayer().getName().toLowerCase();
+			plmFile.setPlayerLogin(playername);
 			// String[] test = new String[2];
 			// test[0] = "This is a test message";
 			// test[1] = "Second test message";
@@ -116,7 +125,6 @@ public class Messages implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST)
 	public void onEarlyQuitEvent(PlayerQuitEvent e) {
 		try {
 			alreadyQuit = false;
@@ -130,7 +138,6 @@ public class Messages implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.HIGH)
 	public void onLatePlayerQuitEvent(PlayerQuitEvent e) {
 		if (alreadyQuit == false) {
 			try {
@@ -156,7 +163,6 @@ public class Messages implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerKickEvent(PlayerKickEvent e) {
 		try {
 			vnpHandler.removeJoinedPlayer(e.getPlayer().getName());
@@ -180,7 +186,6 @@ public class Messages implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.NORMAL)
 	public void onVanishStatusChangeEvent(VanishStatusChangeEvent e) {
 		try {
 			if (!vnpHandler.isJustJoinedPlayer(e.getPlayer().getName())) {
@@ -210,7 +215,7 @@ public class Messages implements Listener {
 		}
 	}
 
-	private String getMessagesJoin(Player pl) {
+	protected String getMessagesJoin(Player pl) {
 		/*
 		 * Selects the class depending on the settings
 		 */
@@ -229,6 +234,9 @@ public class Messages implements Listener {
 		joinMessage = PLMToolbox.getReplacedGroup(joinMessage, permission, player);
 		joinMessage = PLMToolbox.getReplacedWorld(joinMessage, player);
 		joinMessage = PLMToolbox.getReplacedCountry(joinMessage, plugin, player, plmFile);
+		joinMessage = PLMToolbox.getReplacedTotalLogins(joinMessage, plmFile);
+		joinMessage = PLMToolbox.getReplacedUniquePlayers(joinMessage, plmFile);
+		joinMessage = PLMToolbox.getReplacedPlayerLogins(joinMessage, playername, plmFile);
 		/*
 		 * Replace %time when it was found in the string
 		 */
@@ -238,7 +246,7 @@ public class Messages implements Listener {
 		return joinMessage;
 	}
 
-	private String getMessagesQuit(Player pl) {
+	protected String getMessagesQuit(Player pl) {
 		if (advancedStatus == false) {
 			quitMessage = sm.getQuitMessage();
 		} else {
@@ -249,6 +257,9 @@ public class Messages implements Listener {
 		quitMessage = PLMToolbox.getReplacedGroup(quitMessage, permission, player);
 		quitMessage = PLMToolbox.getReplacedWorld(quitMessage, player);
 		quitMessage = PLMToolbox.getReplacedCountry(quitMessage, plugin, player, plmFile);
+		quitMessage = PLMToolbox.getReplacedTotalLogins(quitMessage, plmFile);
+		quitMessage = PLMToolbox.getReplacedUniquePlayers(quitMessage, plmFile);
+		quitMessage = PLMToolbox.getReplacedPlayerLogins(quitMessage, playername, plmFile);
 		return quitMessage;
 	}
 
@@ -378,6 +389,9 @@ public class Messages implements Listener {
 				m = PLMToolbox.getReplacedChatplayerlist(m, chat, vnpHandler, plugin.getServer());
 				m = PLMToolbox.getReplacedGroupplayerlist(m, vnpHandler, permission, plugin.getServer(), player);
 				m = PLMToolbox.getReplacedGroupchatplayerlist(m, vnpHandler, permission, chat, plugin.getServer(), player);
+				m = PLMToolbox.getReplacedTotalLogins(m, plmFile);
+				m = PLMToolbox.getReplacedUniquePlayers(m, plmFile);
+				m = PLMToolbox.getReplacedPlayerLogins(m, playername, plmFile);
 				welcomeMessages[i] = m;
 			}
 			int time = cfg.getDelay();
@@ -401,6 +415,9 @@ public class Messages implements Listener {
 				m = PLMToolbox.getReplacedGroupplayerlist(m, vnpHandler, permission, plugin.getServer(), player);
 				m = PLMToolbox.getReplacedGroupchatplayerlist(m, vnpHandler, permission, chat, plugin.getServer(), player);
 				m = PLMToolbox.getReplacedGroup(m, permission, player);
+				m = PLMToolbox.getReplacedTotalLogins(m, plmFile);
+				m = PLMToolbox.getReplacedUniquePlayers(m, plmFile);
+				m = PLMToolbox.getReplacedPlayerLogins(m, playername, plmFile);
 				publicMessages[i] = m;
 			}
 			Player[] onlinePlayer = plugin.getServer().getOnlinePlayers();

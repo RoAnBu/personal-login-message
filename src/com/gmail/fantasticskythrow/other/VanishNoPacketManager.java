@@ -5,7 +5,6 @@ import java.util.HashMap;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.kitteh.vanish.staticaccess.VanishNoPacket;
-import org.kitteh.vanish.staticaccess.VanishNotLoadedException;
 
 import com.gmail.fantasticskythrow.PLM;
 
@@ -40,7 +39,7 @@ public class VanishNoPacketManager {
 		if (pl != null) {
 			try {
 				return VanishNoPacket.isVanished(name);
-			} catch (VanishNotLoadedException e) {
+			} catch (Exception e) {
 				return false;
 			}
 		} else {
@@ -82,6 +81,15 @@ public class VanishNoPacketManager {
 			if (players.containsKey(name)) {
 				players.remove(name);
 			}
+		}
+	}
+
+	public boolean isPluginInstalled() {
+		Plugin pl = plugin.getServer().getPluginManager().getPlugin("VanishNoPacket");
+		if (pl == null) {
+			return false;
+		} else {
+			return true;
 		}
 	}
 }

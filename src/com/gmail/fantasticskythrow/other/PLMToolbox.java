@@ -316,4 +316,44 @@ public class PLMToolbox {
 			return text;
 		}
 	}
+
+	/**
+	 * Replaces %logins with the number of times the concerning player joined (The current join, too)
+	 * @param text the string which can contain %logins
+	 * @param playername the name of the player in lowercase!
+	 * @param plmFile
+	 * @return the string with replaced %logins
+	 */
+	public static String getReplacedPlayerLogins(String text, String playername, PLMFile plmFile) {
+		if (text.contains("%logins")) {
+			text = text.replaceAll("%logins", String.valueOf(plmFile.getPlayerLogins(playername)));
+		}
+		return text;
+	}
+
+	/**
+	 * Replaces %totallogins with the total number of logins after started counting
+	 * @param text the string which can contain %totallogins
+	 * @param plmFile
+	 * @return the string with replaced %totallogins
+	 */
+	public static String getReplacedTotalLogins(String text, PLMFile plmFile) {
+		if (text.contains("%totallogins")) {
+			text.replaceAll("%totallogins", String.valueOf(plmFile.getTotalLogins()));
+		}
+		return text;
+	}
+
+	/**
+	 * Replaces %uniqueplayers with the total number of unique logins after started counting
+	 * @param text the string which can contain %totallogins
+	 * @param plmFile
+	 * @return the string with replaced %uniqueplayers
+	 */
+	public static String getReplacedUniquePlayers(String text, PLMFile plmFile) {
+		if (text.contains("%uniqueplayers")) {
+			text.replaceAll("%uniqueplayers", String.valueOf(plmFile.getUniquePlayerLogins()));
+		}
+		return text;
+	}
 }

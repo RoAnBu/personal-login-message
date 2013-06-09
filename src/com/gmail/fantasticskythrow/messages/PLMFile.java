@@ -43,6 +43,12 @@ public class PLMFile {
 			PConfig.set("Countries.Russian Federation", "Russian Federation");
 			PConfig.set("Countries.Your Country", "Your Country");
 		}
+		if (!PConfig.contains("totallogins")) {
+			PConfig.set("totallogins", 0L);
+		}
+		if (!PConfig.contains("uniqueplayers")) {
+			PConfig.set("uniqueplayers", 0);
+		}
 		try {
 			PConfig.save(PLMFileData);
 		} catch (FileNotFoundException ex) {
@@ -57,7 +63,8 @@ public class PLMFile {
 
 	public void setPlayerQuitTime(String playername) {
 		PConfig = YamlConfiguration.loadConfiguration(PLMFileData);
-		PConfig.set(String.format("Players.%s", playername), System.currentTimeMillis());
+		final String path = String.format("Players.%s", playername);
+		PConfig.set(path, System.currentTimeMillis());
 		try {
 			PConfig.save(PLMFileData);
 		} catch (IOException e) {
@@ -72,6 +79,55 @@ public class PLMFile {
 			return PConfig.getLong(String.format("Players.%s", playername));
 		} else {
 			return 0L;
+		}
+	}
+
+	public int getPlayerLogins(String playername) {
+		final String path = String.format("logins.%s", playername);
+		PConfig = YamlConfiguration.loadConfiguration(PLMFileData);
+		if (errorStatus == false) {
+			return PConfig.getInt(path);
+		} else {
+			return 0;
+		}
+	}
+
+	public long getTotalLogins() {
+		PConfig = YamlConfiguration.loadConfiguration(PLMFileData);
+		if (errorStatus == false) {
+			return PConfig.getLong("totallogins");
+		} else {
+			return 0L;
+		}
+	}
+
+	public int getUniquePlayerLogins() {
+		PConfig = YamlConfiguration.loadConfiguration(PLMFileData);
+		if (errorStatus == false) {
+			return PConfig.getInt("uniqueplayers");
+		} else {
+			return 0;
+		}
+	}
+
+	public void setPlayerLogin(String playername) {
+		PConfig = YamlConfiguration.loadConfiguration(PLMFileData);
+		final String path = String.format("logins.%s", playername);
+		final int newValue = PConfig.getInt(path) + 1;
+		PConfig.set(path, newValue);
+
+		final long newTotalValue = PConfig.getLong("totallogins") + 1L;
+		PConfig.set("totallogins", newTotalValue);
+
+		if (!PConfig.contains("Players." + playername)) {
+			final int newUniqueValue = PConfig.getInt("uniqueplayers") + 1;
+			PConfig.set("uniqueplayers", newUniqueValue);
+		}
+		try {
+			PConfig.save(PLMFileData);
+		} catch (IOException e) {
+			System.out.println("[PLM] PLM.yml is not available!");
+			System.out.println("[PLM] Please check whether PLM is permitted to write in PLM.yml!");
 		}
 	}
 

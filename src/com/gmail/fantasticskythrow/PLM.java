@@ -13,7 +13,9 @@ import uk.org.whoami.geoip.GeoIPLookup;
 import uk.org.whoami.geoip.GeoIPTools;
 
 import com.gmail.fantasticskythrow.configuration.MainConfiguration;
+import com.gmail.fantasticskythrow.messages.CommonListener;
 import com.gmail.fantasticskythrow.messages.Messages;
+import com.gmail.fantasticskythrow.messages.VanishStatusChangeEventListener;
 import com.gmail.fantasticskythrow.other.Metrics;
 import com.gmail.fantasticskythrow.other.Metrics.Graph;
 import com.gmail.fantasticskythrow.other.PLMLogger;
@@ -45,7 +47,11 @@ public final class PLM extends JavaPlugin {
 					setupChat();
 					setupPermissions();
 					m = new Messages(this, cfg.getAdvancedStatus());
-					this.getServer().getPluginManager().registerEvents(this.m, this);
+					if (m.getVnpHandler().isPluginInstalled()) {
+						this.getServer().getPluginManager().registerEvents(new VanishStatusChangeEventListener(m), this);
+					} else {
+						this.getServer().getPluginManager().registerEvents(new CommonListener(m), this);
+					}
 					plmLogger.logInfo("[PLM] Personal Login Message is enabled");
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -56,11 +62,19 @@ public final class PLM extends JavaPlugin {
 				if (vaultErrorStatus == true || permission == null) { //If vault or permission/chat plugin is not available...
 					plmLogger.logWarning("[PLM] Sorry, you need Vault and a compatible permissions plugin to use the advanced messages mode!");
 					m = new Messages(this, false);
-					this.getServer().getPluginManager().registerEvents(this.m, this);
+					if (m.getVnpHandler().isPluginInstalled()) {
+						this.getServer().getPluginManager().registerEvents(new VanishStatusChangeEventListener(m), this);
+					} else {
+						this.getServer().getPluginManager().registerEvents(new CommonListener(m), this);
+					}
 					plmLogger.logInfo("[PLM] Personal Login Message is enabled");
 				} else { //Activate AdvancedMessages, because vault is active and it's enabled
 					m = new Messages(this, cfg.getAdvancedStatus());
-					this.getServer().getPluginManager().registerEvents(this.m, this);
+					if (m.getVnpHandler().isPluginInstalled()) {
+						this.getServer().getPluginManager().registerEvents(new VanishStatusChangeEventListener(m), this);
+					} else {
+						this.getServer().getPluginManager().registerEvents(new CommonListener(m), this);
+					}
 					plmLogger.logInfo("[PLM] Advanced messages mode is enabled");
 				}
 			}
