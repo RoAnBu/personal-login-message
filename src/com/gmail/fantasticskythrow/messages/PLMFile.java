@@ -112,6 +112,17 @@ public class PLMFile {
 
 	public void setPlayerLogin(String playername) {
 		PConfig = YamlConfiguration.loadConfiguration(PLMFileData);
+
+		if (!PConfig.contains("logins." + playername)) {
+			final int newUniqueValue;
+			if (PConfig.contains("uniqueplayers")) {
+				newUniqueValue = PConfig.getInt("uniqueplayers") + 1;
+			} else {
+				newUniqueValue = 1;
+			}
+			PConfig.set("uniqueplayers", newUniqueValue);
+		}
+
 		final String path = String.format("logins.%s", playername);
 		final int newValue = PConfig.getInt(path) + 1;
 		PConfig.set(path, newValue);
@@ -119,10 +130,6 @@ public class PLMFile {
 		final long newTotalValue = PConfig.getLong("totallogins") + 1L;
 		PConfig.set("totallogins", newTotalValue);
 
-		if (!PConfig.contains("Players." + playername)) {
-			final int newUniqueValue = PConfig.getInt("uniqueplayers") + 1;
-			PConfig.set("uniqueplayers", newUniqueValue);
-		}
 		try {
 			PConfig.save(PLMFileData);
 		} catch (IOException e) {
