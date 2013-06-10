@@ -339,7 +339,7 @@ public class PLMToolbox {
 	 */
 	public static String getReplacedTotalLogins(String text, PLMFile plmFile) {
 		if (text.contains("%totallogins")) {
-			text.replaceAll("%totallogins", String.valueOf(plmFile.getTotalLogins()));
+			text = text.replaceAll("%totallogins", String.valueOf(plmFile.getTotalLogins()));
 		}
 		return text;
 	}
@@ -352,7 +352,7 @@ public class PLMToolbox {
 	 */
 	public static String getReplacedUniquePlayers(String text, PLMFile plmFile) {
 		if (text.contains("%uniqueplayers")) {
-			text.replaceAll("%uniqueplayers", String.valueOf(plmFile.getUniquePlayerLogins()));
+			text = text.replaceAll("%uniqueplayers", String.valueOf(plmFile.getUniquePlayerLogins()));
 		}
 		return text;
 	}
