@@ -95,7 +95,7 @@ public class Messages {
 		this.playername = p.getName().toLowerCase();
 	}
 
-	public void onPlayerJoinEvent(PlayerJoinEvent e) {
+	protected void onPlayerJoinEvent(PlayerJoinEvent e) {
 		try {
 			vnpHandler.addJoinedPlayer(e.getPlayer().getName());
 			this.player = e.getPlayer();
@@ -125,7 +125,7 @@ public class Messages {
 		}
 	}
 
-	public void onEarlyQuitEvent(PlayerQuitEvent e) {
+	protected void onEarlyQuitEvent(PlayerQuitEvent e) {
 		try {
 			alreadyQuit = false;
 			boolean isVanished = vnpHandler.isVanished(e.getPlayer().getName());
@@ -138,7 +138,7 @@ public class Messages {
 		}
 	}
 
-	public void onLatePlayerQuitEvent(PlayerQuitEvent e) {
+	protected void onLatePlayerQuitEvent(PlayerQuitEvent e) {
 		if (alreadyQuit == false) {
 			try {
 				this.player = e.getPlayer();
@@ -163,7 +163,7 @@ public class Messages {
 		}
 	}
 
-	public void onPlayerKickEvent(PlayerKickEvent e) {
+	protected void onPlayerKickEvent(PlayerKickEvent e) {
 		try {
 			vnpHandler.removeJoinedPlayer(e.getPlayer().getName());
 			this.player = e.getPlayer();
@@ -186,7 +186,7 @@ public class Messages {
 		}
 	}
 
-	public void onVanishStatusChangeEvent(VanishStatusChangeEvent e) {
+	protected void onVanishStatusChangeEvent(VanishStatusChangeEvent e) {
 		try {
 			if (!vnpHandler.isJustJoinedPlayer(e.getPlayer().getName())) {
 				if (e.isVanishing() && cfg.getUseFakeQuitMsg()) { // -> Quit message (Fake)
