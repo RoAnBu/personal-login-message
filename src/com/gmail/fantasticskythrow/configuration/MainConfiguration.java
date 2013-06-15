@@ -39,7 +39,7 @@ public class MainConfiguration {
 			cfg.addDefault("advancedmessages.month", "month");
 			cfg.addDefault("advancedmessages.months", "months");
 			cfg.addDefault("advancedmessages.no last login", "no last login");
-			cfg.addDefault("Additional messages.delayms", "200");
+			cfg.addDefault("Welcome messages.delayms", "200");
 			cfg.addDefault("Public messages.usepermissions", "false");
 			cfg.addDefault("VanishNoPacket.usefakejoinmessage", "false");
 			cfg.addDefault("VanishNoPacket.usefakequitmessage", "false");
@@ -106,7 +106,7 @@ public class MainConfiguration {
 	}
 
 	private void setInternalDelay() {
-		String a = cfg.getString("Additional messages.delayms");
+		String a = cfg.getString("Welcome messages.delayms");
 		try {
 			delay = Integer.parseInt(a);
 		} catch (NumberFormatException e) {
