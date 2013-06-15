@@ -1,13 +1,16 @@
 package com.gmail.fantasticskythrow.configuration;
 
-import org.bukkit.configuration.file.FileConfiguration;
+import java.io.File;
+
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.gmail.fantasticskythrow.PLM;
 
 public class MainConfiguration {
 
 	private PLM plugin;
-	private FileConfiguration cfg;
+	private YamlConfiguration cfg;
+	private final File cfgData;
 
 	private boolean pluginStatus = true, usepermissionsGeneral, usepermissionsPM, fakejoinmessage, fakequitmessage, advancedStatus, debugStatus;
 	public String second, seconds, minute, minutes, hour, hours, day, days, month, months, noLastLogin;
@@ -15,6 +18,7 @@ public class MainConfiguration {
 
 	public MainConfiguration(PLM plugin) {
 		this.plugin = plugin;
+		cfgData = new File(this.plugin.getDataFolder(), "config.yml");
 		loadConfiguration();
 	}
 
@@ -23,7 +27,7 @@ public class MainConfiguration {
 			/*
 			 * Set default values if necessary
 			 */
-			cfg = plugin.getConfig();
+			cfg = YamlConfiguration.loadConfiguration(cfgData);
 			cfg.addDefault("general.enabled", "true");
 			cfg.addDefault("general.usepermissions", "false");
 			cfg.addDefault("general.debug", "false");
@@ -44,11 +48,15 @@ public class MainConfiguration {
 			cfg.addDefault("VanishNoPacket.usefakejoinmessage", "false");
 			cfg.addDefault("VanishNoPacket.usefakequitmessage", "false");
 			cfg.options().copyDefaults(true);
-			plugin.saveConfig();
+			cfg.save(cfgData);
 			/*
 			 * Load values
 			 */
-			setStatus();
+			if (this.cfg.getString("general.enabled").equalsIgnoreCase("true")) {
+				pluginStatus = true;
+			} else {
+				pluginStatus = false;
+			}
 			second = cfg.getString("advancedmessages.second");
 			seconds = cfg.getString("advancedmessages.seconds");
 			minute = cfg.getString("advancedmessages.minute");
@@ -86,7 +94,7 @@ public class MainConfiguration {
 				debugStatus = false;
 			setInternalDelay();
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 			System.out.println("[PLM] was not able to load the config.yml");
 			System.out.println("[PLM] Plugin is now disabled!");
 			pluginStatus = false;
@@ -95,14 +103,6 @@ public class MainConfiguration {
 
 	public void reloadConfiguration() {
 		this.loadConfiguration();
-	}
-
-	private void setStatus() {
-		if (this.cfg.getString("general.enabled").equalsIgnoreCase("true")) {
-			pluginStatus = true;
-		} else {
-			pluginStatus = false;
-		}
 	}
 
 	private void setInternalDelay() {
