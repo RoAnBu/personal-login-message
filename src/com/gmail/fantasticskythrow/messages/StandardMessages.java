@@ -145,7 +145,7 @@ public class StandardMessages {
 	/*
 	 * Getters
 	 */
-	public String getJoinMessage(String n) {
+	public String getJoinMessage() {
 		getMessages();
 		return joinMessage;
 	}

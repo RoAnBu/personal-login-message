@@ -30,11 +30,11 @@ import com.gmail.fantasticskythrow.other.WelcomeMessagePrinter;
  */
 public class Messages {
 
-	private PLM plugin;
+	private final PLM plugin;
 	private String joinMessage = "", quitMessage = "", playername;
 	private Chat chat = null;
 	private Permission permission = null;
-	private MainConfiguration cfg = null;
+	private final MainConfiguration cfg;
 	private boolean advancedStatus = false;
 	private static boolean alreadyQuit = false;
 	private StandardMessages sm = null;
@@ -42,7 +42,7 @@ public class Messages {
 	private PLMFile plmFile;
 	private String second, seconds, minute, minutes, hour, hours, day, days, month, months, noLastLogin;
 	private Player player;
-	private VanishNoPacketManager vnpHandler;
+	private final VanishNoPacketManager vnpHandler;
 	private final PLMLogger plmLogger;
 
 	// private HerochatManager chHandler;
@@ -105,7 +105,7 @@ public class Messages {
 			// test[0] = "This is a test message";
 			// test[1] = "Second test message";
 			// chHandler.sendMessages("Minecity", test);
-			String message = getMessagesJoin(e.getPlayer());
+			String message = getMessagesJoin();
 			boolean isVanished = vnpHandler.isVanished(e.getPlayer().getName());
 			if (PLMToolbox.getPermissionJoin(cfg.getUsePermGeneral(), player) && !message.equalsIgnoreCase("off") && !isVanished) {
 				e.setJoinMessage(ChatColor.translateAlternateColorCodes('&', message));
@@ -143,7 +143,7 @@ public class Messages {
 			try {
 				this.player = e.getPlayer();
 				this.playername = e.getPlayer().getName().toLowerCase();
-				String message = getMessagesQuit(e.getPlayer());
+				String message = getMessagesQuit();
 				if (PLMToolbox.getPermissionQuit(cfg.getUsePermGeneral(), player) && !(message.equalsIgnoreCase("off"))) {
 					e.setQuitMessage(ChatColor.translateAlternateColorCodes('&', message));
 				} else if (!PLMToolbox.getPermissionQuit(cfg.getUsePermGeneral(), player) || message.equalsIgnoreCase("off")) {
@@ -168,7 +168,7 @@ public class Messages {
 			vnpHandler.removeJoinedPlayer(e.getPlayer().getName());
 			this.player = e.getPlayer();
 			this.playername = e.getPlayer().getName().toLowerCase();
-			String message = getMessagesQuit(e.getPlayer());
+			String message = getMessagesQuit();
 			if (PLMToolbox.getPermissionQuit(cfg.getUsePermGeneral(), player) && !(message.equalsIgnoreCase("off"))) {
 				e.setLeaveMessage(ChatColor.translateAlternateColorCodes('&', message));
 			} else if (!PLMToolbox.getPermissionQuit(cfg.getUsePermGeneral(), player) || message.equalsIgnoreCase("off")) {
@@ -192,7 +192,7 @@ public class Messages {
 				if (e.isVanishing() && cfg.getUseFakeQuitMsg()) { // -> Quit message (Fake)
 					this.player = e.getPlayer();
 					this.playername = e.getPlayer().getName().toLowerCase();
-					String message = getMessagesQuit(e.getPlayer());
+					String message = getMessagesQuit();
 					if (PLMToolbox.getPermissionQuit(cfg.getUsePermGeneral(), player) && !(message.equalsIgnoreCase("off"))) {
 						plugin.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', message));
 					}
@@ -202,7 +202,7 @@ public class Messages {
 																			// (Fake)
 					this.player = e.getPlayer();
 					this.playername = e.getPlayer().getName().toLowerCase();
-					String message = getMessagesJoin(e.getPlayer());
+					String message = getMessagesJoin();
 					if (PLMToolbox.getPermissionJoin(cfg.getUsePermGeneral(), player) && !message.equalsIgnoreCase("off")) {
 						plugin.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', message));
 					}
@@ -215,16 +215,16 @@ public class Messages {
 		}
 	}
 
-	protected String getMessagesJoin(Player pl) {
+	protected String getMessagesJoin() {
 		/*
 		 * Selects the class depending on the settings
 		 */
 		if (advancedStatus == false) {
-			joinMessage = sm.getJoinMessage(pl.getName());
+			joinMessage = sm.getJoinMessage();
 		} else {
-			joinMessage = am.getJoinMessage(pl);
-			printWelcomeMessage(pl, am);
-			printPublicMessages(pl, am);
+			joinMessage = am.getJoinMessage(player);
+			printWelcomeMessage(am);
+			printPublicMessages(am);
 		}
 		/*
 		 * Replace placeholders
@@ -246,11 +246,11 @@ public class Messages {
 		return joinMessage;
 	}
 
-	protected String getMessagesQuit(Player pl) {
+	protected String getMessagesQuit() {
 		if (advancedStatus == false) {
 			quitMessage = sm.getQuitMessage();
 		} else {
-			quitMessage = am.getQuitMessage(pl);
+			quitMessage = am.getQuitMessage(player);
 		}
 		quitMessage = PLMToolbox.getReplacedPlayername(quitMessage, player);
 		quitMessage = PLMToolbox.getReplacedChatplayername(quitMessage, chat, player);
@@ -375,8 +375,8 @@ public class Messages {
 		return message;
 	}
 
-	private void printWelcomeMessage(Player p, AdvancedMessages am) {
-		String[] welcomeMessages = am.getWelcomeMessages(p);
+	private void printWelcomeMessage(AdvancedMessages am) {
+		String[] welcomeMessages = am.getWelcomeMessages(player);
 		if (welcomeMessages != null) {
 			for (int i = 0; i < welcomeMessages.length; i++) {
 				String m = welcomeMessages[i];
@@ -396,12 +396,12 @@ public class Messages {
 			}
 			int time = cfg.getDelay();
 			WelcomeMessagePrinter c = new WelcomeMessagePrinter();
-			c.start(time, welcomeMessages, p);
+			c.start(time, welcomeMessages, player);
 		}
 	}
 
-	private void printPublicMessages(Player p, AdvancedMessages am) {
-		String[] publicMessages = am.getPublicMessages(p);
+	private void printPublicMessages(AdvancedMessages am) {
+		String[] publicMessages = am.getPublicMessages(player);
 		if (publicMessages != null && !vnpHandler.isVanished(player.getName())) {
 			for (int i = 0; i < publicMessages.length; i++) {
 				String m = publicMessages[i];
@@ -429,9 +429,14 @@ public class Messages {
 				int receiverCount = 0;
 				for (int i = 0; i < onlinePlayer.length; i++) {
 					Player pl = onlinePlayer[i];
-					if (pl.hasPermission("plm." + permission.getPlayerGroups(p)[0]) || pl.hasPermission("plm." + p.getName())
-							|| pl.hasPermission("plm.pm") || pl.hasPermission("plm." + p.getName().toLowerCase())) {
-						if (!onlinePlayer[i].getName().equalsIgnoreCase(p.getName())) {
+					if (pl.hasPermission("plm." + permission.getPlayerGroups(player)[0]) || pl.hasPermission("plm." + player.getName())
+							|| pl.hasPermission("plm.pm") || pl.hasPermission("plm." + player.getName().toLowerCase())) {
+						plmLogger.logDebug(pl.getName() + " has the permission");
+						plmLogger.logDebug("plm.<group>: " + pl.hasPermission("plm." + permission.getPlayerGroups(player)[0]));
+						plmLogger.logDebug("plm.<player>: " + pl.hasPermission("plm." + player.getName()));
+						plmLogger.logDebug("plm.pm: " + pl.hasPermission("plm.pm"));
+						plmLogger.logDebug("plm.<lowercasename>: " + pl.hasPermission("plm." + player.getName().toLowerCase()));
+						if (!onlinePlayer[i].getName().equalsIgnoreCase(player.getName())) {
 							receivers[receiverCount] = onlinePlayer[i];
 							receiverCount++;
 						}
@@ -447,7 +452,7 @@ public class Messages {
 				int b = 0;
 				for (int i = 0; i < onlinePlayer.length; i++) {
 					int j = i - b;
-					if (!onlinePlayer[i].getName().equalsIgnoreCase(p.getName())) {
+					if (!onlinePlayer[i].getName().equalsIgnoreCase(player.getName())) {
 						receivers[j] = onlinePlayer[i];
 					} else {
 						b = 1;
