@@ -45,7 +45,7 @@ public class AdvancedMessages {
 		try {
 			advancedMessagesData = new File(plugin.getDataFolder(), "AdvancedMessages.yml");
 			advancedMessagesYML = ExtendedYamlConfiguration.loadConfiguration(advancedMessagesData);
-			if (settings.getFirstEnabled() == false) {
+			if (settings.getFirstEnabled() == false || !advancedMessagesData.exists()) {
 				advancedMessagesYML.set("Default.JM1", "%chatplayername &ejoined the game");
 				advancedMessagesYML.set("Default.QM1", "%chatplayername &eleft the game");
 				advancedMessagesYML.set("Groups.examplegroup.JM1", "&4Admin %playername joined the game");
@@ -60,6 +60,12 @@ public class AdvancedMessages {
 				advancedMessagesYML.set("players.exampleplayer.QM1", "&6The king Peter &2left the server!");
 				advancedMessagesYML.set("players.exampleplayer.JM2", "&2Our premium player Peter logged in!");
 				advancedMessagesYML.set("players.exampleplayer.QM2", "&2Our premium player Peter is now offline!");
+				advancedMessagesYML.set("players.exampleplayer2.JM1", "&aThis is the public join message");
+				advancedMessagesYML.set("players.exampleplayer2.QM1", "&aThis is the public quit/leave message");
+				advancedMessagesYML.set("players.exampleplayer2.WM1", "&eThis message is for the player who is joining");
+				advancedMessagesYML.set("players.exampleplayer2.WM2", "&2This would be another line just under WM1");
+				advancedMessagesYML.set("players.exampleplayer2.PM1", "&eThis is a message for the other players on the server.");
+				advancedMessagesYML.set("players.exampleplayer2.PM2", "&aYou can create more than one here, too");
 				advancedMessagesYML.set("World names.exampleworld", "main world");
 				settings.setFirstEnabled(true);
 				advancedMessagesYML.save(advancedMessagesData);
