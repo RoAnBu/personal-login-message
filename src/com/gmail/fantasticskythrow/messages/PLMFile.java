@@ -7,15 +7,18 @@ import java.io.IOException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.gmail.fantasticskythrow.PLM;
+import com.gmail.fantasticskythrow.other.PLMLogger;
 
 public class PLMFile {
 	private PLM plugin;
 	private File PLMFileData;
 	private YamlConfiguration PConfig;
 	private boolean errorStatus = false;
+	private final PLMLogger plmLogger;
 
 	public PLMFile(PLM p) {
 		plugin = p;
+		plmLogger = plugin.getPLMLogger();
 		loadFile();
 	}
 
@@ -52,9 +55,9 @@ public class PLMFile {
 		try {
 			PConfig.save(PLMFileData);
 		} catch (FileNotFoundException ex) {
-			System.out.println(ex.getMessage());
-			System.out.println("[PLM] PLM.yml is not available!");
-			System.out.println("[PLM] Please check whether PLM is permitted to write in PLM.yml!");
+			plmLogger.logError(ex.getMessage());
+			plmLogger.logError("[PLM] PLM.yml is not available!");
+			plmLogger.logInfo("[PLM] Please check whether PLM is permitted to write in PLM.yml!");
 			errorStatus = true;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -68,8 +71,8 @@ public class PLMFile {
 		try {
 			PConfig.save(PLMFileData);
 		} catch (IOException e) {
-			System.out.println("[PLM] PLM.yml is not available! Could'nt save the quit time!");
-			System.out.println("[PLM] Please check whether PLM is permitted to write in PLM.yml!");
+			plmLogger.logWarning("[PLM] PLM.yml is not available! Could'nt save the quit time!");
+			plmLogger.logWarning("[PLM] Please check whether PLM is permitted to write in PLM.yml!");
 		}
 	}
 
@@ -133,8 +136,8 @@ public class PLMFile {
 		try {
 			PConfig.save(PLMFileData);
 		} catch (IOException e) {
-			System.out.println("[PLM] PLM.yml is not available!");
-			System.out.println("[PLM] Please check whether PLM is permitted to write in PLM.yml!");
+			plmLogger.logWarning("[PLM] PLM.yml is not available!");
+			plmLogger.logWarning("[PLM] Please check whether PLM is permitted to write in PLM.yml!");
 		}
 	}
 
@@ -156,8 +159,8 @@ public class PLMFile {
 		try {
 			PConfig.save(PLMFileData);
 		} catch (IOException e) {
-			System.out.println("[PLM] PLM.yml is not available!");
-			System.out.println("[PLM] Please check whether PLM is permitted to write in PLM.yml!");
+			plmLogger.logWarning("[PLM] PLM.yml is not available!");
+			plmLogger.logWarning("[PLM] Please check whether PLM is permitted to write in PLM.yml!");
 		}
 	}
 
