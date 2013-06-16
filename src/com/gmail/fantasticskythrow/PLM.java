@@ -78,7 +78,7 @@ public final class PLM extends JavaPlugin {
 					plmLogger.logInfo("[PLM] Advanced messages mode is enabled");
 				}
 			}
-			//			activateMetrics();
+			activateMetrics();
 		} else { //Not activated
 			plmLogger.logInfo("[PLM] Personal Login Message is not enabled in config");
 		}
