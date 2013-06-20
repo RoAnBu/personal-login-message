@@ -237,6 +237,7 @@ public class Messages {
 		joinMessage = PLMToolbox.getReplacedTotalLogins(joinMessage, plmFile);
 		joinMessage = PLMToolbox.getReplacedUniquePlayers(joinMessage, plmFile);
 		joinMessage = PLMToolbox.getReplacedPlayerLogins(joinMessage, playername, plmFile);
+		joinMessage = PLMToolbox.getReplacedOnlinePlayerNumber(joinMessage, plugin.getServer(), vnpHandler, false);
 		/*
 		 * Replace %time when it was found in the string
 		 */
@@ -260,6 +261,7 @@ public class Messages {
 		quitMessage = PLMToolbox.getReplacedTotalLogins(quitMessage, plmFile);
 		quitMessage = PLMToolbox.getReplacedUniquePlayers(quitMessage, plmFile);
 		quitMessage = PLMToolbox.getReplacedPlayerLogins(quitMessage, playername, plmFile);
+		quitMessage = PLMToolbox.getReplacedOnlinePlayerNumber(quitMessage, plugin.getServer(), vnpHandler, true);
 		return quitMessage;
 	}
 
@@ -392,6 +394,7 @@ public class Messages {
 				m = PLMToolbox.getReplacedTotalLogins(m, plmFile);
 				m = PLMToolbox.getReplacedUniquePlayers(m, plmFile);
 				m = PLMToolbox.getReplacedPlayerLogins(m, playername, plmFile);
+				m = PLMToolbox.getReplacedOnlinePlayerNumber(m, plugin.getServer(), vnpHandler, false);
 				welcomeMessages[i] = m;
 			}
 			int time = cfg.getDelay();
@@ -418,6 +421,7 @@ public class Messages {
 				m = PLMToolbox.getReplacedTotalLogins(m, plmFile);
 				m = PLMToolbox.getReplacedUniquePlayers(m, plmFile);
 				m = PLMToolbox.getReplacedPlayerLogins(m, playername, plmFile);
+				m = PLMToolbox.getReplacedOnlinePlayerNumber(m, plugin.getServer(), vnpHandler, false);
 				publicMessages[i] = m;
 			}
 			Player[] onlinePlayer = plugin.getServer().getOnlinePlayers();

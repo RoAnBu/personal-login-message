@@ -356,4 +356,28 @@ public class PLMToolbox {
 		}
 		return text;
 	}
+
+	/**
+	 * Replaces %onlineplayers with the number of online players (Apart from vanished ones)
+	 * @param text The string which can contain %onlineplayers
+	 * @param server the server (taken by JavaPlugin)
+	 * @param vnpHandler The VanishNoPacketManager for checking vanish status
+	 * @return
+	 */
+	public static String getReplacedOnlinePlayerNumber(String text, Server server, VanishNoPacketManager vnpHandler, boolean isQuitting) {
+		if (text.contains("%onlineplayers")) {
+			Player[] playerlist = server.getOnlinePlayers();
+			int number = 0;
+			for (Player p : playerlist) {
+				if (!vnpHandler.isVanished(p.getName())) {
+					number++;
+				}
+			}
+			if (isQuitting) {
+				number--;
+			}
+			text = text.replaceAll("%onlineplayers", String.valueOf(number));
+		}
+		return text;
+	}
 }
