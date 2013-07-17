@@ -20,11 +20,6 @@ public class CommonListener implements Listener {
 		messages.onPlayerJoinEvent(e);
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void onEarlyQuitEvent(PlayerQuitEvent e) {
-		messages.onEarlyQuitEvent(e);
-	}
-
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onLatePlayerQuitEvent(PlayerQuitEvent e) {
 		messages.onLatePlayerQuitEvent(e);
