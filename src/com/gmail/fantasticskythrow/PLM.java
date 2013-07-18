@@ -92,7 +92,6 @@ public final class PLM extends JavaPlugin {
 		plmLogger.logInfo("[PLM] Personal Login Message disabled");
 	}
 
-	//Plugin setup
 	/**
 	 * setupChat tries to find a chat plugin hooked by vault. It sends a message to console if no chat plugin was found or vault is not installed.
 	 */
@@ -195,6 +194,10 @@ public final class PLM extends JavaPlugin {
 		}
 	}
 
+	/**
+	 * Tries to find the plugin "GeoIPTools" and returns an GeoIPLookup Object which provides public methods for country and city information
+	 * @return A GeoIPLookup object if GeoIPTools works. Otherwise it'll return null
+	 */
 	public GeoIPLookup getGeoIPLookup() {
 		Plugin pl = this.getServer().getPluginManager().getPlugin("GeoIPTools");
 		if (pl != null) {
@@ -224,7 +227,5 @@ public final class PLM extends JavaPlugin {
 		cfg.reloadConfiguration();
 		m.reload();
 	}
-
-	// Setters
 
 }
