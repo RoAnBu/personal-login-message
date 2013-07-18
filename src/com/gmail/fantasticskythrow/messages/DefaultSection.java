@@ -4,9 +4,13 @@ import java.util.Random;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import com.gmail.fantasticskythrow.other.MessageData;
+import com.gmail.fantasticskythrow.other.SectionSubTypes;
+import com.gmail.fantasticskythrow.other.SectionTypes;
+
 public final class DefaultSection {
 
-	private String message;
+	private MessageData mData;
 	private YamlConfiguration advancedMessagesYML;
 	private long difference;
 	private final String defaultpath = "Default";
@@ -17,9 +21,9 @@ public final class DefaultSection {
 	protected boolean checkMessagesJoin(YamlConfiguration yml, long difference, AdvancedMessages am) {
 		this.advancedMessagesYML = yml;
 		this.difference = difference;
-		this.message = "";
+		mData = null;
 		if (isSuitableJoin()) {
-			am.setMessage(message);
+			am.setMessage(mData);
 			return true;
 		} else {
 			return false;
@@ -28,9 +32,9 @@ public final class DefaultSection {
 
 	protected boolean checkMessagesQuit(YamlConfiguration yml, AdvancedMessages am) {
 		this.advancedMessagesYML = yml;
-		this.message = "";
+		mData = null;
 		if (isSuitableQuit()) {
-			am.setMessage(message);
+			am.setMessage(mData);
 			return true;
 		} else {
 			return false;
@@ -83,11 +87,13 @@ public final class DefaultSection {
 						time = 0L;
 					}
 					if (time > 0 && time <= difference) {
-						message = advancedMessagesYML.getString(defaultpath + ".BM" + i);
+						String message = advancedMessagesYML.getString(defaultpath + ".BM" + i);
+						mData = new MessageData(message, getChannels(), SectionTypes.DEFAULT, SectionSubTypes.BACKMESSAGE);
 						a = true;
 						status = true;
 					} else if (time < 0 && (time * -1) >= difference) {
-						message = advancedMessagesYML.getString(defaultpath + ".BM" + i);
+						String message = advancedMessagesYML.getString(defaultpath + ".BM" + i);
+						mData = new MessageData(message, getChannels(), SectionTypes.DEFAULT, SectionSubTypes.BACKMESSAGE);
 						a = true;
 						status = true;
 					}
@@ -121,7 +127,8 @@ public final class DefaultSection {
 				}
 				Random r = new Random();
 				int n = r.nextInt(count - 1) + 1;
-				message = advancedMessagesYML.getString(defaultpath + ".JM" + n);
+				String message = advancedMessagesYML.getString(defaultpath + ".JM" + n);
+				mData = new MessageData(message, getChannels(), SectionTypes.DEFAULT, SectionSubTypes.JOINMESSAGE);
 				return true;
 			} else {
 				return false;
@@ -138,7 +145,8 @@ public final class DefaultSection {
 				}
 				Random r = new Random();
 				int n = r.nextInt(count - 1) + 1;
-				message = advancedMessagesYML.getString(defaultpath + ".QM" + n);
+				String message = advancedMessagesYML.getString(defaultpath + ".QM" + n);
+				mData = new MessageData(message, getChannels(), SectionTypes.DEFAULT, SectionSubTypes.QUITMESSAGE);
 				return true;
 			} else {
 				return false;
@@ -158,7 +166,8 @@ public final class DefaultSection {
 			}
 			Random r = new Random();
 			int n = r.nextInt(count - 1) + 1;
-			am.setMessage(yml.getString("Default.FM" + n));
+			String message = yml.getString("Default.FM" + n);
+			am.setMessage(new MessageData(message, getChannels(), SectionTypes.DEFAULT, SectionSubTypes.FIRSTMESSAGE));
 			return true;
 		} else {
 			return false;
@@ -198,6 +207,15 @@ public final class DefaultSection {
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+	private String[] getChannels() {
+		if (advancedMessagesYML.contains(defaultpath + ".CH")) {
+			String[] channels = advancedMessagesYML.getString(defaultpath + ".CH").split(", ");
+			return channels;
+		} else {
+			return null;
 		}
 	}
 }

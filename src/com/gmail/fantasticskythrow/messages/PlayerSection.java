@@ -4,9 +4,14 @@ import java.util.Random;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import com.gmail.fantasticskythrow.other.MessageData;
+import com.gmail.fantasticskythrow.other.SectionSubTypes;
+import com.gmail.fantasticskythrow.other.SectionTypes;
+
 public final class PlayerSection {
 
-	private String playername, playerpath, message;
+	private String playername, playerpath;
+	private MessageData mData;
 	private YamlConfiguration advancedMessagesYML;
 	private long difference;
 
@@ -15,9 +20,9 @@ public final class PlayerSection {
 		this.playerpath = playerpath;
 		this.advancedMessagesYML = yml;
 		this.difference = difference;
-		this.message = "";
+		mData = null;
 		if (isSuitableJoin()) {
-			am.setMessage(message);
+			am.setMessage(mData);
 			return true;
 		} else {
 			return false;
@@ -28,9 +33,9 @@ public final class PlayerSection {
 		this.playername = playername;
 		this.playerpath = playerpath;
 		this.advancedMessagesYML = yml;
-		this.message = "";
+		mData = null;
 		if (isSuitableQuit()) {
-			am.setMessage(message);
+			am.setMessage(mData);
 			return true;
 		} else {
 			return false;
@@ -77,11 +82,13 @@ public final class PlayerSection {
 						time = 0L;
 					}
 					if (time > 0 && time <= difference) {
-						message = advancedMessagesYML.getString(playerpath + ".BM" + i);
+						String message = advancedMessagesYML.getString(playerpath + ".BM" + i);
+						mData = new MessageData(message, getChannels(), SectionTypes.PLAYER, SectionSubTypes.BACKMESSAGE);
 						a = true;
 						status = true;
 					} else if (time < 0 && (time * -1) >= difference) {
-						message = advancedMessagesYML.getString(playerpath + ".BM" + i);
+						String message = advancedMessagesYML.getString(playerpath + ".BM" + i);
+						mData = new MessageData(message, getChannels(), SectionTypes.PLAYER, SectionSubTypes.BACKMESSAGE);
 						a = true;
 						status = true;
 					}
@@ -115,7 +122,8 @@ public final class PlayerSection {
 				}
 				Random r = new Random();
 				int n = r.nextInt(count - 1) + 1;
-				message = advancedMessagesYML.getString(playerpath + ".JM" + n);
+				String message = advancedMessagesYML.getString(playerpath + ".JM" + n);
+				mData = new MessageData(message, getChannels(), SectionTypes.PLAYER, SectionSubTypes.JOINMESSAGE);
 				return true;
 			} else {
 				return false;
@@ -132,7 +140,8 @@ public final class PlayerSection {
 				}
 				Random r = new Random();
 				int n = r.nextInt(count - 1) + 1;
-				message = advancedMessagesYML.getString(playerpath + ".QM" + n);
+				String message = advancedMessagesYML.getString(playerpath + ".QM" + n);
+				mData = new MessageData(message, getChannels(), SectionTypes.PLAYER, SectionSubTypes.QUITMESSAGE);
 				return true;
 			} else {
 				return false;
@@ -148,7 +157,8 @@ public final class PlayerSection {
 			}
 			Random r = new Random();
 			int n = r.nextInt(count - 1) + 1;
-			am.setMessage(yml.getString(playerpath + ".FM" + n));
+			String message = yml.getString(playerpath + ".FM" + n);
+			am.setMessage(new MessageData(message, getChannels(playerpath), SectionTypes.PLAYER, SectionSubTypes.FIRSTMESSAGE));
 			return true;
 		} else {
 			return false;
@@ -188,6 +198,24 @@ public final class PlayerSection {
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+	private String[] getChannels() {
+		if (advancedMessagesYML.contains(playerpath + ".CH")) {
+			String[] channels = advancedMessagesYML.getString(playerpath + ".CH").split(", ");
+			return channels;
+		} else {
+			return null;
+		}
+	}
+
+	private String[] getChannels(String playerpath) {
+		if (advancedMessagesYML.contains(playerpath + ".CH")) {
+			String[] channels = advancedMessagesYML.getString(playerpath + ".CH").split(", ");
+			return channels;
+		} else {
+			return null;
 		}
 	}
 }

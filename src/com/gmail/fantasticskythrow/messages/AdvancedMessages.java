@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 
 import com.gmail.fantasticskythrow.PLM;
 import com.gmail.fantasticskythrow.configuration.ExtendedYamlConfiguration;
+import com.gmail.fantasticskythrow.other.MessageData;
 import com.gmail.fantasticskythrow.other.PLMLogger;
 
 public class AdvancedMessages {
@@ -17,7 +18,7 @@ public class AdvancedMessages {
 	private File advancedMessagesData;
 	private YamlConfiguration advancedMessagesYML;
 	private PLMFile settings;
-	private String message;
+	private MessageData mData;
 	private Permission permission;
 	private boolean errorStatus = false;
 	private PlayerSection playerS;
@@ -96,12 +97,12 @@ public class AdvancedMessages {
 	 * @param p
 	 * @return
 	 */
-	protected String getJoinMessage(Player p) {
+	protected MessageData getJoinMessage(Player p) {
 		/*
 		 * Error -> Skips message checking
 		 */
 		if (errorStatus == true) {
-			return "&4An error occurred at the messages file! &e%playername joined";
+			return new MessageData("&4An error occurred at the messages file! &e%playername joined", null);
 		} else
 		/*
 		 * No error -> Looking for fitting message
@@ -119,26 +120,26 @@ public class AdvancedMessages {
 				difference = 0L;
 			}
 			if (playerS.checkFirstMessage(playerpath, difference, advancedMessagesYML, this)) {
-				message = getReplacedWorld(message, p);
-				return message;
+				mData.message = getReplacedWorld(mData.message, p);
+				return mData;
 			} else if (groupS.checkFirstMessage(grouppath, difference, advancedMessagesYML, this)) {
-				message = getReplacedWorld(message, p);
-				return message;
+				mData.message = getReplacedWorld(mData.message, p);
+				return mData;
 			} else if (defaultS.checkFirstMessage(difference, advancedMessagesYML, this)) {
-				message = getReplacedWorld(message, p);
-				return message;
+				mData.message = getReplacedWorld(mData.message, p);
+				return mData;
 			} else if (playerS.checkMessagesJoin(playername, playerpath, advancedMessagesYML, difference, this)) {
-				message = getReplacedWorld(message, p);
-				return message;
+				mData.message = getReplacedWorld(mData.message, p);
+				return mData;
 			} else if (groupS.checkMessagesJoin(grouppath, advancedMessagesYML, difference, this)) {
-				message = getReplacedWorld(message, p);
-				return message;
+				mData.message = getReplacedWorld(mData.message, p);
+				return mData;
 			} else if (defaultS.checkMessagesJoin(advancedMessagesYML, difference, this)) {
-				message = getReplacedWorld(message, p);
-				return message;
+				mData.message = getReplacedWorld(mData.message, p);
+				return mData;
 			} else {
 				plmLogger.logWarning("[PLM] No path found for " + p.getName() + ". Using default messages");
-				return "&e%playername joined the game";
+				return new MessageData("&e%playername joined the game", null);
 			}
 		}
 	}
@@ -150,25 +151,25 @@ public class AdvancedMessages {
 	 * @param p
 	 * @return
 	 */
-	protected String getQuitMessage(Player p) {
+	protected MessageData getQuitMessage(Player p) {
 		String playername = p.getName().toLowerCase();
 		String playerpath = String.format("players.%s", playername);
 		String groupname = permission.getPlayerGroups(p)[0];
 		String grouppath = String.format("Groups.%s", groupname);
 		if (errorStatus == true) {
-			return "&e%playername left the game";
+			return new MessageData("&e%playername left the game", null);
 		} else if (playerS.checkMessagesQuit(playername, playerpath, advancedMessagesYML, this)) {
-			message = getReplacedWorld(message, p);
-			return message;
+			mData.message = getReplacedWorld(mData.message, p);
+			return mData;
 		} else if (groupS.checkMessagesQuit(grouppath, advancedMessagesYML, this)) {
-			message = getReplacedWorld(message, p);
-			return message;
+			mData.message = getReplacedWorld(mData.message, p);
+			return mData;
 		} else if (defaultS.checkMessagesQuit(advancedMessagesYML, this)) {
-			message = getReplacedWorld(message, p);
-			return message;
+			mData.message = getReplacedWorld(mData.message, p);
+			return mData;
 		} else {
 			plmLogger.logWarning("[PLM] No path found for " + p.getName() + ". Using default messages");
-			return "&e%playername left the game";
+			return new MessageData("&e%playername left the game", null);
 		}
 	}
 
@@ -180,11 +181,11 @@ public class AdvancedMessages {
 		return message;
 	}
 
-	protected void setMessage(String message) {
-		if (message != "") {
-			this.message = message;
+	protected void setMessage(MessageData mData) {
+		if (mData.message != "") {
+			this.mData = mData;
 		} else {
-			message = "&e%playername joined the game";
+			this.mData.message = "&e%playername joined the game";
 		}
 	}
 

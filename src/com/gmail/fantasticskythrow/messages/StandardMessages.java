@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 
 import com.gmail.fantasticskythrow.PLM;
+import com.gmail.fantasticskythrow.other.MessageData;
 
 public class StandardMessages {
 
@@ -145,13 +146,13 @@ public class StandardMessages {
 	/*
 	 * Getters
 	 */
-	public String getJoinMessage() {
+	public MessageData getJoinMessage() {
 		getMessages();
-		return joinMessage;
+		return new MessageData(joinMessage, null);
 	}
 
-	public String getQuitMessage() {
+	public MessageData getQuitMessage() {
 		getMessages();
-		return quitMessage;
+		return new MessageData(quitMessage, null);
 	}
 }

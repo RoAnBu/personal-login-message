@@ -10,15 +10,14 @@ import com.dthielke.herochat.Herochat;
 
 public class HerochatManager {
 
-	private PLM plugin;
+	private Plugin herochat = null;
 
 	public HerochatManager(PLM plugin) {
-		this.plugin = plugin;
+		herochat = plugin.getServer().getPluginManager().getPlugin("Herochat");
 	}
 
 	public boolean sendMessages(String channelname, String[] messages) {
-		Plugin pl = plugin.getServer().getPluginManager().getPlugin("Herochat");
-		if (pl != null) {
+		if (herochat != null) {
 			Channel c = Herochat.getChannelManager().getChannel(channelname);
 			if (c != null) {
 				for (String s : messages) {
@@ -31,5 +30,26 @@ public class HerochatManager {
 		} else {
 			return false; //Herochat not found
 		}
+	}
+
+	public boolean sendMessage(String channelname, String message) {
+		if (herochat != null) {
+			Channel c = Herochat.getChannelManager().getChannel(channelname);
+			if (c != null) {
+				c.sendRawMessage(ChatColor.translateAlternateColorCodes('&', message));
+				return true; //Success
+			} else {
+				return false; //No channel with that name
+			}
+		} else {
+			return false; //Herochat not found
+		}
+	}
+
+	public boolean isHerochatInstalled() {
+		if (herochat == null)
+			return false;
+		else
+			return true;
 	}
 }

@@ -4,9 +4,14 @@ import java.util.Random;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import com.gmail.fantasticskythrow.other.MessageData;
+import com.gmail.fantasticskythrow.other.SectionSubTypes;
+import com.gmail.fantasticskythrow.other.SectionTypes;
+
 public final class GroupSection {
 
-	private String grouppath, message;
+	private String grouppath;
+	private MessageData mData;
 	private YamlConfiguration advancedMessagesYML;
 	private long difference;
 
@@ -14,9 +19,9 @@ public final class GroupSection {
 		this.grouppath = grouppath;
 		this.advancedMessagesYML = yml;
 		this.difference = difference;
-		this.message = "";
+		mData = null;
 		if (isSuitableJoin()) {
-			am.setMessage(message);
+			am.setMessage(mData);
 			return true;
 		} else {
 			return false;
@@ -26,9 +31,9 @@ public final class GroupSection {
 	protected boolean checkMessagesQuit(String grouppath, YamlConfiguration yml, AdvancedMessages am) {
 		this.grouppath = grouppath;
 		this.advancedMessagesYML = yml;
-		this.message = "";
+		mData = null;
 		if (isSuitableQuit()) {
-			am.setMessage(message);
+			am.setMessage(mData);
 			return true;
 		} else {
 			return false;
@@ -75,11 +80,13 @@ public final class GroupSection {
 						time = 0L;
 					}
 					if (time > 0 && time <= difference) {
-						message = advancedMessagesYML.getString(grouppath + ".BM" + i);
+						String message = advancedMessagesYML.getString(grouppath + ".BM" + i);
+						mData = new MessageData(message, getChannels(), SectionTypes.GROUP, SectionSubTypes.BACKMESSAGE);
 						a = true;
 						status = true;
 					} else if (time < 0 && (time * -1) >= difference) {
-						message = advancedMessagesYML.getString(grouppath + ".BM" + i);
+						String message = advancedMessagesYML.getString(grouppath + ".BM" + i);
+						mData = new MessageData(message, getChannels(), SectionTypes.GROUP, SectionSubTypes.BACKMESSAGE);
 						a = true;
 						status = true;
 					}
@@ -113,7 +120,8 @@ public final class GroupSection {
 				}
 				Random r = new Random();
 				int n = r.nextInt(count - 1) + 1;
-				message = advancedMessagesYML.getString(grouppath + ".JM" + n);
+				String message = advancedMessagesYML.getString(grouppath + ".JM" + n);
+				mData = new MessageData(message, getChannels(), SectionTypes.GROUP, SectionSubTypes.JOINMESSAGE);
 				return true;
 			} else {
 				return false;
@@ -130,7 +138,8 @@ public final class GroupSection {
 				}
 				Random r = new Random();
 				int n = r.nextInt(count - 1) + 1;
-				message = advancedMessagesYML.getString(grouppath + ".QM" + n);
+				String message = advancedMessagesYML.getString(grouppath + ".QM" + n);
+				mData = new MessageData(message, getChannels(), SectionTypes.GROUP, SectionSubTypes.QUITMESSAGE);
 				return true;
 			} else {
 				return false;
@@ -182,10 +191,29 @@ public final class GroupSection {
 			}
 			Random r = new Random();
 			int n = r.nextInt(count - 1) + 1;
-			am.setMessage(yml.getString(grouppath + ".FM" + n));
+			String message = yml.getString(grouppath + ".FM" + n);
+			mData = new MessageData(message, getChannels(grouppath), SectionTypes.GROUP, SectionSubTypes.FIRSTMESSAGE);
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+	private String[] getChannels() {
+		if (advancedMessagesYML.contains(grouppath + ".CH")) {
+			String[] channels = advancedMessagesYML.getString(grouppath + ".CH").split(", ");
+			return channels;
+		} else {
+			return null;
+		}
+	}
+
+	private String[] getChannels(String grouppath) {
+		if (advancedMessagesYML.contains(grouppath + ".CH")) {
+			String[] channels = advancedMessagesYML.getString(grouppath + ".CH").split(", ");
+			return channels;
+		} else {
+			return null;
 		}
 	}
 }

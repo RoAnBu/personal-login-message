@@ -1,5 +1,8 @@
 package com.gmail.fantasticskythrow.messages;
 
+import java.util.Arrays;
+import java.util.List;
+
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
 
@@ -14,9 +17,10 @@ import com.gmail.fantasticskythrow.PLM;
 import com.gmail.fantasticskythrow.commands.PLMRestoreCommand;
 import com.gmail.fantasticskythrow.commands.ReloadCommand;
 import com.gmail.fantasticskythrow.configuration.MainConfiguration;
+import com.gmail.fantasticskythrow.other.MessageData;
 import com.gmail.fantasticskythrow.other.PLMToolbox;
 import com.gmail.fantasticskythrow.other.PLMLogger;
-//import com.gmail.fantasticskythrow.other.HerochatManager;
+import com.gmail.fantasticskythrow.other.HerochatManager;
 import com.gmail.fantasticskythrow.other.PublicMessagePrinter;
 import com.gmail.fantasticskythrow.other.VanishNoPacketManager;
 import com.gmail.fantasticskythrow.other.WelcomeMessagePrinter;
@@ -31,7 +35,7 @@ import com.gmail.fantasticskythrow.other.WelcomeMessagePrinter;
 public class Messages {
 
 	private final PLM plugin;
-	private String joinMessage = "", quitMessage = "", playername;
+	private String playername;
 	private Chat chat = null;
 	private Permission permission = null;
 	private final MainConfiguration cfg;
@@ -44,8 +48,7 @@ public class Messages {
 	private Player player;
 	private final VanishNoPacketManager vnpHandler;
 	private final PLMLogger plmLogger;
-
-	// private HerochatManager chHandler;
+	private HerochatManager chHandler;
 
 	/**
 	 * Uses the given status to control whether AdvancedStatus should be enabled  or not.
@@ -63,7 +66,7 @@ public class Messages {
 		plmFile = new PLMFile(plugin);
 		iniTimeMessages();
 		vnpHandler = new VanishNoPacketManager(plugin, plugin.getServer().getOnlinePlayers());
-		// chHandler = new HerochatManager(plugin);
+		chHandler = new HerochatManager(plugin);
 		if (advancedStatus == false) { // StandardMessages
 			sm = new StandardMessages(plugin);
 			PLMRestoreCommand rc = new PLMRestoreCommand(plugin);
@@ -101,19 +104,36 @@ public class Messages {
 			this.player = e.getPlayer();
 			this.playername = e.getPlayer().getName().toLowerCase();
 			plmFile.setPlayerLogin(playername);
-			// String[] test = new String[2];
-			// test[0] = "This is a test message";
-			// test[1] = "Second test message";
-			// chHandler.sendMessages("Minecity", test);
-			String message = getMessagesJoin();
+			MessageData mData = getMessagesJoin();
+			String message = ChatColor.translateAlternateColorCodes('&', mData.message);
 			boolean isVanished = vnpHandler.isVanished(e.getPlayer().getName());
 			if (PLMToolbox.getPermissionJoin(cfg.getUsePermGeneral(), player) && !message.equalsIgnoreCase("off") && !isVanished) {
-				e.setJoinMessage(ChatColor.translateAlternateColorCodes('&', message));
-			} else if (!isVanished) {
+
+				//Sending/activating message
+				if (!cfg.getUseChannels() && mData.channels == null) { //No channel use anyway
+					e.setJoinMessage(message);
+				} else if (mData.channels == null) { //No channels given with the section
+					if (!sendMessageToConfigChannels(message)) { // Returns false if the Default channel is activated
+						e.setJoinMessage(message); // Brings the message to the public channel, too
+					} else { // Disable join message because it's not in the channels
+						e.setJoinMessage(null);
+					}
+				} else { //Specified channels from section are given
+					sendMessageToChannels(message, mData.channels);
+					e.setJoinMessage(null);
+				}
+
+			} else if (!isVanished) {// Cases to disable join message
 				if (!PLMToolbox.getPermissionJoin(cfg.getUsePermGeneral(), player) || message.equalsIgnoreCase("off")) {
 					e.setJoinMessage(null);
 				}
 			}
+			if (mData.type == null) {
+				plmLogger.logDebug("PLM's join message is: " + message);
+			} else {
+				plmLogger.logDebug("PLM's join message is: " + message + " Path: " + mData.type + " | " + mData.subType);
+			}
+
 		} catch (NullPointerException ne) {
 			plmLogger.logError("[PLM] A problem occurred at PlayerJoinEvent!");
 			ne.printStackTrace();
@@ -139,23 +159,42 @@ public class Messages {
 	}
 
 	protected void onLatePlayerQuitEvent(PlayerQuitEvent e) {
-		if (alreadyQuit == false) {
+		if (!alreadyQuit) {
 			try {
 				this.player = e.getPlayer();
 				this.playername = e.getPlayer().getName().toLowerCase();
-				String message = getMessagesQuit();
+				MessageData mData = getMessagesQuit();
+				String message = ChatColor.translateAlternateColorCodes('&', mData.message);
 				if (PLMToolbox.getPermissionQuit(cfg.getUsePermGeneral(), player) && !(message.equalsIgnoreCase("off"))) {
-					e.setQuitMessage(ChatColor.translateAlternateColorCodes('&', message));
+
+					//Sending/activating message
+					if (!cfg.getUseChannels() && mData.channels == null) { //No channel use anyway
+						e.setQuitMessage(message);
+					} else if (mData.channels == null) { //No channels given with the section
+						if (!sendMessageToConfigChannels(message)) { // Returns false if the Default channel is activated
+							e.setQuitMessage(message); // Brings the message to the public channel, too
+						} else { // Disable quit message because it's not in the channels
+							e.setQuitMessage(null);
+						}
+					} else { //Specified channels from section are given
+						sendMessageToChannels(message, mData.channels);
+						e.setQuitMessage(null);
+					}
+
 				} else if (!PLMToolbox.getPermissionQuit(cfg.getUsePermGeneral(), player) || message.equalsIgnoreCase("off")) {
 					e.setQuitMessage(null);
 				}
+
 				plmFile.setPlayerQuitTime(e.getPlayer().getName().toLowerCase());
+				if (mData.type == null) {
+					plmLogger.logDebug("PLM's join message is: " + message);
+				} else {
+					plmLogger.logDebug("PLM's join message is: " + message + " Path: " + mData.type + " | " + mData.subType);
+				}
 			} catch (NullPointerException ne) {
 				plmLogger.logError("[PLM] A problem occurred at PlayerQuitEvent!");
 				e.setQuitMessage(null);
-			}
-
-			catch (Exception ex) {
+			} catch (Exception ex) {
 				ex.printStackTrace();
 				plmLogger.logError("[PLM] An unknown error occurred at PlayerQuitEvent!");
 				plmLogger.logError("[PLM] Please make sure that all configuration files are available");
@@ -168,9 +207,24 @@ public class Messages {
 			vnpHandler.removeJoinedPlayer(e.getPlayer().getName());
 			this.player = e.getPlayer();
 			this.playername = e.getPlayer().getName().toLowerCase();
-			String message = getMessagesQuit();
+			MessageData mData = getMessagesQuit();
+			String message = ChatColor.translateAlternateColorCodes('&', mData.message);
 			if (PLMToolbox.getPermissionQuit(cfg.getUsePermGeneral(), player) && !(message.equalsIgnoreCase("off"))) {
-				e.setLeaveMessage(ChatColor.translateAlternateColorCodes('&', message));
+
+				//Sending/activating message
+				if (!cfg.getUseChannels() && mData.channels == null) { //No channel use anyway
+					e.setLeaveMessage(message);
+				} else if (mData.channels == null) { //No channels given with the section
+					if (!sendMessageToConfigChannels(message)) { // Returns false if the Default channel is activated
+						e.setLeaveMessage(message); // Brings the message to the public channel, too
+					} else { // Disable leave message because it's not in the channels
+						e.setLeaveMessage(null);
+					}
+				} else { //Specified channels from section are given
+					sendMessageToChannels(message, mData.channels);
+					e.setLeaveMessage(null);
+				}
+
 			} else if (!PLMToolbox.getPermissionQuit(cfg.getUsePermGeneral(), player) || message.equalsIgnoreCase("off")) {
 				e.setLeaveMessage(null);
 			}
@@ -192,19 +246,41 @@ public class Messages {
 				if (e.isVanishing() && cfg.getUseFakeQuitMsg()) { // -> Quit message (Fake)
 					this.player = e.getPlayer();
 					this.playername = e.getPlayer().getName().toLowerCase();
-					String message = getMessagesQuit();
+					MessageData mData = getMessagesQuit();
+					String message = ChatColor.translateAlternateColorCodes('&', mData.message);
 					if (PLMToolbox.getPermissionQuit(cfg.getUsePermGeneral(), player) && !(message.equalsIgnoreCase("off"))) {
-						plugin.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', message));
+
+						//Sending/activating message
+						if (!cfg.getUseChannels() && mData.channels == null) { //No channel use anyway
+							plugin.getServer().broadcastMessage(message);
+						} else if (mData.channels == null) { //No channels given with the section
+							if (!sendMessageToConfigChannels(message)) { // Returns false if the Default channel is activated
+								plugin.getServer().broadcastMessage(message);
+							}
+						} else { //Specified channels from section are given
+							sendMessageToChannels(message, mData.channels);
+						}
+
 					}
 					plmFile.setPlayerQuitTime(e.getPlayer().getName().toLowerCase());
-				} else if (!e.isVanishing() && cfg.getUseFakeJoinMsg()) { // Join
-																			// message
-																			// (Fake)
+				} else if (!e.isVanishing() && cfg.getUseFakeJoinMsg()) { // Join  message (Fake)
 					this.player = e.getPlayer();
 					this.playername = e.getPlayer().getName().toLowerCase();
-					String message = getMessagesJoin();
+					MessageData mData = getMessagesJoin();
+					String message = ChatColor.translateAlternateColorCodes('&', mData.message);
 					if (PLMToolbox.getPermissionJoin(cfg.getUsePermGeneral(), player) && !message.equalsIgnoreCase("off")) {
-						plugin.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', message));
+
+						//Sending/activating message
+						if (!cfg.getUseChannels() && mData.channels == null) { //No channel use anyway
+							plugin.getServer().broadcastMessage(message);
+						} else if (mData.channels == null) { //No channels given with the section
+							if (!sendMessageToConfigChannels(message)) { // Returns false if the Default channel is activated
+								plugin.getServer().broadcastMessage(message);
+							}
+						} else { //Specified channels from section are given
+							sendMessageToChannels(message, mData.channels);
+						}
+
 					}
 				}
 			}
@@ -215,14 +291,18 @@ public class Messages {
 		}
 	}
 
-	protected String getMessagesJoin() {
+	protected MessageData getMessagesJoin() {
+		String joinMessage;
+		MessageData mData;
 		/*
 		 * Selects the class depending on the settings
 		 */
 		if (advancedStatus == false) {
-			joinMessage = sm.getJoinMessage();
+			mData = sm.getJoinMessage();
+			joinMessage = mData.message;
 		} else {
-			joinMessage = am.getJoinMessage(player);
+			mData = am.getJoinMessage(player);
+			joinMessage = mData.message;
 			printWelcomeMessage(am);
 			printPublicMessages(am);
 		}
@@ -244,14 +324,19 @@ public class Messages {
 		if (joinMessage.contains("%time")) {
 			joinMessage = getReplacedTime(joinMessage);
 		}
-		return joinMessage;
+		mData.message = joinMessage;
+		return mData;
 	}
 
-	protected String getMessagesQuit() {
+	protected MessageData getMessagesQuit() {
+		String quitMessage;
+		MessageData mData;
 		if (advancedStatus == false) {
-			quitMessage = sm.getQuitMessage();
+			mData = sm.getQuitMessage();
+			quitMessage = mData.message;
 		} else {
-			quitMessage = am.getQuitMessage(player);
+			mData = am.getQuitMessage(player);
+			quitMessage = mData.message;
 		}
 		quitMessage = PLMToolbox.getReplacedPlayername(quitMessage, player);
 		quitMessage = PLMToolbox.getReplacedChatplayername(quitMessage, chat, player);
@@ -262,7 +347,8 @@ public class Messages {
 		quitMessage = PLMToolbox.getReplacedUniquePlayers(quitMessage, plmFile);
 		quitMessage = PLMToolbox.getReplacedPlayerLogins(quitMessage, playername, plmFile);
 		quitMessage = PLMToolbox.getReplacedOnlinePlayerNumber(quitMessage, plugin.getServer(), vnpHandler, true);
-		return quitMessage;
+		mData.message = quitMessage;
+		return mData;
 	}
 
 	/**
@@ -285,8 +371,7 @@ public class Messages {
 	/**
 	 * Replaces %time with the period the player was offline
 	 * 
-	 * @param message
-	 *            - the message containing the time constant
+	 * @param message the message containing the time constant
 	 * @return the message without %time
 	 */
 	private String getReplacedTime(String message) {
@@ -471,4 +556,47 @@ public class Messages {
 		PublicMessagePrinter pmPrinter = new PublicMessagePrinter();
 		pmPrinter.start(messages, receivers);
 	}
+
+	/**
+	 * Sends a message to the global defined channels (in config)
+	 * @param message The join/quit message to send
+	 * @return true if no need to use the public join/quit message system. False -> Activate join/quit message
+	 */
+	private boolean sendMessageToConfigChannels(String message) {
+		List<String> channels = cfg.getChannels();
+		boolean answer = true;
+		if (chHandler.isHerochatInstalled()) {
+			if (channels.contains("Default")) {
+				answer = false;
+				channels.remove("Default");
+			}
+			if (channels.contains("default")) {
+				answer = false;
+				channels.remove("default");
+			}
+			for (String s : channels) {
+				chHandler.sendMessage(s, message);
+			}
+			return answer;
+		} else { //Herochat not found
+			return false;
+		}
+	}
+
+	/**
+	 * Sends a message to the given channels. The channel "Default" won't be ignored
+	 * @param message The message with translated color codes
+	 * @param channels The channels which are the aim for the message.
+	 */
+	private void sendMessageToChannels(String message, String[] channels) {
+		List<String> channelsnew = Arrays.asList(channels);
+		if (chHandler.isHerochatInstalled()) {
+			for (String s : channelsnew) {
+				chHandler.sendMessage(s, message);
+			}
+		} else { //Herochat not found
+			plmLogger.logInfo("[PLM] You defined channels but you don't have Herochat installed");
+		}
+	}
+
 }
