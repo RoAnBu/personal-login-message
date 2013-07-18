@@ -57,6 +57,7 @@ public class AdvancedMessages {
 				advancedMessagesYML.set("Groups.examplegroup.BM2T", "60");
 				advancedMessagesYML.set("Groups.examplegroup.BM3", "&4Admin &a%playername is back after less than one hour!");
 				advancedMessagesYML.set("Groups.examplegroup.BM3T", "-59");
+				advancedMessagesYML.set("Groups.examplegroup.CH", "Messages, Information");
 				advancedMessagesYML.set("players.exampleplayer.JM1", "&6The king Peter &2joined the server!");
 				advancedMessagesYML.set("players.exampleplayer.QM1", "&6The king Peter &2left the server!");
 				advancedMessagesYML.set("players.exampleplayer.JM2", "&2Our premium player Peter logged in!");
