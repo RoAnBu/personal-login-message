@@ -1,6 +1,8 @@
 package com.gmail.fantasticskythrow.configuration;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -12,9 +14,11 @@ public class MainConfiguration {
 	private YamlConfiguration cfg;
 	private final File cfgData;
 
-	private boolean pluginStatus = true, usepermissionsGeneral, usepermissionsPM, fakejoinmessage, fakequitmessage, advancedStatus, debugStatus;
+	private boolean pluginStatus = true, usepermissionsGeneral, usepermissionsPM, fakejoinmessage, fakequitmessage, advancedStatus, debugStatus,
+			useChannels;
 	public String second, seconds, minute, minutes, hour, hours, day, days, month, months, noLastLogin;
 	private int delay;
+	private List<String> channels;
 
 	public MainConfiguration(PLM plugin) {
 		this.plugin = plugin;
@@ -47,6 +51,10 @@ public class MainConfiguration {
 			cfg.addDefault("Public messages.usepermissions", "false");
 			cfg.addDefault("VanishNoPacket.usefakejoinmessage", "false");
 			cfg.addDefault("VanishNoPacket.usefakequitmessage", "false");
+			cfg.addDefault("Use Channels", "false");
+			List<String> channelList = new ArrayList<String>();
+			channelList.add("Default");
+			cfg.addDefault("Channels", channelList);
 			cfg.options().copyDefaults(true);
 			cfg.save(cfgData);
 			/*
@@ -92,7 +100,12 @@ public class MainConfiguration {
 				debugStatus = true;
 			else
 				debugStatus = false;
+			if (cfg.getString("Use Channels").equalsIgnoreCase("true"))
+				useChannels = true;
+			else
+				useChannels = false;
 			setInternalDelay();
+			channels = cfg.getStringList("Channels");
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			System.out.println("[PLM] was not able to load the config.yml");
@@ -146,4 +159,13 @@ public class MainConfiguration {
 	public boolean getDebugStatus() {
 		return debugStatus;
 	}
+
+	public boolean getUseChannels() {
+		return useChannels;
+	}
+
+	public List<String> getChannels() {
+		return channels;
+	}
+
 }
