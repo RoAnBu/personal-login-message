@@ -380,4 +380,62 @@ public class PLMToolbox {
 		}
 		return text;
 	}
+	
+	public static String getReplacedPrefix(String text, Chat chat, Player player) {
+		if (chat != null && text.contains("%prefix")) {
+			String prefix = chat.getPlayerPrefix(player);
+			return text.replaceAll("%prefix", prefix);
+		} else if (chat == null && text.contains("%prefix")) {
+			System.out.println("[PLM] PLM was not able to identify a prefix for this player!");
+			return text.replaceAll("%prefix", "");
+		} else {
+			return text.replaceAll("%prefix", "");
+		}
+	}
+	
+	public static String getReplacedSuffix(String text, Chat chat, Player player) {
+		if (chat != null && text.contains("%suffix")) {
+			String suffix = chat.getPlayerSuffix(player);
+			return text.replaceAll("%suffix", suffix);
+		} else if (chat == null && text.contains("%suffix")) {
+			System.out.println("[PLM] PLM was not able to identify a suffix for this player!");
+			return text.replaceAll("%suffix", "");
+		} else {
+			return text.replaceAll("%suffix", "");
+		}
+	}
+	
+	public static String getReplacedStandardPlaceholders(String text, Player player, Chat chat, Permission permission, PLM plugin, PLMFile plmFile, VanishNoPacketManager vnpHandler) {
+		text = getReplacedPlayername(text, player);
+		text = getReplacedChatplayername(text, chat, player);
+		text = getReplacedGroup(text, permission, player);
+		text = getReplacedWorld(text, player);
+		text = getReplacedCountry(text, plugin, player, plmFile);
+		text = getReplacedTotalLogins(text, plmFile);
+		text = getReplacedUniquePlayers(text, plmFile);
+		text = getReplacedPlayerLogins(text, player.getName().toLowerCase(), plmFile);
+		text = getReplacedOnlinePlayerNumber(text, plugin.getServer(), vnpHandler, false);
+		text = getReplacedPrefix(text, chat, player);
+		text = getReplacedSuffix(text, chat, player);
+		return text;
+	}
+	
+	public static String getReplacedComplexPlaceholders(String text, Player player, Chat chat, PLM plugin, PLMFile plmFile, VanishNoPacketManager vnpHandler, Permission permission) {
+		text = getReplacedPlayername(text, player);
+		text = getReplacedChatplayername(text, chat, player);
+		text = getReplacedWorld(text, player);
+		text = getReplacedCountry(text, plugin, player, plmFile);
+		text = getReplacedPlayerlist(text, vnpHandler, plugin.getServer());
+		text = getReplacedChatplayerlist(text, chat, vnpHandler, plugin.getServer());
+		text = getReplacedGroupplayerlist(text, vnpHandler, permission, plugin.getServer(), player);
+		text = getReplacedGroupchatplayerlist(text, vnpHandler, permission, chat, plugin.getServer(), player);
+		text = getReplacedGroup(text, permission, player);
+		text = getReplacedTotalLogins(text, plmFile);
+		text = getReplacedUniquePlayers(text, plmFile);
+		text = getReplacedPlayerLogins(text, player.getName().toLowerCase(), plmFile);
+		text = getReplacedOnlinePlayerNumber(text, plugin.getServer(), vnpHandler, false);
+		text = getReplacedPrefix(text, chat, player);
+		text = getReplacedSuffix(text, chat, player);
+		return text;
+	}
 }
