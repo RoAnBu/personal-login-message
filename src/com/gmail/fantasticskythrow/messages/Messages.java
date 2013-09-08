@@ -1,6 +1,5 @@
 package com.gmail.fantasticskythrow.messages;
 
-import java.util.Arrays;
 import java.util.List;
 
 import net.milkbowl.vault.chat.Chat;
@@ -593,9 +592,8 @@ public class Messages {
 	 * @param channels The channels which are the aim for the message.
 	 */
 	private void sendMessageToChannels(String message, String[] channels) {
-		List<String> channelsnew = Arrays.asList(channels);
 		if (chHandler.isHerochatInstalled()) {
-			for (String s : channelsnew) {
+			for (String s : channels) {
 				chHandler.sendMessage(s, message);
 			}
 		} else { //Herochat not found
