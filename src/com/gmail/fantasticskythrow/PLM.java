@@ -39,48 +39,22 @@ public final class PLM extends JavaPlugin {
 	 */
 	@Override
 	public void onEnable() {
-		cfg = new MainConfiguration(this);
-		plmLogger = new PLMLogger(this);
-		if (cfg.getPluginStatus() == true) {
-			if (cfg.getAdvancedStatus() == false) { //Standard mode
-				try {
-					setupChat();
-					setupPermissions();
-					m = new Messages(this, cfg.getAdvancedStatus());
-					if (m.getVnpHandler().isPluginInstalled()) {
-						this.getServer().getPluginManager().registerEvents(new VanishStatusChangeEventListener(m), this);
-					} else {
-						this.getServer().getPluginManager().registerEvents(new CommonListener(m), this);
-					}
-					plmLogger.logInfo("[PLM] Personal Login Message is enabled");
-				} catch (Exception e) {
-					e.printStackTrace();
+		try {
+			cfg = new MainConfiguration(this);
+			plmLogger = new PLMLogger(this);
+			if (cfg.getPluginStatus()) { //Activated
+				if (!cfg.getAdvancedStatus()) { //Standard mode
+						initStandardSetup();
+				} else { //Advanced messages mode
+					initAdvancedSetup();
 				}
-			} else { //Advanced messages mode
-				setupChat();
-				setupPermissions();
-				if (vaultErrorStatus == true || permission == null) { //If vault or permission/chat plugin is not available...
-					plmLogger.logWarning("[PLM] Sorry, you need Vault and a compatible permissions plugin to use the advanced messages mode!");
-					m = new Messages(this, false);
-					if (m.getVnpHandler().isPluginInstalled()) {
-						this.getServer().getPluginManager().registerEvents(new VanishStatusChangeEventListener(m), this);
-					} else {
-						this.getServer().getPluginManager().registerEvents(new CommonListener(m), this);
-					}
-					plmLogger.logInfo("[PLM] Personal Login Message is enabled");
-				} else { //Activate AdvancedMessages, because vault is active and it's enabled
-					m = new Messages(this, cfg.getAdvancedStatus());
-					if (m.getVnpHandler().isPluginInstalled()) {
-						this.getServer().getPluginManager().registerEvents(new VanishStatusChangeEventListener(m), this);
-					} else {
-						this.getServer().getPluginManager().registerEvents(new CommonListener(m), this);
-					}
-					plmLogger.logInfo("[PLM] Advanced messages mode is enabled");
-				}
+				activateMetrics();
+			} else { //Not activated
+				plmLogger.logInfo("[PLM] Personal Login Message is not enabled in config");
 			}
-			activateMetrics();
-		} else { //Not activated
-			plmLogger.logInfo("[PLM] Personal Login Message is not enabled in config");
+		} catch (Exception e) { // Not handled exceptions
+			plmLogger.logError("[PLM] An unknown problem occurred while setting up PLM!");
+			e.printStackTrace();
 		}
 	}
 
@@ -92,6 +66,35 @@ public final class PLM extends JavaPlugin {
 		plmLogger.logInfo("[PLM] Personal Login Message disabled");
 	}
 
+	private void initStandardSetup() {
+		setupChat();
+		setupPermissions();
+		m = new Messages(this, false);
+		if (m.getVnpHandler().isPluginInstalled()) {
+			this.getServer().getPluginManager().registerEvents(new VanishStatusChangeEventListener(m), this);
+		} else {
+			this.getServer().getPluginManager().registerEvents(new CommonListener(m), this);
+		}
+		plmLogger.logInfo("[PLM] Personal Login Message is enabled");
+	}
+	
+	private void initAdvancedSetup() {
+		setupChat();
+		setupPermissions();
+		if (vaultErrorStatus == true || permission == null) { //If vault or permission/chat plugin is not available -> Standard setup
+			plmLogger.logWarning("[PLM] Sorry, you need Vault and a compatible permissions plugin to use the advanced messages mode!");
+			initStandardSetup();
+		} else { //Activate AdvancedMessages, because vault is active and it's enabled
+			m = new Messages(this, true);
+			if (m.getVnpHandler().isPluginInstalled()) {
+				this.getServer().getPluginManager().registerEvents(new VanishStatusChangeEventListener(m), this);
+			} else {
+				this.getServer().getPluginManager().registerEvents(new CommonListener(m), this);
+			}
+			plmLogger.logInfo("[PLM] Advanced messages mode is enabled");
+		}
+	}
+	
 	/**
 	 * setupChat tries to find a chat plugin hooked by vault. It sends a message to console if no chat plugin was found or vault is not installed.
 	 */
@@ -114,8 +117,7 @@ public final class PLM extends JavaPlugin {
 
 	/**
 	 * A try to find Vault and setup the hooked permission plugin. This is only called if setupChat() was successful.
-	 * Any error here will be printed out in the
-	 * console
+	 * Any error here will be printed out in the console
 	 */
 	private void setupPermissions() {
 		try {
@@ -130,7 +132,7 @@ public final class PLM extends JavaPlugin {
 			e.printStackTrace();
 		} catch (Error er) {
 			if (vaultErrorStatus == false)
-				plmLogger.logError("[PLM] An unknown error occurred ");
+				plmLogger.logError("[PLM] An unknown error occurred concerning Vault");
 		}
 	}
 
