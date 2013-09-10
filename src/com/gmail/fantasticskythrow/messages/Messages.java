@@ -13,8 +13,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.kitteh.vanish.event.VanishStatusChangeEvent;
 
 import com.gmail.fantasticskythrow.PLM;
-import com.gmail.fantasticskythrow.commands.PLMRestoreCommand;
-import com.gmail.fantasticskythrow.commands.ReloadCommand;
+import com.gmail.fantasticskythrow.commands.PLMCommandHandler;
 import com.gmail.fantasticskythrow.configuration.MainConfiguration;
 import com.gmail.fantasticskythrow.other.MessageData;
 import com.gmail.fantasticskythrow.other.PLMToolbox;
@@ -66,14 +65,12 @@ public class Messages {
 		iniTimeMessages();
 		vnpHandler = new VanishNoPacketManager(plugin, plugin.getServer().getOnlinePlayers());
 		chHandler = new HerochatManager(plugin);
+		PLMCommandHandler commandHandler = new PLMCommandHandler(plmLogger, advancedStatus);
+		plugin.getCommand("plm").setExecutor(commandHandler);
 		if (advancedStatus == false) { // StandardMessages
 			sm = new StandardMessages(plugin);
-			PLMRestoreCommand rc = new PLMRestoreCommand(plugin);
-			plugin.getCommand("plm").setExecutor(rc);
 		} else { // Advanced messages mode
 			am = new AdvancedMessages(plugin, plmFile);
-			ReloadCommand reloadCommand = new ReloadCommand(plugin);
-			plugin.getCommand("plm").setExecutor(reloadCommand);
 		}
 	}
 

@@ -2,13 +2,12 @@ package com.gmail.fantasticskythrow.commands;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.gmail.fantasticskythrow.PLM;
 
-public class ReloadCommand implements CommandExecutor {
+public class ReloadCommand{
 
 	private PLM plugin;
 
@@ -16,8 +15,7 @@ public class ReloadCommand implements CommandExecutor {
 		this.plugin = p;
 	}
 
-	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+	public boolean onCommandOld(CommandSender sender, Command cmd, String label, String[] args) {
 		if (sender instanceof Player) {
 			if (sender.hasPermission("plm.admin") || sender.hasPermission("plm.*")) {
 				if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
@@ -56,5 +54,9 @@ public class ReloadCommand implements CommandExecutor {
 				return true;
 			}
 		}
+	}
+	
+	protected void onCommand (CommandSender sender, Command cmd, String label, String[] args) {
+		
 	}
 }

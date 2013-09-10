@@ -6,13 +6,12 @@ import java.io.FileWriter;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.gmail.fantasticskythrow.PLM;
 
-public class PLMRestoreCommand implements CommandExecutor {
+public class PLMRestoreCommand {
 
 	private PLM plugin;
 
@@ -20,8 +19,7 @@ public class PLMRestoreCommand implements CommandExecutor {
 		this.plugin = p;
 	}
 
-	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+	protected boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (sender instanceof Player) {
 			if (sender.hasPermission("plm.admin") || sender.hasPermission("plm.*")) {
 				if (args.length == 1 && args[0].equalsIgnoreCase("restore")) {
