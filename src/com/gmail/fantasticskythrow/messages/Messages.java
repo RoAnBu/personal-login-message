@@ -65,7 +65,7 @@ public class Messages {
 		iniTimeMessages();
 		vnpHandler = new VanishNoPacketManager(plugin, plugin.getServer().getOnlinePlayers());
 		chHandler = new HerochatManager(plugin);
-		PLMCommandHandler commandHandler = new PLMCommandHandler(plmLogger, advancedStatus);
+		PLMCommandHandler commandHandler = new PLMCommandHandler(plugin, plmLogger, advancedStatus);
 		plugin.getCommand("plm").setExecutor(commandHandler);
 		if (advancedStatus == false) { // StandardMessages
 			sm = new StandardMessages(plugin);
@@ -183,9 +183,9 @@ public class Messages {
 
 				plmFile.setPlayerQuitTime(e.getPlayer().getName().toLowerCase());
 				if (mData.type == null) {
-					plmLogger.logDebug("PLM's join message is: " + message);
+					plmLogger.logDebug("PLM's quit message is: " + message);
 				} else {
-					plmLogger.logDebug("PLM's join message is: " + message + " Path: " + mData.type + " | " + mData.subType);
+					plmLogger.logDebug("PLM's quit message is: " + message + " Path: " + mData.type + " | " + mData.subType);
 				}
 			} catch (NullPointerException ne) {
 				plmLogger.logError("[PLM] A problem occurred at PlayerQuitEvent!");
@@ -306,15 +306,15 @@ public class Messages {
 		 * Replace placeholders
 		 */
 		joinMessage = PLMToolbox.getReplacedStandardPlaceholders(joinMessage, player, chat, permission, plugin, plmFile, vnpHandler);
-//		joinMessage = PLMToolbox.getReplacedPlayername(joinMessage, player);
-//		joinMessage = PLMToolbox.getReplacedChatplayername(joinMessage, chat, player);
-//		joinMessage = PLMToolbox.getReplacedGroup(joinMessage, permission, player);
-//		joinMessage = PLMToolbox.getReplacedWorld(joinMessage, player);
-//		joinMessage = PLMToolbox.getReplacedCountry(joinMessage, plugin, player, plmFile);
-//		joinMessage = PLMToolbox.getReplacedTotalLogins(joinMessage, plmFile);
-//		joinMessage = PLMToolbox.getReplacedUniquePlayers(joinMessage, plmFile);
-//		joinMessage = PLMToolbox.getReplacedPlayerLogins(joinMessage, playername, plmFile);
-//		joinMessage = PLMToolbox.getReplacedOnlinePlayerNumber(joinMessage, plugin.getServer(), vnpHandler, false);
+		//		joinMessage = PLMToolbox.getReplacedPlayername(joinMessage, player);
+		//		joinMessage = PLMToolbox.getReplacedChatplayername(joinMessage, chat, player);
+		//		joinMessage = PLMToolbox.getReplacedGroup(joinMessage, permission, player);
+		//		joinMessage = PLMToolbox.getReplacedWorld(joinMessage, player);
+		//		joinMessage = PLMToolbox.getReplacedCountry(joinMessage, plugin, player, plmFile);
+		//		joinMessage = PLMToolbox.getReplacedTotalLogins(joinMessage, plmFile);
+		//		joinMessage = PLMToolbox.getReplacedUniquePlayers(joinMessage, plmFile);
+		//		joinMessage = PLMToolbox.getReplacedPlayerLogins(joinMessage, playername, plmFile);
+		//		joinMessage = PLMToolbox.getReplacedOnlinePlayerNumber(joinMessage, plugin.getServer(), vnpHandler, false);
 		/*
 		 * Replace %time when it was found in the string
 		 */
@@ -336,15 +336,15 @@ public class Messages {
 			quitMessage = mData.message;
 		}
 		quitMessage = PLMToolbox.getReplacedStandardPlaceholders(quitMessage, player, chat, permission, plugin, plmFile, vnpHandler);
-//		quitMessage = PLMToolbox.getReplacedPlayername(quitMessage, player);
-//		quitMessage = PLMToolbox.getReplacedChatplayername(quitMessage, chat, player);
-//		quitMessage = PLMToolbox.getReplacedGroup(quitMessage, permission, player);
-//		quitMessage = PLMToolbox.getReplacedWorld(quitMessage, player);
-//		quitMessage = PLMToolbox.getReplacedCountry(quitMessage, plugin, player, plmFile);
-//		quitMessage = PLMToolbox.getReplacedTotalLogins(quitMessage, plmFile);
-//		quitMessage = PLMToolbox.getReplacedUniquePlayers(quitMessage, plmFile);
-//		quitMessage = PLMToolbox.getReplacedPlayerLogins(quitMessage, playername, plmFile);
-//		quitMessage = PLMToolbox.getReplacedOnlinePlayerNumber(quitMessage, plugin.getServer(), vnpHandler, true);
+		//		quitMessage = PLMToolbox.getReplacedPlayername(quitMessage, player);
+		//		quitMessage = PLMToolbox.getReplacedChatplayername(quitMessage, chat, player);
+		//		quitMessage = PLMToolbox.getReplacedGroup(quitMessage, permission, player);
+		//		quitMessage = PLMToolbox.getReplacedWorld(quitMessage, player);
+		//		quitMessage = PLMToolbox.getReplacedCountry(quitMessage, plugin, player, plmFile);
+		//		quitMessage = PLMToolbox.getReplacedTotalLogins(quitMessage, plmFile);
+		//		quitMessage = PLMToolbox.getReplacedUniquePlayers(quitMessage, plmFile);
+		//		quitMessage = PLMToolbox.getReplacedPlayerLogins(quitMessage, playername, plmFile);
+		//		quitMessage = PLMToolbox.getReplacedOnlinePlayerNumber(quitMessage, plugin.getServer(), vnpHandler, true);
 		mData.message = quitMessage;
 		return mData;
 	}
@@ -466,18 +466,18 @@ public class Messages {
 			for (int i = 0; i < welcomeMessages.length; i++) {
 				String m = welcomeMessages[i];
 				m = PLMToolbox.getReplacedComplexPlaceholders(m, player, chat, plugin, plmFile, vnpHandler, permission);
-//				m = PLMToolbox.getReplacedPlayername(m, player);
-//				m = PLMToolbox.getReplacedChatplayername(m, chat, player);
-//				m = PLMToolbox.getReplacedWorld(m, player);
-//				m = PLMToolbox.getReplacedCountry(m, plugin, player, plmFile);
-//				m = PLMToolbox.getReplacedPlayerlist(m, vnpHandler, plugin.getServer());
-//				m = PLMToolbox.getReplacedChatplayerlist(m, chat, vnpHandler, plugin.getServer());
-//				m = PLMToolbox.getReplacedGroupplayerlist(m, vnpHandler, permission, plugin.getServer(), player);
-//				m = PLMToolbox.getReplacedGroupchatplayerlist(m, vnpHandler, permission, chat, plugin.getServer(), player);
-//				m = PLMToolbox.getReplacedTotalLogins(m, plmFile);
-//				m = PLMToolbox.getReplacedUniquePlayers(m, plmFile);
-//				m = PLMToolbox.getReplacedPlayerLogins(m, playername, plmFile);
-//				m = PLMToolbox.getReplacedOnlinePlayerNumber(m, plugin.getServer(), vnpHandler, false);
+				//	m = PLMToolbox.getReplacedPlayername(m, player);
+				//	m = PLMToolbox.getReplacedChatplayername(m, chat, player);
+				//	m = PLMToolbox.getReplacedWorld(m, player);
+				//	m = PLMToolbox.getReplacedCountry(m, plugin, player, plmFile);
+				//	m = PLMToolbox.getReplacedPlayerlist(m, vnpHandler, plugin.getServer());
+				//	m = PLMToolbox.getReplacedChatplayerlist(m, chat, vnpHandler, plugin.getServer());
+				//	m = PLMToolbox.getReplacedGroupplayerlist(m, vnpHandler, permission, plugin.getServer(), player);
+				//	m = PLMToolbox.getReplacedGroupchatplayerlist(m, vnpHandler, permission, chat, plugin.getServer(), player);
+				//	m = PLMToolbox.getReplacedTotalLogins(m, plmFile);
+				//	m = PLMToolbox.getReplacedUniquePlayers(m, plmFile);
+				//	m = PLMToolbox.getReplacedPlayerLogins(m, playername, plmFile);
+				//	m = PLMToolbox.getReplacedOnlinePlayerNumber(m, plugin.getServer(), vnpHandler, false);
 				m = getReplacedTime(m);
 				welcomeMessages[i] = m;
 			}
@@ -493,19 +493,19 @@ public class Messages {
 			for (int i = 0; i < publicMessages.length; i++) {
 				String m = publicMessages[i];
 				m = PLMToolbox.getReplacedComplexPlaceholders(m, player, chat, plugin, plmFile, vnpHandler, permission);
-//				m = PLMToolbox.getReplacedPlayername(m, player);
-//				m = PLMToolbox.getReplacedChatplayername(m, chat, player);
-//				m = PLMToolbox.getReplacedWorld(m, player);
-//				m = PLMToolbox.getReplacedCountry(m, plugin, player, plmFile);
-//				m = PLMToolbox.getReplacedPlayerlist(m, vnpHandler, plugin.getServer());
-//				m = PLMToolbox.getReplacedChatplayerlist(m, chat, vnpHandler, plugin.getServer());
-//				m = PLMToolbox.getReplacedGroupplayerlist(m, vnpHandler, permission, plugin.getServer(), player);
-//				m = PLMToolbox.getReplacedGroupchatplayerlist(m, vnpHandler, permission, chat, plugin.getServer(), player);
-//				m = PLMToolbox.getReplacedGroup(m, permission, player);
-//				m = PLMToolbox.getReplacedTotalLogins(m, plmFile);
-//				m = PLMToolbox.getReplacedUniquePlayers(m, plmFile);
-//				m = PLMToolbox.getReplacedPlayerLogins(m, playername, plmFile);
-//				m = PLMToolbox.getReplacedOnlinePlayerNumber(m, plugin.getServer(), vnpHandler, false);
+				//	m = PLMToolbox.getReplacedPlayername(m, player);
+				//	m = PLMToolbox.getReplacedChatplayername(m, chat, player);
+				//	m = PLMToolbox.getReplacedWorld(m, player);
+				//	m = PLMToolbox.getReplacedCountry(m, plugin, player, plmFile);
+				//	m = PLMToolbox.getReplacedPlayerlist(m, vnpHandler, plugin.getServer());
+				//	m = PLMToolbox.getReplacedChatplayerlist(m, chat, vnpHandler, plugin.getServer());
+				//	m = PLMToolbox.getReplacedGroupplayerlist(m, vnpHandler, permission, plugin.getServer(), player);
+				//	m = PLMToolbox.getReplacedGroupchatplayerlist(m, vnpHandler, permission, chat, plugin.getServer(), player);
+				//	m = PLMToolbox.getReplacedGroup(m, permission, player);
+				//	m = PLMToolbox.getReplacedTotalLogins(m, plmFile);
+				//	m = PLMToolbox.getReplacedUniquePlayers(m, plmFile);
+				//	m = PLMToolbox.getReplacedPlayerLogins(m, playername, plmFile);
+				//	m = PLMToolbox.getReplacedOnlinePlayerNumber(m, plugin.getServer(), vnpHandler, false);
 				m = getReplacedTime(m);
 				publicMessages[i] = m;
 			}

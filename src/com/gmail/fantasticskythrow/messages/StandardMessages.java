@@ -11,7 +11,7 @@ import com.gmail.fantasticskythrow.other.MessageData;
 
 public class StandardMessages {
 
-	private static File messagesFile;
+	private File messagesFile;
 	private String joinMessage = "", quitMessage = "";
 	private PLM plugin;
 
@@ -45,34 +45,7 @@ public class StandardMessages {
 		try {
 			messagesFile = new File(plugin.getDataFolder(), "messages.txt");
 			if (!messagesFile.exists()) {
-				FileWriter fw = new FileWriter(messagesFile);
-				BufferedWriter bw = new BufferedWriter(fw);
-				bw.write("Join message:");
-				bw.newLine();
-				bw.write("&e%playername joined the game");
-				bw.newLine();
-				bw.newLine();
-				bw.write("Quit message:");
-				bw.newLine();
-				bw.write("&e%playername left the game");
-				bw.newLine();
-				bw.newLine();
-				bw.write("How to write own messages:");
-				bw.newLine();
-				bw.write("Colors are set with the standard minecraft color codes (with '&')");
-				bw.newLine();
-				bw.write("%playername will be replaced by the normal name.");
-				bw.newLine();
-				bw.write("%chatplayername will be replaced by the name with color and prefixes (suffixes too)");
-				bw.newLine();
-				bw.write("%group will be replaced by the name of the player's group");
-				bw.newLine();
-				bw.write("%world: The world where the player spawned. Only the complete name right now.");
-				bw.newLine();
-				bw.write("%World outputs the world with a capital letter and no _");
-				bw.newLine();
-				bw.write("NOTE: Please don't move the lines otherwise the plugin will return wrong values!!");
-				bw.close();
+				overwriteMessagesFile(plugin);
 			} else {
 				System.out.println("[PLM] The file messages.txt was loaded");
 				checkMFContent();
@@ -80,12 +53,13 @@ public class StandardMessages {
 		} catch (Exception e) {
 			System.out.println("[PLM] An error occurred while checking the messages.txt");
 			System.out.println("[PLM] Trying to replace it by default...");
-			overwriteMessagesFile();
+			overwriteMessagesFile(plugin);
 		}
 	}
 
-	public void overwriteMessagesFile() {
+	public static void overwriteMessagesFile(PLM plugin) {
 		try {
+			File messagesFile = new File(plugin.getDataFolder(), "messages.txt");
 			FileWriter fw = new FileWriter(messagesFile);
 			BufferedWriter bw = new BufferedWriter(fw);
 			bw.write("Join message:");
@@ -114,9 +88,7 @@ public class StandardMessages {
 			bw.newLine();
 			bw.write("NOTE: Please don't move the lines otherwise the plugin will return wrong values!!");
 			bw.close();
-		}
-
-		catch (Exception e) {
+		} catch (Exception e) {
 			System.out.println("[PLM] Writing or replacing 'messages.txt' was not possible! Check the plugin's folder");
 		}
 	}
