@@ -23,7 +23,12 @@ public class PLMCommandHandler implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		String commandType = args[0];
+		String commandType;
+		if (args.length != 0) {
+			commandType = args[0];
+		} else {
+			commandType = "";
+		}
 		if (sender instanceof Player) {
 			/*
 			 * PLAYER
