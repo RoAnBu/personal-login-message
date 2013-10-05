@@ -33,7 +33,7 @@ public class StandardMessages {
 		}
 
 		catch (Exception e) {
-			System.out.println("[SEVERE] [PLM] An error occurred while reading messages.txt");
+			System.out.println("[SEVERE] [PLM] An error has occurred while reading messages.txt");
 			System.out.println("[PLM] Please check the messages.txt file. Standard join and quit messages will be used");
 			System.out.println(e.getMessage());
 			joinMessage = "&e%playername joined the game";
@@ -51,7 +51,7 @@ public class StandardMessages {
 				checkMFContent();
 			}
 		} catch (Exception e) {
-			System.out.println("[PLM] An error occurred while checking the messages.txt");
+			System.out.println("[PLM] An error has occurred while checking the messages.txt");
 			System.out.println("[PLM] Trying to replace it by default...");
 			overwriteMessagesFile(plugin);
 		}

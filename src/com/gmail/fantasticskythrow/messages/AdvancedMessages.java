@@ -84,7 +84,7 @@ public class AdvancedMessages {
 			plmLogger.logInfo("[PLM] Please make sure that you used ' in front any special letter (%, &,...)");
 			plmLogger.logInfo("[PLM] More information on PLM's BukkitDev page!");
 		} catch (IOException io) {
-			plmLogger.logError("[PLM] An error occurred while saving AdvancedMessages.yml");
+			plmLogger.logError("[PLM] An error has occurred while saving AdvancedMessages.yml");
 			plmLogger.logInfo("[PLM] Please check whether PLM has all rights to do this!");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -103,7 +103,7 @@ public class AdvancedMessages {
 		 * Error -> Skips message checking
 		 */
 		if (errorStatus == true) {
-			return new MessageData("&4An error occurred at the messages file! &e%playername joined", null);
+			return new MessageData("&4An error has occurred at the messages file! &e%playername joined", null);
 		} else
 		/*
 		 * No error -> Looking for fitting message

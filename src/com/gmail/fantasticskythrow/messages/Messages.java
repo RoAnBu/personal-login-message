@@ -131,12 +131,12 @@ public class Messages {
 			}
 
 		} catch (NullPointerException ne) {
-			plmLogger.logError("[PLM] A problem occurred at PlayerJoinEvent!");
+			plmLogger.logError("[PLM] A problem has occurred at PlayerJoinEvent!");
 			ne.printStackTrace();
 			e.setJoinMessage(null);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			plmLogger.logError("[PLM] An unknown error occurred at PlayerJoinEvent!");
+			plmLogger.logError("[PLM] An unknown error has occurred at PlayerJoinEvent!");
 			plmLogger.logError("[PLM] Please make sure that all configuration files are available");
 		}
 	}
@@ -188,11 +188,11 @@ public class Messages {
 					plmLogger.logDebug("PLM's quit message is: " + message + " Path: " + mData.type + " | " + mData.subType);
 				}
 			} catch (NullPointerException ne) {
-				plmLogger.logError("[PLM] A problem occurred at PlayerQuitEvent!");
+				plmLogger.logError("[PLM] A problem has occurred at PlayerQuitEvent!");
 				e.setQuitMessage(null);
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				plmLogger.logError("[PLM] An unknown error occurred at PlayerQuitEvent!");
+				plmLogger.logError("[PLM] An unknown error has occurred at PlayerQuitEvent!");
 				plmLogger.logError("[PLM] Please make sure that all configuration files are available");
 			}
 		}
@@ -225,13 +225,13 @@ public class Messages {
 				e.setLeaveMessage(null);
 			}
 		} catch (NullPointerException ne) {
-			plmLogger.logError("[PLM] A problem occurred at PlayerKickEvent!");
+			plmLogger.logError("[PLM] A problem has occurred at PlayerKickEvent!");
 			e.setLeaveMessage(null);
 		}
 
 		catch (Exception ex) {
 			ex.printStackTrace();
-			plmLogger.logError("[PLM] An unknown error occurred at PlayerQuitEvent!");
+			plmLogger.logError("[PLM] An unknown error has occurred at PlayerQuitEvent!");
 			plmLogger.logError("[PLM] Please make sure that all configuration files are available");
 		}
 	}
@@ -282,7 +282,7 @@ public class Messages {
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			plmLogger.logError("[PLM] An unknown error occurred at VanishStatusChangeEvent!");
+			plmLogger.logError("[PLM] An unknown error has occurred at VanishStatusChangeEvent!");
 			plmLogger.logError("[PLM] Please make sure that all configuration files are available");
 		}
 	}

@@ -44,7 +44,7 @@ public final class PLM extends JavaPlugin {
 			plmLogger = new PLMLogger(this);
 			if (cfg.getPluginStatus()) { //Activated
 				if (!cfg.getAdvancedStatus()) { //Standard mode
-						initStandardSetup();
+					initStandardSetup();
 				} else { //Advanced messages mode
 					initAdvancedSetup();
 				}
@@ -53,7 +53,7 @@ public final class PLM extends JavaPlugin {
 				plmLogger.logInfo("[PLM] Personal Login Message is not enabled in config");
 			}
 		} catch (Exception e) { // Not handled exceptions
-			plmLogger.logError("[PLM] An unknown problem occurred while setting up PLM!");
+			plmLogger.logError("[PLM] An unknown error has occurred while setting up PLM!");
 			e.printStackTrace();
 		}
 	}
@@ -77,7 +77,7 @@ public final class PLM extends JavaPlugin {
 		}
 		plmLogger.logInfo("[PLM] Personal Login Message is enabled");
 	}
-	
+
 	private void initAdvancedSetup() {
 		setupChat();
 		setupPermissions();
@@ -94,7 +94,7 @@ public final class PLM extends JavaPlugin {
 			plmLogger.logInfo("[PLM] Advanced messages mode is enabled");
 		}
 	}
-	
+
 	/**
 	 * setupChat tries to find a chat plugin hooked by vault. It sends a message to console if no chat plugin was found or vault is not installed.
 	 */
@@ -132,7 +132,7 @@ public final class PLM extends JavaPlugin {
 			e.printStackTrace();
 		} catch (Error er) {
 			if (vaultErrorStatus == false)
-				plmLogger.logError("[PLM] An unknown error occurred concerning Vault");
+				plmLogger.logError("[PLM] An unknown error has occurred concerning Vault");
 		}
 	}
 
