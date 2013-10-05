@@ -57,7 +57,7 @@ public class StandardMessages {
 		}
 	}
 
-	public static void overwriteMessagesFile(PLM plugin) {
+	public static boolean overwriteMessagesFile(PLM plugin) {
 		try {
 			File messagesFile = new File(plugin.getDataFolder(), "messages.txt");
 			FileWriter fw = new FileWriter(messagesFile);
@@ -88,8 +88,10 @@ public class StandardMessages {
 			bw.newLine();
 			bw.write("NOTE: Please don't move the lines otherwise the plugin will return wrong values!!");
 			bw.close();
+			return true;
 		} catch (Exception e) {
-			System.out.println("[PLM] Writing or replacing 'messages.txt' was not possible! Check the plugin's folder");
+			System.out.println("[PLM] Editing 'messages.txt' was not possible! Check the plugin's folder");
+			return false;
 		}
 	}
 
