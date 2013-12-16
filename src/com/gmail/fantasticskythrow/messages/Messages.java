@@ -100,7 +100,12 @@ public class Messages {
 			this.player = e.getPlayer();
 			this.playername = e.getPlayer().getName().toLowerCase();
 			plmFile.setPlayerLogin(playername);
-			MessageData mData = getMessagesJoin();
+			MessageData mData;
+			if (!cfg.getUseRandom()) {
+				mData = getMessagesJoin();
+			} else {
+				mData = getRandomJoinMessages();
+			}
 			String message = ChatColor.translateAlternateColorCodes('&', mData.message);
 			boolean isVanished = vnpHandler.isVanished(e.getPlayer().getName());
 			if (PLMToolbox.getPermissionJoin(cfg.getUsePermGeneral(), player) && !message.equalsIgnoreCase("off") && !isVanished) {
@@ -159,7 +164,12 @@ public class Messages {
 			try {
 				this.player = e.getPlayer();
 				this.playername = e.getPlayer().getName().toLowerCase();
-				MessageData mData = getMessagesQuit();
+				MessageData mData;
+				if (!cfg.getUseRandom()) {
+					mData = getMessagesQuit();
+				} else {
+					mData = getRandomQuitMessages();
+				}
 				String message = ChatColor.translateAlternateColorCodes('&', mData.message);
 				if (PLMToolbox.getPermissionQuit(cfg.getUsePermGeneral(), player) && !(message.equalsIgnoreCase("off"))) {
 
@@ -347,6 +357,49 @@ public class Messages {
 		//		quitMessage = PLMToolbox.getReplacedOnlinePlayerNumber(quitMessage, plugin.getServer(), vnpHandler, true);
 		mData.message = quitMessage;
 		return mData;
+	}
+
+	private MessageData getRandomJoinMessages() {
+		String joinMessage;
+		MessageData mData;
+		/*
+		 * Selects the class depending on the settings
+		 */
+		if (!advancedStatus) { // No effect if standard mode
+			return getMessagesJoin();
+		} else { // With AMM
+			mData = am.getRandomJoinMessage(player);
+			joinMessage = mData.message;
+			printWelcomeMessage(am);
+			printPublicMessages(am);
+			/*
+			 * Replace placeholders
+			 */
+			joinMessage = PLMToolbox.getReplacedStandardPlaceholders(joinMessage, player, chat, permission, plugin, plmFile, vnpHandler);
+			/*
+			 * Replace %time when it was found in the string
+			 */
+			if (joinMessage.contains("%time")) {
+				joinMessage = getReplacedTime(joinMessage);
+			}
+			mData.message = joinMessage;
+			return mData;
+		}
+	}
+
+	private MessageData getRandomQuitMessages() {
+		String quitMessage;
+		MessageData mData;
+		if (!advancedStatus) {
+			return getMessagesQuit();
+		} else {
+			mData = am.getRandomQuitMessage(player);
+			quitMessage = mData.message;
+			quitMessage = PLMToolbox.getReplacedStandardPlaceholders(quitMessage, player, chat, permission, plugin, plmFile, vnpHandler);
+			mData.message = quitMessage;
+			return mData;
+		}
+
 	}
 
 	/**

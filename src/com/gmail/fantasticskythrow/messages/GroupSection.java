@@ -1,10 +1,11 @@
 package com.gmail.fantasticskythrow.messages;
 
-import java.util.Random;
+import java.util.ArrayList;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.gmail.fantasticskythrow.other.MessageData;
+import com.gmail.fantasticskythrow.other.PLMToolbox;
 import com.gmail.fantasticskythrow.other.SectionSubTypes;
 import com.gmail.fantasticskythrow.other.SectionTypes;
 
@@ -43,14 +44,14 @@ public final class GroupSection {
 	private boolean isSuitableJoin() {
 		if (backCase())
 			return true;
-		else if (standardCase(true))
+		else if (standardJoinCase())
 			return true;
 		else
 			return false;
 	}
 
 	private boolean isSuitableQuit() {
-		if (standardCase(false))
+		if (standardQuitCase())
 			return true;
 		else
 			return false;
@@ -81,12 +82,12 @@ public final class GroupSection {
 					}
 					if (time > 0 && time <= difference) {
 						String message = advancedMessagesYML.getString(grouppath + ".BM" + i);
-						mData = new MessageData(message, getChannels(), SectionTypes.GROUP, SectionSubTypes.BACKMESSAGE);
+						mData = new MessageData(message, getChannels(grouppath, advancedMessagesYML), SectionTypes.GROUP, SectionSubTypes.BACKMESSAGE);
 						a = true;
 						status = true;
 					} else if (time < 0 && (time * -1) >= difference) {
 						String message = advancedMessagesYML.getString(grouppath + ".BM" + i);
-						mData = new MessageData(message, getChannels(), SectionTypes.GROUP, SectionSubTypes.BACKMESSAGE);
+						mData = new MessageData(message, getChannels(grouppath, advancedMessagesYML), SectionTypes.GROUP, SectionSubTypes.BACKMESSAGE);
 						a = true;
 						status = true;
 					}
@@ -103,114 +104,95 @@ public final class GroupSection {
 		}
 	}
 
-	/**
-	 * The normal case
-	 * @param join
-	 * @return
-	 */
-	private boolean standardCase(boolean join) {
-		/*
-		 * Join Case
-		 */
-		if (join) {
-			if (advancedMessagesYML.contains(grouppath + ".JM1")) {
-				int count = 2;
-				while (advancedMessagesYML.contains(grouppath + ".JM" + count)) {
-					count++;
-				}
-				Random r = new Random();
-				int n = r.nextInt(count - 1) + 1;
-				String message = advancedMessagesYML.getString(grouppath + ".JM" + n);
-				mData = new MessageData(message, getChannels(), SectionTypes.GROUP, SectionSubTypes.JOINMESSAGE);
-				return true;
-			} else {
-				return false;
-			}
-		}
-		/*
-		 * Quit Case
-		 */
-		else {
-			if (advancedMessagesYML.contains(grouppath + ".QM1")) {
-				int count = 2;
-				while (advancedMessagesYML.contains(grouppath + ".QM" + count)) {
-					count++;
-				}
-				Random r = new Random();
-				int n = r.nextInt(count - 1) + 1;
-				String message = advancedMessagesYML.getString(grouppath + ".QM" + n);
-				mData = new MessageData(message, getChannels(), SectionTypes.GROUP, SectionSubTypes.QUITMESSAGE);
-				return true;
-			} else {
-				return false;
-			}
-		}
-	}
-
-	protected boolean checkWelcomeMessages(String grouppath, YamlConfiguration yml, AdvancedMessages am) {
-		if (yml.contains(grouppath + ".WM1")) {
-			int count = 2;
-			while (yml.contains(grouppath + ".WM" + count)) {
-				count++;
-			}
-			String[] messages = new String[count - 1];
-			while (count > 1) {
-				count--;
-				messages[count - 1] = yml.getString(grouppath + ".WM" + count);
-			}
-			am.setWelcomeMessages(messages);
+	private boolean standardJoinCase() {
+		if (advancedMessagesYML.contains(grouppath + ".JM1")) {
+			mData = new MessageData(PLMToolbox.getMessage(grouppath + ".JM", advancedMessagesYML), getChannels(grouppath, advancedMessagesYML),
+					SectionTypes.GROUP, SectionSubTypes.JOINMESSAGE);
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	protected boolean checkPublicMessages(String grouppath, YamlConfiguration yml, AdvancedMessages am) {
-		if (yml.contains(grouppath + ".PM1")) {
-			int count = 2;
-			while (yml.contains(grouppath + ".PM" + count)) {
-				count++;
-			}
-			String[] publicMessages = new String[count - 1];
-			while (count > 1) {
-				count--;
-				publicMessages[count - 1] = yml.getString(grouppath + ".PM" + count);
-			}
-			am.setPublicMessages(publicMessages);
+	private boolean standardQuitCase() {
+		if (advancedMessagesYML.contains(grouppath + ".QM1")) {
+			mData = new MessageData(PLMToolbox.getMessage(grouppath + ".QM", advancedMessagesYML), getChannels(grouppath, advancedMessagesYML),
+					SectionTypes.GROUP, SectionSubTypes.QUITMESSAGE);
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	protected boolean checkFirstMessage(String grouppath, long lastLogin, YamlConfiguration yml, AdvancedMessages am) {
+	protected static boolean checkFirstMessage(String grouppath, long lastLogin, YamlConfiguration yml, AdvancedMessages am) {
 		if (lastLogin == 0L && yml.contains(grouppath + ".FM1")) {
-			int count = 2;
-			while (yml.contains(grouppath + ".FM" + count)) {
-				count++;
-			}
-			Random r = new Random();
-			int n = r.nextInt(count - 1) + 1;
-			String message = yml.getString(grouppath + ".FM" + n);
-			mData = new MessageData(message, getChannels(grouppath), SectionTypes.GROUP, SectionSubTypes.FIRSTMESSAGE);
+			am.setMessage(new MessageData(PLMToolbox.getMessage(grouppath + ".FM", yml), getChannels(grouppath, yml), SectionTypes.GROUP,
+					SectionSubTypes.FIRSTMESSAGE));
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	private String[] getChannels() {
-		if (advancedMessagesYML.contains(grouppath + ".CH")) {
-			String[] channels = advancedMessagesYML.getString(grouppath + ".CH").split(", ");
-			return channels;
+	protected static boolean checkWelcomeMessages(String grouppath, YamlConfiguration yml, AdvancedMessages am) {
+		final String path = grouppath + ".WM";
+		if (yml.contains(path + "1")) {
+			am.setWelcomeMessages(PLMToolbox.getAdvancedMessages(path, yml));
+			return true;
 		} else {
-			return null;
+			return false;
 		}
 	}
 
-	private String[] getChannels(String grouppath) {
-		if (advancedMessagesYML.contains(grouppath + ".CH")) {
-			String[] channels = advancedMessagesYML.getString(grouppath + ".CH").split(", ");
+	protected static boolean checkPublicMessages(String grouppath, YamlConfiguration yml, AdvancedMessages am) {
+		final String path = grouppath + ".PM";
+		if (yml.contains(path + "1")) {
+			am.setPublicMessages(PLMToolbox.getAdvancedMessages(path, yml));
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	protected static ArrayList<MessageData> getJoinMessages(YamlConfiguration yml, long difference, long lastLogin, final String grouppath) {
+		ArrayList<MessageData> messages = new ArrayList<MessageData>();
+		String[] channels = getChannels(grouppath, yml);
+		if (lastLogin == 0L && yml.contains(grouppath + ".FM1")) {
+			ArrayList<String> al = PLMToolbox.getAllMessages(grouppath + ".FM", yml);
+			for (String text : al) {
+				messages.add(new MessageData(text, channels, SectionTypes.GROUP, SectionSubTypes.FIRSTMESSAGE));
+			}
+		}
+		if (yml.contains(grouppath + ".JM1")) {
+			ArrayList<String> al = PLMToolbox.getAllMessages(grouppath + ".JM", yml);
+			for (String text : al) {
+				messages.add(new MessageData(text, channels, SectionTypes.GROUP, SectionSubTypes.JOINMESSAGE));
+			}
+		}
+		if (yml.contains(grouppath + ".BM1")) {
+			String text = PLMToolbox.getBackMessage(yml, grouppath, difference);
+			if (text != null) {
+				messages.add(new MessageData(text, channels, SectionTypes.GROUP, SectionSubTypes.BACKMESSAGE));
+			}
+		}
+		return messages;
+	}
+
+	protected static ArrayList<MessageData> getQuitMessages(YamlConfiguration yml, String grouppath) {
+		ArrayList<MessageData> messages = new ArrayList<MessageData>();
+		String[] channels = getChannels(grouppath, yml);
+		if (yml.contains(grouppath + ".QM1")) {
+			ArrayList<String> al = PLMToolbox.getAllMessages(grouppath + ".QM", yml);
+			for (String text : al) {
+				messages.add(new MessageData(text, channels, SectionTypes.GROUP, SectionSubTypes.QUITMESSAGE));
+			}
+		}
+		return messages;
+	}
+
+	private static String[] getChannels(String grouppath, YamlConfiguration yml) {
+		if (yml.contains(grouppath + ".CH")) {
+			String[] channels = yml.getString(grouppath + ".CH").split(", ");
 			return channels;
 		} else {
 			return null;

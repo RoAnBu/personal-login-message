@@ -1,10 +1,11 @@
 package com.gmail.fantasticskythrow.messages;
 
-import java.util.Random;
+import java.util.ArrayList;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.gmail.fantasticskythrow.other.MessageData;
+import com.gmail.fantasticskythrow.other.PLMToolbox;
 import com.gmail.fantasticskythrow.other.SectionSubTypes;
 import com.gmail.fantasticskythrow.other.SectionTypes;
 
@@ -45,14 +46,14 @@ public final class PlayerSection {
 	private boolean isSuitableJoin() {
 		if (backCase())
 			return true;
-		else if (standardCase(true))
+		else if (standardJoinCase())
 			return true;
 		else
 			return false;
 	}
 
 	private boolean isSuitableQuit() {
-		if (standardCase(false))
+		if (standardQuitCase())
 			return true;
 		else
 			return false;
@@ -83,12 +84,14 @@ public final class PlayerSection {
 					}
 					if (time > 0 && time <= difference) {
 						String message = advancedMessagesYML.getString(playerpath + ".BM" + i);
-						mData = new MessageData(message, getChannels(), SectionTypes.PLAYER, SectionSubTypes.BACKMESSAGE);
+						mData = new MessageData(message, getChannels(playerpath, advancedMessagesYML), SectionTypes.PLAYER,
+								SectionSubTypes.BACKMESSAGE);
 						a = true;
 						status = true;
 					} else if (time < 0 && (time * -1) >= difference) {
 						String message = advancedMessagesYML.getString(playerpath + ".BM" + i);
-						mData = new MessageData(message, getChannels(), SectionTypes.PLAYER, SectionSubTypes.BACKMESSAGE);
+						mData = new MessageData(message, getChannels(playerpath, advancedMessagesYML), SectionTypes.PLAYER,
+								SectionSubTypes.BACKMESSAGE);
 						a = true;
 						status = true;
 					}
@@ -105,114 +108,95 @@ public final class PlayerSection {
 		}
 	}
 
-	/**
-	 * The normal case
-	 * @param join
-	 * @return
-	 */
-	private boolean standardCase(boolean join) {
-		/*
-		 * Join Case
-		 */
-		if (join) {
-			if (advancedMessagesYML.contains(playerpath + ".JM1")) {
-				int count = 2;
-				while (advancedMessagesYML.contains(playerpath + ".JM" + count)) {
-					count++;
-				}
-				Random r = new Random();
-				int n = r.nextInt(count - 1) + 1;
-				String message = advancedMessagesYML.getString(playerpath + ".JM" + n);
-				mData = new MessageData(message, getChannels(), SectionTypes.PLAYER, SectionSubTypes.JOINMESSAGE);
-				return true;
-			} else {
-				return false;
-			}
-		}
-		/*
-		 * Quit Case
-		 */
-		else {
-			if (advancedMessagesYML.contains(playerpath + ".QM1")) {
-				int count = 2;
-				while (advancedMessagesYML.contains(playerpath + ".QM" + count)) {
-					count++;
-				}
-				Random r = new Random();
-				int n = r.nextInt(count - 1) + 1;
-				String message = advancedMessagesYML.getString(playerpath + ".QM" + n);
-				mData = new MessageData(message, getChannels(), SectionTypes.PLAYER, SectionSubTypes.QUITMESSAGE);
-				return true;
-			} else {
-				return false;
-			}
+	private boolean standardJoinCase() {
+		if (advancedMessagesYML.contains(playerpath + ".JM1")) {
+			mData = new MessageData(PLMToolbox.getMessage(playerpath + ".JM", advancedMessagesYML), getChannels(playerpath, advancedMessagesYML),
+					SectionTypes.PLAYER, SectionSubTypes.JOINMESSAGE);
+			return true;
+		} else {
+			return false;
 		}
 	}
 
-	protected boolean checkFirstMessage(String playerpath, long lastLogin, YamlConfiguration yml, AdvancedMessages am) {
+	private boolean standardQuitCase() {
+		if (advancedMessagesYML.contains(playerpath + ".QM1")) {
+			mData = new MessageData(PLMToolbox.getMessage(playerpath + ".QM", advancedMessagesYML), getChannels(playerpath, advancedMessagesYML),
+					SectionTypes.PLAYER, SectionSubTypes.QUITMESSAGE);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	protected static boolean checkFirstMessage(String playerpath, long lastLogin, YamlConfiguration yml, AdvancedMessages am) {
 		if (lastLogin == 0L && yml.contains(playerpath + ".FM1")) {
-			int count = 2;
-			while (yml.contains(playerpath + ".FM" + count)) {
-				count++;
-			}
-			Random r = new Random();
-			int n = r.nextInt(count - 1) + 1;
-			String message = yml.getString(playerpath + ".FM" + n);
-			am.setMessage(new MessageData(message, getChannels(playerpath), SectionTypes.PLAYER, SectionSubTypes.FIRSTMESSAGE));
+			am.setMessage(new MessageData(PLMToolbox.getMessage(playerpath + ".FM", yml), getChannels(playerpath, yml), SectionTypes.PLAYER,
+					SectionSubTypes.FIRSTMESSAGE));
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	protected boolean checkWelcomeMessages(String playerpath, YamlConfiguration yml, AdvancedMessages am) {
-		if (yml.contains(playerpath + ".WM1")) {
-			int count = 2;
-			while (yml.contains(playerpath + ".WM" + count)) {
-				count++;
-			}
-			String[] messages = new String[count - 1];
-			while (count > 1) {
-				count--;
-				messages[count - 1] = yml.getString(playerpath + ".WM" + count);
-			}
-			am.setWelcomeMessages(messages);
+	protected static boolean checkWelcomeMessages(String playerpath, YamlConfiguration yml, AdvancedMessages am) {
+		final String path = playerpath + ".WM";
+		if (yml.contains(path + "1")) {
+			am.setWelcomeMessages(PLMToolbox.getAdvancedMessages(path, yml));
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	protected boolean checkPublicMessages(String playerpath, YamlConfiguration yml, AdvancedMessages am) {
-		if (yml.contains(playerpath + ".PM1")) {
-			int count = 2;
-			while (yml.contains(playerpath + ".PM" + count)) {
-				count++;
-			}
-			String[] publicMessages = new String[count - 1];
-			while (count > 1) {
-				count--;
-				publicMessages[count - 1] = yml.getString(playerpath + ".PM" + count);
-			}
-			am.setPublicMessages(publicMessages);
+	protected static boolean checkPublicMessages(String playerpath, YamlConfiguration yml, AdvancedMessages am) {
+		final String path = playerpath + ".PM";
+		if (yml.contains(path + "1")) {
+			am.setPublicMessages(PLMToolbox.getAdvancedMessages(path, yml));
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	private String[] getChannels() {
-		if (advancedMessagesYML.contains(playerpath + ".CH")) {
-			String[] channels = advancedMessagesYML.getString(playerpath + ".CH").split(", ");
-			return channels;
-		} else {
-			return null;
+	protected static ArrayList<MessageData> getJoinMessages(YamlConfiguration yml, long difference, long lastLogin, final String playerpath) {
+		ArrayList<MessageData> messages = new ArrayList<MessageData>();
+		String[] channels = getChannels(playerpath, yml);
+		if (lastLogin == 0L && yml.contains(playerpath + ".FM1")) {
+			ArrayList<String> al = PLMToolbox.getAllMessages(playerpath + ".FM", yml);
+			for (String text : al) {
+				messages.add(new MessageData(text, channels, SectionTypes.PLAYER, SectionSubTypes.FIRSTMESSAGE));
+			}
 		}
+		if (yml.contains(playerpath + ".JM1")) {
+			ArrayList<String> al = PLMToolbox.getAllMessages(playerpath + ".JM", yml);
+			for (String text : al) {
+				messages.add(new MessageData(text, channels, SectionTypes.PLAYER, SectionSubTypes.JOINMESSAGE));
+			}
+		}
+		if (yml.contains(playerpath + ".BM1")) {
+			String text = PLMToolbox.getBackMessage(yml, playerpath, difference);
+			if (text != null) {
+				messages.add(new MessageData(text, channels, SectionTypes.PLAYER, SectionSubTypes.BACKMESSAGE));
+			}
+		}
+		return messages;
 	}
 
-	private String[] getChannels(String playerpath) {
-		if (advancedMessagesYML.contains(playerpath + ".CH")) {
-			String[] channels = advancedMessagesYML.getString(playerpath + ".CH").split(", ");
+	protected static ArrayList<MessageData> getQuitMessages(YamlConfiguration yml, String playerpath) {
+		ArrayList<MessageData> messages = new ArrayList<MessageData>();
+		String[] channels = getChannels(playerpath, yml);
+		if (yml.contains(playerpath + ".QM1")) {
+			ArrayList<String> al = PLMToolbox.getAllMessages(playerpath + ".QM", yml);
+			for (String text : al) {
+				messages.add(new MessageData(text, channels, SectionTypes.PLAYER, SectionSubTypes.QUITMESSAGE));
+			}
+		}
+		return messages;
+	}
+
+	private static String[] getChannels(String playerpath, YamlConfiguration yml) {
+		if (yml.contains(playerpath + ".CH")) {
+			String[] channels = yml.getString(playerpath + ".CH").split(", ");
 			return channels;
 		} else {
 			return null;

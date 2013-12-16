@@ -2,6 +2,9 @@ package com.gmail.fantasticskythrow.messages;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Random;
+
 import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -11,6 +14,8 @@ import com.gmail.fantasticskythrow.PLM;
 import com.gmail.fantasticskythrow.configuration.ExtendedYamlConfiguration;
 import com.gmail.fantasticskythrow.other.MessageData;
 import com.gmail.fantasticskythrow.other.PLMLogger;
+import com.gmail.fantasticskythrow.other.SectionSubTypes;
+import com.gmail.fantasticskythrow.other.SectionTypes;
 
 public class AdvancedMessages {
 
@@ -93,17 +98,13 @@ public class AdvancedMessages {
 
 	//Join Section
 
-	/**
-	 * 
-	 * @param p
-	 * @return
-	 */
 	protected MessageData getJoinMessage(Player p) {
 		/*
 		 * Error -> Skips message checking
 		 */
 		if (errorStatus == true) {
-			return new MessageData("&4An error has occurred at the messages file! &e%playername joined", null);
+			return new MessageData("&4An error has occurred at the messages file! &e%playername joined", null, SectionTypes.ERROR,
+					SectionSubTypes.FILEERROR);
 		} else
 		/*
 		 * No error -> Looking for fitting message
@@ -114,72 +115,150 @@ public class AdvancedMessages {
 			String groupname = permission.getPlayerGroups(p)[0];
 			String grouppath = String.format("Groups.%s", groupname);
 
-			long difference;
-			if (settings.getLastLogin(playername) != 0L) {
-				difference = System.currentTimeMillis() - settings.getLastLogin(playername);
-			} else {
-				difference = 0L;
-			}
-			if (playerS.checkFirstMessage(playerpath, difference, advancedMessagesYML, this)) {
-				mData.message = getReplacedWorld(mData.message, p);
-				return mData;
-			} else if (groupS.checkFirstMessage(grouppath, difference, advancedMessagesYML, this)) {
-				mData.message = getReplacedWorld(mData.message, p);
-				return mData;
-			} else if (defaultS.checkFirstMessage(difference, advancedMessagesYML, this)) {
-				mData.message = getReplacedWorld(mData.message, p);
-				return mData;
-			} else if (playerS.checkMessagesJoin(playername, playerpath, advancedMessagesYML, difference, this)) {
-				mData.message = getReplacedWorld(mData.message, p);
-				return mData;
-			} else if (groupS.checkMessagesJoin(grouppath, advancedMessagesYML, difference, this)) {
-				mData.message = getReplacedWorld(mData.message, p);
-				return mData;
-			} else if (defaultS.checkMessagesJoin(advancedMessagesYML, difference, this)) {
-				mData.message = getReplacedWorld(mData.message, p);
-				return mData;
+			long difference = settings.getDifference(playername);
+			if (PlayerSection.checkFirstMessage(playerpath, difference, advancedMessagesYML, this)) { //Player section, first message
+			} else if (GroupSection.checkFirstMessage(grouppath, difference, advancedMessagesYML, this)) { //Group section, first message
+			} else if (DefaultSection.checkFirstMessage(difference, advancedMessagesYML, this)) { //Default section, first message
+			} else if (playerS.checkMessagesJoin(playername, playerpath, advancedMessagesYML, difference, this)) { //Player section, back/join message
+			} else if (groupS.checkMessagesJoin(grouppath, advancedMessagesYML, difference, this)) { //Group section, back/join message
+			} else if (defaultS.checkMessagesJoin(advancedMessagesYML, difference, this)) { //Default section, back/join message
 			} else {
 				plmLogger.logWarning("[PLM] No path found for " + p.getName() + ". Using default messages");
-				return new MessageData("&e%playername joined the game", null);
+				mData = new MessageData("&e%playername joined the game", null, SectionTypes.ERROR, SectionSubTypes.NOPATH);
 			}
+			mData.message = getReplacedWorld(mData.message, p);
+			return mData;
 		}
 	}
 
 	//Quit Section
 
-	/**
-	 * 
-	 * @param p
-	 * @return
-	 */
 	protected MessageData getQuitMessage(Player p) {
 		String playername = p.getName().toLowerCase();
 		String playerpath = String.format("players.%s", playername);
 		String groupname = permission.getPlayerGroups(p)[0];
 		String grouppath = String.format("Groups.%s", groupname);
 		if (errorStatus == true) {
-			return new MessageData("&e%playername left the game", null);
+			mData = new MessageData("&e%playername left the game", null, SectionTypes.ERROR, SectionSubTypes.FILEERROR);
 		} else if (playerS.checkMessagesQuit(playername, playerpath, advancedMessagesYML, this)) {
-			mData.message = getReplacedWorld(mData.message, p);
-			return mData;
 		} else if (groupS.checkMessagesQuit(grouppath, advancedMessagesYML, this)) {
-			mData.message = getReplacedWorld(mData.message, p);
-			return mData;
 		} else if (defaultS.checkMessagesQuit(advancedMessagesYML, this)) {
-			mData.message = getReplacedWorld(mData.message, p);
-			return mData;
 		} else {
 			plmLogger.logWarning("[PLM] No path found for " + p.getName() + ". Using default messages");
-			return new MessageData("&e%playername left the game", null);
+			mData = new MessageData("&e%playername left the game", null, SectionTypes.ERROR, SectionSubTypes.NOPATH);
+		}
+		mData.message = getReplacedWorld(mData.message, p);
+		return mData;
+	}
+
+	protected MessageData getRandomJoinMessage(Player p) {
+		/*
+		 * Error -> Skips message checking
+		 */
+		if (errorStatus == true) {
+			return new MessageData("&4An error has occurred at the messages file! &e%playername joined", null, SectionTypes.ERROR,
+					SectionSubTypes.FILEERROR);
+		} else
+		/*
+		 * No error -> Looking for fitting messages
+		 */
+		{
+			final String playername = p.getName().toLowerCase();
+			final String playerpath = String.format("players.%s", playername);
+			final String groupname = permission.getPlayerGroups(p)[0];
+			final String grouppath = String.format("Groups.%s", groupname);
+			final ArrayList<MessageData> messages = new ArrayList<MessageData>();
+			final long lastLogin = settings.getLastLogin(playername);
+			final long difference = settings.getDifference(playername);
+
+			ArrayList<MessageData> pm = PlayerSection.getJoinMessages(advancedMessagesYML, difference, lastLogin, playerpath);
+			ArrayList<MessageData> gm = GroupSection.getJoinMessages(advancedMessagesYML, difference, lastLogin, grouppath);
+			ArrayList<MessageData> dm = DefaultSection.getJoinMessages(advancedMessagesYML, difference, lastLogin);
+			if (!pm.isEmpty()) {
+				messages.addAll(pm);
+			}
+			if (!gm.isEmpty()) {
+				messages.addAll(gm);
+			}
+			if (!dm.isEmpty()) {
+				messages.addAll(dm);
+			}
+			/*
+			 * Selecting one of the messages randomly. If no message was found -> Error message
+			 */
+			if (!messages.isEmpty()) {
+				int current = 0;
+				for (MessageData md : messages) { //Message Debugging. Prints all messages to the console
+					current++;
+					this.plmLogger.logDebug("Message " + current + ": " + md.message);
+				}
+				int length = messages.size();
+				int resultIndex;
+				Random r = new Random();
+				resultIndex = r.nextInt(length - 1);
+				mData = messages.get(resultIndex);
+			} else {
+				plmLogger.logWarning("[PLM] No path found for " + p.getName() + ". Using default messages");
+				mData = new MessageData("&e%playername joined the game", null, SectionTypes.ERROR, SectionSubTypes.NOPATH);
+			}
+
+			mData.message = getReplacedWorld(mData.message, p);
+			return mData;
 		}
 	}
 
-	private String getReplacedWorld(String message, Player p) {
-		if (advancedMessagesYML.contains("World names." + p.getWorld().getName())) {
-			message = message.replaceAll("%world", advancedMessagesYML.getString("World names." + p.getWorld().getName()));
-			message = message.replaceAll("%World", advancedMessagesYML.getString("World names." + p.getWorld().getName()));
+	protected MessageData getRandomQuitMessage(Player p) {
+		/*
+		 * Error -> Skips message checking
+		 */
+		if (errorStatus == true) {
+			return new MessageData("&4An error has occurred at the messages file! &e%playername left the game", null, SectionTypes.ERROR,
+					SectionSubTypes.FILEERROR);
+		} else
+		/*
+		 * No error -> Looking for fitting messages
+		 */
+		{
+			final String playername = p.getName().toLowerCase();
+			final String playerpath = String.format("players.%s", playername);
+			final String groupname = permission.getPlayerGroups(p)[0];
+			final String grouppath = String.format("Groups.%s", groupname);
+			final ArrayList<MessageData> messages = new ArrayList<MessageData>();
+
+			ArrayList<MessageData> pm = PlayerSection.getQuitMessages(advancedMessagesYML, playerpath);
+			ArrayList<MessageData> gm = GroupSection.getQuitMessages(advancedMessagesYML, grouppath);
+			ArrayList<MessageData> dm = DefaultSection.getQuitMessages(advancedMessagesYML);
+			if (!pm.isEmpty()) {
+				messages.addAll(pm);
+			}
+			if (!gm.isEmpty()) {
+				messages.addAll(gm);
+			}
+			if (!dm.isEmpty()) {
+				messages.addAll(dm);
+			}
+			/*
+			 * Selecting one of the messages randomly. If no message was found -> Error message
+			 */
+			if (!messages.isEmpty()) {
+				int current = 0;
+				for (MessageData md : messages) { //Message Debugging. Prints all messages to the console
+					current++;
+					this.plmLogger.logDebug("Message " + current + ": " + md.message);
+				}
+				int length = messages.size();
+				int resultIndex;
+				Random r = new Random();
+				resultIndex = r.nextInt(length - 1);
+				mData = messages.get(resultIndex);
+			} else {
+				plmLogger.logWarning("[PLM] No path found for " + p.getName() + ". Using default messages");
+				mData = new MessageData("&e%playername left the game", null, SectionTypes.ERROR, SectionSubTypes.NOPATH);
+			}
+
+			mData.message = getReplacedWorld(mData.message, p);
+			return mData;
 		}
-		return message;
 	}
 
 	protected void setMessage(MessageData mData) {
@@ -190,10 +269,6 @@ public class AdvancedMessages {
 		}
 	}
 
-	/*
-	 * Welcome messages
-	 */
-
 	protected String[] getWelcomeMessages(Player p) {
 		String groupname = permission.getPlayerGroups(p)[0];
 		String grouppath = String.format("Groups.%s", groupname);
@@ -201,17 +276,17 @@ public class AdvancedMessages {
 		String playerpath = String.format("players.%s", playername);
 		if (errorStatus == true) {
 			return emptyMessages;
-		} else if (playerS.checkWelcomeMessages(playerpath, advancedMessagesYML, this)) {
+		} else if (PlayerSection.checkWelcomeMessages(playerpath, advancedMessagesYML, this)) {
 			for (int i = 0; i < welcomeMessages.length; i++) {
 				welcomeMessages[i] = getReplacedWorld(welcomeMessages[i], p);
 			}
 			return welcomeMessages;
-		} else if (groupS.checkWelcomeMessages(grouppath, advancedMessagesYML, this)) {
+		} else if (GroupSection.checkWelcomeMessages(grouppath, advancedMessagesYML, this)) {
 			for (int i = 0; i < welcomeMessages.length; i++) {
 				welcomeMessages[i] = getReplacedWorld(welcomeMessages[i], p);
 			}
 			return welcomeMessages;
-		} else if (defaultS.checkWelcomeMessages(advancedMessagesYML, this)) {
+		} else if (DefaultSection.checkWelcomeMessages(advancedMessagesYML, this)) {
 			for (int i = 0; i < welcomeMessages.length; i++) {
 				welcomeMessages[i] = getReplacedWorld(welcomeMessages[i], p);
 			}
@@ -232,17 +307,17 @@ public class AdvancedMessages {
 		String playerpath = String.format("players.%s", playername);
 		if (errorStatus == true) {
 			return emptyMessages;
-		} else if (playerS.checkPublicMessages(playerpath, advancedMessagesYML, this)) {
+		} else if (PlayerSection.checkPublicMessages(playerpath, advancedMessagesYML, this)) {
 			for (int i = 0; i < publicMessages.length; i++) {
 				publicMessages[i] = getReplacedWorld(publicMessages[i], p);
 			}
 			return publicMessages;
-		} else if (groupS.checkPublicMessages(grouppath, advancedMessagesYML, this)) {
+		} else if (GroupSection.checkPublicMessages(grouppath, advancedMessagesYML, this)) {
 			for (int i = 0; i < publicMessages.length; i++) {
 				publicMessages[i] = getReplacedWorld(publicMessages[i], p);
 			}
 			return publicMessages;
-		} else if (defaultS.checkPublicMessages(advancedMessagesYML, this)) {
+		} else if (DefaultSection.checkPublicMessages(advancedMessagesYML, this)) {
 			for (int i = 0; i < publicMessages.length; i++) {
 				publicMessages[i] = getReplacedWorld(publicMessages[i], p);
 			}
@@ -254,5 +329,13 @@ public class AdvancedMessages {
 
 	protected void setPublicMessages(String[] publicMessages) {
 		this.publicMessages = publicMessages;
+	}
+
+	private String getReplacedWorld(String message, Player p) {
+		if (advancedMessagesYML.contains("World names." + p.getWorld().getName())) {
+			message = message.replaceAll("%world", advancedMessagesYML.getString("World names." + p.getWorld().getName()));
+			message = message.replaceAll("%World", advancedMessagesYML.getString("World names." + p.getWorld().getName()));
+		}
+		return message;
 	}
 }

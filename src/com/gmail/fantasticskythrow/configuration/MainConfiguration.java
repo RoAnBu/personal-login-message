@@ -15,7 +15,7 @@ public class MainConfiguration {
 	private final File cfgData;
 
 	private boolean pluginStatus = true, usepermissionsGeneral, usepermissionsPM, fakejoinmessage, fakequitmessage, advancedStatus, debugStatus,
-			useChannels;
+			useChannels, useRandom;
 	public String second, seconds, minute, minutes, hour, hours, day, days, month, months, noLastLogin;
 	private int delay;
 	private List<String> channels;
@@ -47,6 +47,7 @@ public class MainConfiguration {
 			cfg.addDefault("advancedmessages.month", "month");
 			cfg.addDefault("advancedmessages.months", "months");
 			cfg.addDefault("advancedmessages.no last login", "no last login");
+			cfg.addDefault("advancedmessages.userandom", "false");
 			cfg.addDefault("Welcome messages.delayms", "200");
 			cfg.addDefault("Public messages.usepermissions", "false");
 			cfg.addDefault("VanishNoPacket.usefakejoinmessage", "false");
@@ -104,6 +105,10 @@ public class MainConfiguration {
 				useChannels = true;
 			else
 				useChannels = false;
+			if (cfg.getString("advancedmessages.userandom").equalsIgnoreCase("true"))
+				useRandom = true;
+			else
+				useRandom = false;
 			setInternalDelay();
 			channels = cfg.getStringList("Channels");
 		} catch (Exception e) {
@@ -166,6 +171,10 @@ public class MainConfiguration {
 
 	public List<String> getChannels() {
 		return channels;
+	}
+
+	public boolean getUseRandom() {
+		return useRandom;
 	}
 
 }

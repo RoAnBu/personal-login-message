@@ -1,5 +1,5 @@
 package com.gmail.fantasticskythrow.other;
 
 public enum SectionTypes {
-	DEFAULT, PLAYER, GROUP
+	DEFAULT, PLAYER, GROUP, ERROR
 }

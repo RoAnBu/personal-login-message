@@ -85,6 +85,15 @@ public class PLMFile {
 		}
 	}
 
+	public long getDifference(String playername) {
+		final long lastLogin = getLastLogin(playername);
+		if (lastLogin != 0L) {
+			return (long) (System.currentTimeMillis() - lastLogin);
+		} else {
+			return 0L;
+		}
+	}
+
 	public int getPlayerLogins(String playername) {
 		final String path = String.format("logins.%s", playername);
 		PConfig = YamlConfiguration.loadConfiguration(PLMFileData);

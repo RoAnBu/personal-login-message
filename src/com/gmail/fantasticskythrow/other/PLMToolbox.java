@@ -1,9 +1,13 @@
 package com.gmail.fantasticskythrow.other;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.Server;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import com.gmail.fantasticskythrow.PLM;
@@ -380,7 +384,7 @@ public class PLMToolbox {
 		}
 		return text;
 	}
-	
+
 	public static String getReplacedPrefix(String text, Chat chat, Player player) {
 		if (chat != null && text.contains("%prefix")) {
 			String prefix = chat.getPlayerPrefix(player);
@@ -392,7 +396,7 @@ public class PLMToolbox {
 			return text.replaceAll("%prefix", "");
 		}
 	}
-	
+
 	public static String getReplacedSuffix(String text, Chat chat, Player player) {
 		if (chat != null && text.contains("%suffix")) {
 			String suffix = chat.getPlayerSuffix(player);
@@ -404,8 +408,9 @@ public class PLMToolbox {
 			return text.replaceAll("%suffix", "");
 		}
 	}
-	
-	public static String getReplacedStandardPlaceholders(String text, Player player, Chat chat, Permission permission, PLM plugin, PLMFile plmFile, VanishNoPacketManager vnpHandler) {
+
+	public static String getReplacedStandardPlaceholders(String text, Player player, Chat chat, Permission permission, PLM plugin, PLMFile plmFile,
+			VanishNoPacketManager vnpHandler) {
 		text = getReplacedPlayername(text, player);
 		text = getReplacedChatplayername(text, chat, player);
 		text = getReplacedGroup(text, permission, player);
@@ -419,8 +424,9 @@ public class PLMToolbox {
 		text = getReplacedSuffix(text, chat, player);
 		return text;
 	}
-	
-	public static String getReplacedComplexPlaceholders(String text, Player player, Chat chat, PLM plugin, PLMFile plmFile, VanishNoPacketManager vnpHandler, Permission permission) {
+
+	public static String getReplacedComplexPlaceholders(String text, Player player, Chat chat, PLM plugin, PLMFile plmFile,
+			VanishNoPacketManager vnpHandler, Permission permission) {
 		text = getReplacedPlayername(text, player);
 		text = getReplacedChatplayername(text, chat, player);
 		text = getReplacedWorld(text, player);
@@ -437,5 +443,75 @@ public class PLMToolbox {
 		text = getReplacedPrefix(text, chat, player);
 		text = getReplacedSuffix(text, chat, player);
 		return text;
+	}
+
+	public static String getMessage(String path, YamlConfiguration yml) {
+		int count = 2;
+		while (yml.contains(path + count)) {
+			count++;
+		}
+		Random r = new Random();
+		int n = r.nextInt(count - 1) + 1;
+		return yml.getString(path + n);
+	}
+
+	public static ArrayList<String> getAllMessages(String path, YamlConfiguration yml) {
+		ArrayList<String> messages = new ArrayList<String>();
+		int count = 1;
+		while (yml.contains(path + count)) {
+			messages.add(yml.getString(path + count));
+			count++;
+		}
+		return messages;
+	}
+
+	public static String[] getAdvancedMessages(final String path, YamlConfiguration yml) {
+		int count = 2;
+		while (yml.contains(path + count)) {
+			count++;
+		}
+		String[] messages = new String[count - 1];
+		while (count > 1) {
+			count--;
+			messages[count - 1] = yml.getString(path + count);
+		}
+		return messages;
+	}
+
+	public static String getBackMessage(final YamlConfiguration yml, final String path, long difference) {
+		String returnMessage = null;
+		if (yml.contains(path + ".BM1")) {
+			int backMessageCount = 2;
+			while (yml.contains(path + ".BM" + backMessageCount)) {
+				backMessageCount++;
+			}
+			boolean a = false;
+			int i = 1;
+			while (i < backMessageCount && a == false && difference > 0) {
+				String currentPath = path + ".BM" + i + "T";
+				long time = 0;
+				if (yml.contains(currentPath)) {
+					try {
+						time = Long.parseLong(yml.getString(currentPath)) * 60000;
+					} catch (NumberFormatException e) {
+						System.out.println("[PLM] Number format at " + currentPath + " is invalid!!");
+						time = 0L;
+					}
+					if (time > 0 && time <= difference) {
+						returnMessage = yml.getString(path + ".BM" + i);
+						a = true;
+					} else if (time < 0 && (time * -1) >= difference) {
+						returnMessage = yml.getString(path + ".BM" + i);
+						a = true;
+					}
+				} else {
+					//Quit while
+					a = true;
+					System.out.println("[PLM] Couldn't find the time path for back message " + i + " at " + currentPath + "'s personal section!");
+				}
+				i++;
+			}
+		}
+		return returnMessage;
 	}
 }
