@@ -20,12 +20,12 @@ public class PLMReloadCommand {
 					e.printStackTrace();
 				}
 			} else {
-				//Wrong syntax SPIELER
+				//Wrong syntax PLAYER
 				sender.sendMessage(ChatColor.RED + "/plm reload");
 			}
 		} else {
 			if (args.length == 1) {
-				//Correct syntax KONSOLE
+				//Correct syntax CONSOLE
 				try {
 					plugin.reloadMessages();
 					System.out.println("[PLM] Advanced Messages Mode reloaded");
@@ -33,7 +33,7 @@ public class PLMReloadCommand {
 					e.printStackTrace();
 				}
 			} else {
-				//Wrong syntax KONSOLE
+				//Wrong syntax CONSOLE
 				System.out.println("Too many arguments. Usage: /plm reload");
 			}
 		}
