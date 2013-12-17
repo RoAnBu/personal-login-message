@@ -135,10 +135,6 @@ public class Messages {
 				plmLogger.logDebug("PLM's join message is: " + message + " Path: " + mData.type + " | " + mData.subType);
 			}
 
-		} catch (NullPointerException ne) {
-			plmLogger.logError("[PLM] A problem has occurred at PlayerJoinEvent!");
-			ne.printStackTrace();
-			e.setJoinMessage(null);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			plmLogger.logError("[PLM] An unknown error has occurred at PlayerJoinEvent!");
@@ -197,9 +193,6 @@ public class Messages {
 				} else {
 					plmLogger.logDebug("PLM's quit message is: " + message + " Path: " + mData.type + " | " + mData.subType);
 				}
-			} catch (NullPointerException ne) {
-				plmLogger.logError("[PLM] A problem has occurred at PlayerQuitEvent!");
-				e.setQuitMessage(null);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				plmLogger.logError("[PLM] An unknown error has occurred at PlayerQuitEvent!");
@@ -234,12 +227,7 @@ public class Messages {
 			} else if (!PLMToolbox.getPermissionQuit(cfg.getUsePermGeneral(), player) || message.equalsIgnoreCase("off")) {
 				e.setLeaveMessage(null);
 			}
-		} catch (NullPointerException ne) {
-			plmLogger.logError("[PLM] A problem has occurred at PlayerKickEvent!");
-			e.setLeaveMessage(null);
-		}
-
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 			plmLogger.logError("[PLM] An unknown error has occurred at PlayerQuitEvent!");
 			plmLogger.logError("[PLM] Please make sure that all configuration files are available");
