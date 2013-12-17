@@ -206,7 +206,12 @@ public class Messages {
 			vnpHandler.removeJoinedPlayer(e.getPlayer().getName());
 			this.player = e.getPlayer();
 			this.playername = e.getPlayer().getName().toLowerCase();
-			MessageData mData = getMessagesQuit();
+			MessageData mData;
+			if (!cfg.getUseRandom()) {
+				mData = getMessagesQuit();
+			} else {
+				mData = getRandomQuitMessages();
+			}
 			String message = ChatColor.translateAlternateColorCodes('&', mData.message);
 			if (PLMToolbox.getPermissionQuit(cfg.getUsePermGeneral(), player) && !(message.equalsIgnoreCase("off"))) {
 
@@ -240,7 +245,12 @@ public class Messages {
 				if (e.isVanishing() && cfg.getUseFakeQuitMsg()) { // -> Quit message (Fake)
 					this.player = e.getPlayer();
 					this.playername = e.getPlayer().getName().toLowerCase();
-					MessageData mData = getMessagesQuit();
+					MessageData mData;
+					if (!cfg.getUseRandom()) {
+						mData = getMessagesQuit();
+					} else {
+						mData = getRandomQuitMessages();
+					}
 					String message = ChatColor.translateAlternateColorCodes('&', mData.message);
 					if (PLMToolbox.getPermissionQuit(cfg.getUsePermGeneral(), player) && !(message.equalsIgnoreCase("off"))) {
 
@@ -260,7 +270,12 @@ public class Messages {
 				} else if (!e.isVanishing() && cfg.getUseFakeJoinMsg()) { // Join  message (Fake)
 					this.player = e.getPlayer();
 					this.playername = e.getPlayer().getName().toLowerCase();
-					MessageData mData = getMessagesJoin();
+					MessageData mData;
+					if (!cfg.getUseRandom()) {
+						mData = getMessagesJoin();
+					} else {
+						mData = getRandomJoinMessages();
+					}
 					String message = ChatColor.translateAlternateColorCodes('&', mData.message);
 					if (PLMToolbox.getPermissionJoin(cfg.getUsePermGeneral(), player) && !message.equalsIgnoreCase("off")) {
 
