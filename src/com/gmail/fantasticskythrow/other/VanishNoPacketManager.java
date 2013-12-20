@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.kitteh.vanish.staticaccess.VanishNoPacket;
+import org.kitteh.vanish.VanishPlugin;
 
 import com.gmail.fantasticskythrow.PLM;
 
@@ -38,7 +38,7 @@ public class VanishNoPacketManager {
 		Plugin pl = plugin.getServer().getPluginManager().getPlugin("VanishNoPacket");
 		if (pl != null) {
 			try {
-				return VanishNoPacket.isVanished(name);
+				return ((VanishPlugin) pl).getManager().isVanished(name);
 			} catch (Exception e) {
 				return false;
 			}
