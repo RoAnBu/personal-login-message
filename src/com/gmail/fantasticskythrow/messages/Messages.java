@@ -95,51 +95,7 @@ public class Messages {
 	}
 
 	protected void onPlayerJoinEvent(PlayerJoinEvent e) {
-		try {
-			vnpHandler.addJoinedPlayer(e.getPlayer().getName());
-			this.player = e.getPlayer();
-			this.playername = e.getPlayer().getName().toLowerCase();
-			plmFile.setPlayerLogin(playername);
-			MessageData mData;
-			if (!cfg.getUseRandom()) {
-				mData = getMessagesJoin();
-			} else {
-				mData = getRandomJoinMessages();
-			}
-			String message = ChatColor.translateAlternateColorCodes('&', mData.message);
-			boolean isVanished = vnpHandler.isVanished(e.getPlayer().getName());
-			if (PLMToolbox.getPermissionJoin(cfg.getUsePermGeneral(), player) && !message.equalsIgnoreCase("off") && !isVanished) {
-
-				//Sending/activating message
-				if (!cfg.getUseChannels() && mData.channels == null) { //No channel use anyway
-					e.setJoinMessage(message);
-				} else if (mData.channels == null) { //No channels given with the section
-					if (!sendMessageToConfigChannels(message)) { // Returns false if the Default channel is activated
-						e.setJoinMessage(message); // Brings the message to the public channel, too
-					} else { // Disable join message because it's not in the channels
-						e.setJoinMessage(null);
-					}
-				} else { //Specified channels from section are given
-					sendMessageToChannels(message, mData.channels);
-					e.setJoinMessage(null);
-				}
-
-			} else if (!isVanished) {// Cases to disable join message
-				if (!PLMToolbox.getPermissionJoin(cfg.getUsePermGeneral(), player) || message.equalsIgnoreCase("off")) {
-					e.setJoinMessage(null);
-				}
-			}
-			if (mData.type == null) {
-				plmLogger.logDebug("PLM's join message is: " + message);
-			} else {
-				plmLogger.logDebug("PLM's join message is: " + message + " Path: " + mData.type + " | " + mData.subType);
-			}
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			plmLogger.logError("[PLM] An unknown error has occurred at PlayerJoinEvent!");
-			plmLogger.logError("[PLM] Please make sure that all configuration files are available");
-		}
+		e.setJoinMessage(getFinalJoinMessage(e.getPlayer(), false));
 	}
 
 	protected void onEarlyQuitEvent(PlayerQuitEvent e) {
@@ -148,6 +104,7 @@ public class Messages {
 			boolean isVanished = vnpHandler.isVanished(e.getPlayer().getName());
 			if (isVanished) {
 				alreadyQuit = true;
+				plmLogger.logDebug("[PLM] No quit message because the player was vanished!");
 			}
 			vnpHandler.removeJoinedPlayer(e.getPlayer().getName());
 		} catch (Exception ex) {
@@ -157,55 +114,99 @@ public class Messages {
 
 	protected void onLatePlayerQuitEvent(PlayerQuitEvent e) {
 		if (!alreadyQuit) {
-			try {
-				this.player = e.getPlayer();
-				this.playername = e.getPlayer().getName().toLowerCase();
-				MessageData mData;
-				if (!cfg.getUseRandom()) {
-					mData = getMessagesQuit();
-				} else {
-					mData = getRandomQuitMessages();
-				}
-				String message = ChatColor.translateAlternateColorCodes('&', mData.message);
-				if (PLMToolbox.getPermissionQuit(cfg.getUsePermGeneral(), player) && !(message.equalsIgnoreCase("off"))) {
-
-					//Sending/activating message
-					if (!cfg.getUseChannels() && mData.channels == null) { //No channel use anyway
-						e.setQuitMessage(message);
-					} else if (mData.channels == null) { //No channels given with the section
-						if (!sendMessageToConfigChannels(message)) { // Returns false if the Default channel is activated
-							e.setQuitMessage(message); // Brings the message to the public channel, too
-						} else { // Disable quit message because it's not in the channels
-							e.setQuitMessage(null);
-						}
-					} else { //Specified channels from section are given
-						sendMessageToChannels(message, mData.channels);
-						e.setQuitMessage(null);
-					}
-
-				} else if (!PLMToolbox.getPermissionQuit(cfg.getUsePermGeneral(), player) || message.equalsIgnoreCase("off")) {
-					e.setQuitMessage(null);
-				}
-
-				plmFile.setPlayerQuitTime(e.getPlayer().getName().toLowerCase());
-				if (mData.type == null) {
-					plmLogger.logDebug("PLM's quit message is: " + message);
-				} else {
-					plmLogger.logDebug("PLM's quit message is: " + message + " Path: " + mData.type + " | " + mData.subType);
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-				plmLogger.logError("[PLM] An unknown error has occurred at PlayerQuitEvent!");
-				plmLogger.logError("[PLM] Please make sure that all configuration files are available");
-			}
+			e.setQuitMessage(getFinalQuitMessage(e.getPlayer()));
 		}
 	}
 
 	protected void onPlayerKickEvent(PlayerKickEvent e) {
+		e.setLeaveMessage(getFinalQuitMessage(e.getPlayer()));
+	}
+
+	protected void onVanishStatusChangeEvent(VanishStatusChangeEvent e) {
 		try {
-			vnpHandler.removeJoinedPlayer(e.getPlayer().getName());
-			this.player = e.getPlayer();
-			this.playername = e.getPlayer().getName().toLowerCase();
+			if (!vnpHandler.isJustJoinedPlayer(e.getPlayer().getName())) {
+				if (e.isVanishing() && cfg.getUseFakeQuitMsg()) { // -> Quit message (Fake)
+					String fakeQuitMessage = getFinalQuitMessage(e.getPlayer());
+					if (fakeQuitMessage != null) {
+						plugin.getServer().broadcastMessage(fakeQuitMessage);
+					}
+					plmFile.setPlayerQuitTime(e.getPlayer().getName().toLowerCase());
+				} else if (!e.isVanishing() && cfg.getUseFakeJoinMsg()) { // Join  message (Fake)
+					String fakeJoinMessage = getFinalJoinMessage(e.getPlayer(), true);
+					if (fakeJoinMessage != null) {
+						plugin.getServer().broadcastMessage(fakeJoinMessage);
+					}
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			plmLogger.logError("[PLM] An unknown error has occurred at VanishStatusChangeEvent!");
+			plmLogger.logError("[PLM] Please make sure that all configuration files are available");
+		}
+	}
+
+	private String getFinalJoinMessage(Player player, final boolean ignoreVanish) {
+		try {
+			String joinMessage = null;
+			vnpHandler.addJoinedPlayer(player.getName());
+			this.player = player;
+			this.playername = player.getName().toLowerCase();
+			plmFile.setPlayerLogin(playername);
+			MessageData mData;
+			if (!cfg.getUseRandom()) {
+				mData = getMessagesJoin();
+			} else {
+				mData = getRandomJoinMessages();
+			}
+			String message = ChatColor.translateAlternateColorCodes('&', mData.message);
+			boolean isVanished;
+			if (ignoreVanish) {
+				isVanished = false;
+			} else {
+				isVanished = vnpHandler.isVanished(player.getName());
+			}
+			if (PLMToolbox.getPermissionJoin(cfg.getUsePermGeneral(), player) && !message.equalsIgnoreCase("off") && !isVanished) {
+
+				//Sending/activating message
+				if (!cfg.getUseChannels() && mData.channels == null) { //No channel use anyway
+					joinMessage = message;
+				} else if (mData.channels == null) { //No channels given with the section
+					if (!sendMessageToConfigChannels(message)) { // Returns false if the Default channel is activated
+						joinMessage = message; // Brings the message to the public channel, too
+					} else { // Disable join message because it's not in the channels
+						joinMessage = null;
+					}
+				} else { //Specified channels from section are given
+					sendMessageToChannels(message, mData.channels);
+					joinMessage = null;
+				}
+
+			} else if (!isVanished) {// Cases to disable join message
+				if (!PLMToolbox.getPermissionJoin(cfg.getUsePermGeneral(), player) || message.equalsIgnoreCase("off")) {
+					joinMessage = null;
+				}
+			}
+			if (mData.type == null) {
+				plmLogger.logDebug("PLM's join message is: " + message);
+			} else {
+				plmLogger.logDebug("PLM's join message is: " + message + " Path: " + mData.type + " | " + mData.subType);
+			}
+
+			return joinMessage;
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			plmLogger.logError("[PLM] An unknown error has occurred at PlayerJoinEvent!");
+			plmLogger.logError("[PLM] Please make sure that all configuration files are available");
+			return null;
+		}
+	}
+
+	private String getFinalQuitMessage(Player player) {
+		try {
+			String quitMessage = null;
+			this.player = player;
+			this.playername = player.getName().toLowerCase();
 			MessageData mData;
 			if (!cfg.getUseRandom()) {
 				mData = getMessagesQuit();
@@ -217,86 +218,34 @@ public class Messages {
 
 				//Sending/activating message
 				if (!cfg.getUseChannels() && mData.channels == null) { //No channel use anyway
-					e.setLeaveMessage(message);
+					quitMessage = message;
 				} else if (mData.channels == null) { //No channels given with the section
 					if (!sendMessageToConfigChannels(message)) { // Returns false if the Default channel is activated
-						e.setLeaveMessage(message); // Brings the message to the public channel, too
-					} else { // Disable leave message because it's not in the channels
-						e.setLeaveMessage(null);
+						quitMessage = message; // Brings the message to the public channel, too
+					} else { // Disable quit message because it's not in the channels
+						quitMessage = null;
 					}
 				} else { //Specified channels from section are given
 					sendMessageToChannels(message, mData.channels);
-					e.setLeaveMessage(null);
+					quitMessage = null;
 				}
 
 			} else if (!PLMToolbox.getPermissionQuit(cfg.getUsePermGeneral(), player) || message.equalsIgnoreCase("off")) {
-				e.setLeaveMessage(null);
+				quitMessage = null;
 			}
+
+			plmFile.setPlayerQuitTime(player.getName().toLowerCase());
+			if (mData.type == null) {
+				plmLogger.logDebug("PLM's quit message is: " + message);
+			} else {
+				plmLogger.logDebug("PLM's quit message is: " + message + " Path: " + mData.type + " | " + mData.subType);
+			}
+			return quitMessage;
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			plmLogger.logError("[PLM] An unknown error has occurred at PlayerQuitEvent!");
 			plmLogger.logError("[PLM] Please make sure that all configuration files are available");
-		}
-	}
-
-	protected void onVanishStatusChangeEvent(VanishStatusChangeEvent e) {
-		try {
-			if (!vnpHandler.isJustJoinedPlayer(e.getPlayer().getName())) {
-				if (e.isVanishing() && cfg.getUseFakeQuitMsg()) { // -> Quit message (Fake)
-					this.player = e.getPlayer();
-					this.playername = e.getPlayer().getName().toLowerCase();
-					MessageData mData;
-					if (!cfg.getUseRandom()) {
-						mData = getMessagesQuit();
-					} else {
-						mData = getRandomQuitMessages();
-					}
-					String message = ChatColor.translateAlternateColorCodes('&', mData.message);
-					if (PLMToolbox.getPermissionQuit(cfg.getUsePermGeneral(), player) && !(message.equalsIgnoreCase("off"))) {
-
-						//Sending/activating message
-						if (!cfg.getUseChannels() && mData.channels == null) { //No channel use anyway
-							plugin.getServer().broadcastMessage(message);
-						} else if (mData.channels == null) { //No channels given with the section
-							if (!sendMessageToConfigChannels(message)) { // Returns false if the Default channel is activated
-								plugin.getServer().broadcastMessage(message);
-							}
-						} else { //Specified channels from section are given
-							sendMessageToChannels(message, mData.channels);
-						}
-
-					}
-					plmFile.setPlayerQuitTime(e.getPlayer().getName().toLowerCase());
-				} else if (!e.isVanishing() && cfg.getUseFakeJoinMsg()) { // Join  message (Fake)
-					this.player = e.getPlayer();
-					this.playername = e.getPlayer().getName().toLowerCase();
-					MessageData mData;
-					if (!cfg.getUseRandom()) {
-						mData = getMessagesJoin();
-					} else {
-						mData = getRandomJoinMessages();
-					}
-					String message = ChatColor.translateAlternateColorCodes('&', mData.message);
-					if (PLMToolbox.getPermissionJoin(cfg.getUsePermGeneral(), player) && !message.equalsIgnoreCase("off")) {
-
-						//Sending/activating message
-						if (!cfg.getUseChannels() && mData.channels == null) { //No channel use anyway
-							plugin.getServer().broadcastMessage(message);
-						} else if (mData.channels == null) { //No channels given with the section
-							if (!sendMessageToConfigChannels(message)) { // Returns false if the Default channel is activated
-								plugin.getServer().broadcastMessage(message);
-							}
-						} else { //Specified channels from section are given
-							sendMessageToChannels(message, mData.channels);
-						}
-
-					}
-				}
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			plmLogger.logError("[PLM] An unknown error has occurred at VanishStatusChangeEvent!");
-			plmLogger.logError("[PLM] Please make sure that all configuration files are available");
+			return null;
 		}
 	}
 
