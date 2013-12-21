@@ -249,7 +249,7 @@ public class Messages {
 		}
 	}
 
-	protected MessageData getMessagesJoin() {
+	private MessageData getMessagesJoin() {
 		String joinMessage;
 		MessageData mData;
 		/*
@@ -278,7 +278,7 @@ public class Messages {
 		return mData;
 	}
 
-	protected MessageData getMessagesQuit() {
+	private MessageData getMessagesQuit() {
 		String quitMessage;
 		MessageData mData;
 		if (advancedStatus == false) {
