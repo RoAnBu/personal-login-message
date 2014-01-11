@@ -445,6 +445,15 @@ public class PLMToolbox {
 		return text;
 	}
 
+	public static String[] getChannels(String path, YamlConfiguration yml) {
+		if (yml.contains(path + ".CH")) {
+			String[] channels = yml.getString(path + ".CH").split(", ");
+			return channels;
+		} else {
+			return null;
+		}
+	}
+
 	public static String getMessage(String path, YamlConfiguration yml) {
 		int count = 2;
 		while (yml.contains(path + count)) {

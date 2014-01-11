@@ -89,12 +89,14 @@ public final class DefaultSection {
 					}
 					if (time > 0 && time <= difference) {
 						String message = advancedMessagesYML.getString(defaultpath + ".BM" + i);
-						mData = new MessageData(message, getChannels(advancedMessagesYML), SectionTypes.DEFAULT, SectionSubTypes.BACKMESSAGE);
+						mData = new MessageData(message, PLMToolbox.getChannels(defaultpath, advancedMessagesYML), SectionTypes.DEFAULT,
+								SectionSubTypes.BACKMESSAGE);
 						a = true;
 						status = true;
 					} else if (time < 0 && (time * -1) >= difference) {
 						String message = advancedMessagesYML.getString(defaultpath + ".BM" + i);
-						mData = new MessageData(message, getChannels(advancedMessagesYML), SectionTypes.DEFAULT, SectionSubTypes.BACKMESSAGE);
+						mData = new MessageData(message, PLMToolbox.getChannels(defaultpath, advancedMessagesYML), SectionTypes.DEFAULT,
+								SectionSubTypes.BACKMESSAGE);
 						a = true;
 						status = true;
 					}
@@ -113,8 +115,8 @@ public final class DefaultSection {
 
 	private boolean standardJoinCase() {
 		if (advancedMessagesYML.contains(defaultpath + ".JM1")) {
-			mData = new MessageData(PLMToolbox.getMessage(defaultpath + ".JM", advancedMessagesYML), getChannels(advancedMessagesYML),
-					SectionTypes.DEFAULT, SectionSubTypes.JOINMESSAGE);
+			mData = new MessageData(PLMToolbox.getMessage(defaultpath + ".JM", advancedMessagesYML), PLMToolbox.getChannels(defaultpath,
+					advancedMessagesYML), SectionTypes.DEFAULT, SectionSubTypes.JOINMESSAGE);
 			return true;
 		} else {
 			return false;
@@ -124,8 +126,8 @@ public final class DefaultSection {
 	private boolean standardQuitCase() {
 
 		if (advancedMessagesYML.contains(defaultpath + ".QM1")) {
-			mData = new MessageData(PLMToolbox.getMessage(defaultpath + ".QM", advancedMessagesYML), getChannels(advancedMessagesYML),
-					SectionTypes.DEFAULT, SectionSubTypes.QUITMESSAGE);
+			mData = new MessageData(PLMToolbox.getMessage(defaultpath + ".QM", advancedMessagesYML), PLMToolbox.getChannels(defaultpath,
+					advancedMessagesYML), SectionTypes.DEFAULT, SectionSubTypes.QUITMESSAGE);
 			return true;
 		} else {
 			return false;
@@ -134,7 +136,7 @@ public final class DefaultSection {
 
 	protected static boolean checkFirstMessage(long lastLogin, YamlConfiguration yml, AdvancedMessages am) {
 		if (lastLogin == 0L && yml.contains("Default.FM1")) {
-			am.setMessage(new MessageData(PLMToolbox.getMessage("Default.FM", yml), getChannels(yml), SectionTypes.DEFAULT,
+			am.setMessage(new MessageData(PLMToolbox.getMessage("Default.FM", yml), PLMToolbox.getChannels(defaultpath, yml), SectionTypes.DEFAULT,
 					SectionSubTypes.FIRSTMESSAGE));
 			return true;
 		} else {
@@ -164,7 +166,7 @@ public final class DefaultSection {
 
 	protected static ArrayList<MessageData> getJoinMessages(YamlConfiguration yml, long difference, long lastLogin) {
 		ArrayList<MessageData> messages = new ArrayList<MessageData>();
-		String[] channels = getChannels(yml);
+		String[] channels = PLMToolbox.getChannels(defaultpath, yml);
 		if (lastLogin == 0L && yml.contains(defaultpath + ".FM1")) {
 			ArrayList<String> al = PLMToolbox.getAllMessages(defaultpath + ".FM", yml);
 			for (String text : al) {
@@ -188,7 +190,7 @@ public final class DefaultSection {
 
 	protected static ArrayList<MessageData> getQuitMessages(YamlConfiguration yml) {
 		ArrayList<MessageData> messages = new ArrayList<MessageData>();
-		String[] channels = getChannels(yml);
+		String[] channels = PLMToolbox.getChannels(defaultpath, yml);
 		if (yml.contains(defaultpath + ".QM1")) {
 			ArrayList<String> al = PLMToolbox.getAllMessages(defaultpath + ".QM", yml);
 			for (String text : al) {
@@ -196,14 +198,5 @@ public final class DefaultSection {
 			}
 		}
 		return messages;
-	}
-
-	private static String[] getChannels(YamlConfiguration yml) {
-		if (yml.contains(defaultpath + ".CH")) {
-			String[] channels = yml.getString(defaultpath + ".CH").split(", ");
-			return channels;
-		} else {
-			return null;
-		}
 	}
 }

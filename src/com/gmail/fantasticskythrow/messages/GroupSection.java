@@ -82,12 +82,14 @@ public final class GroupSection {
 					}
 					if (time > 0 && time <= difference) {
 						String message = advancedMessagesYML.getString(grouppath + ".BM" + i);
-						mData = new MessageData(message, getChannels(grouppath, advancedMessagesYML), SectionTypes.GROUP, SectionSubTypes.BACKMESSAGE);
+						mData = new MessageData(message, PLMToolbox.getChannels(grouppath, advancedMessagesYML), SectionTypes.GROUP,
+								SectionSubTypes.BACKMESSAGE);
 						a = true;
 						status = true;
 					} else if (time < 0 && (time * -1) >= difference) {
 						String message = advancedMessagesYML.getString(grouppath + ".BM" + i);
-						mData = new MessageData(message, getChannels(grouppath, advancedMessagesYML), SectionTypes.GROUP, SectionSubTypes.BACKMESSAGE);
+						mData = new MessageData(message, PLMToolbox.getChannels(grouppath, advancedMessagesYML), SectionTypes.GROUP,
+								SectionSubTypes.BACKMESSAGE);
 						a = true;
 						status = true;
 					}
@@ -106,8 +108,8 @@ public final class GroupSection {
 
 	private boolean standardJoinCase() {
 		if (advancedMessagesYML.contains(grouppath + ".JM1")) {
-			mData = new MessageData(PLMToolbox.getMessage(grouppath + ".JM", advancedMessagesYML), getChannels(grouppath, advancedMessagesYML),
-					SectionTypes.GROUP, SectionSubTypes.JOINMESSAGE);
+			mData = new MessageData(PLMToolbox.getMessage(grouppath + ".JM", advancedMessagesYML), PLMToolbox.getChannels(grouppath,
+					advancedMessagesYML), SectionTypes.GROUP, SectionSubTypes.JOINMESSAGE);
 			return true;
 		} else {
 			return false;
@@ -116,8 +118,8 @@ public final class GroupSection {
 
 	private boolean standardQuitCase() {
 		if (advancedMessagesYML.contains(grouppath + ".QM1")) {
-			mData = new MessageData(PLMToolbox.getMessage(grouppath + ".QM", advancedMessagesYML), getChannels(grouppath, advancedMessagesYML),
-					SectionTypes.GROUP, SectionSubTypes.QUITMESSAGE);
+			mData = new MessageData(PLMToolbox.getMessage(grouppath + ".QM", advancedMessagesYML), PLMToolbox.getChannels(grouppath,
+					advancedMessagesYML), SectionTypes.GROUP, SectionSubTypes.QUITMESSAGE);
 			return true;
 		} else {
 			return false;
@@ -126,7 +128,7 @@ public final class GroupSection {
 
 	protected static boolean checkFirstMessage(String grouppath, long lastLogin, YamlConfiguration yml, AdvancedMessages am) {
 		if (lastLogin == 0L && yml.contains(grouppath + ".FM1")) {
-			am.setMessage(new MessageData(PLMToolbox.getMessage(grouppath + ".FM", yml), getChannels(grouppath, yml), SectionTypes.GROUP,
+			am.setMessage(new MessageData(PLMToolbox.getMessage(grouppath + ".FM", yml), PLMToolbox.getChannels(grouppath, yml), SectionTypes.GROUP,
 					SectionSubTypes.FIRSTMESSAGE));
 			return true;
 		} else {
@@ -156,7 +158,7 @@ public final class GroupSection {
 
 	protected static ArrayList<MessageData> getJoinMessages(YamlConfiguration yml, long difference, long lastLogin, final String grouppath) {
 		ArrayList<MessageData> messages = new ArrayList<MessageData>();
-		String[] channels = getChannels(grouppath, yml);
+		String[] channels = PLMToolbox.getChannels(grouppath, yml);
 		if (lastLogin == 0L && yml.contains(grouppath + ".FM1")) {
 			ArrayList<String> al = PLMToolbox.getAllMessages(grouppath + ".FM", yml);
 			for (String text : al) {
@@ -180,7 +182,7 @@ public final class GroupSection {
 
 	protected static ArrayList<MessageData> getQuitMessages(YamlConfiguration yml, String grouppath) {
 		ArrayList<MessageData> messages = new ArrayList<MessageData>();
-		String[] channels = getChannels(grouppath, yml);
+		String[] channels = PLMToolbox.getChannels(grouppath, yml);
 		if (yml.contains(grouppath + ".QM1")) {
 			ArrayList<String> al = PLMToolbox.getAllMessages(grouppath + ".QM", yml);
 			for (String text : al) {
@@ -188,14 +190,5 @@ public final class GroupSection {
 			}
 		}
 		return messages;
-	}
-
-	private static String[] getChannels(String grouppath, YamlConfiguration yml) {
-		if (yml.contains(grouppath + ".CH")) {
-			String[] channels = yml.getString(grouppath + ".CH").split(", ");
-			return channels;
-		} else {
-			return null;
-		}
 	}
 }

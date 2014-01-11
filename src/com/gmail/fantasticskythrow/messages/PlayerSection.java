@@ -84,13 +84,13 @@ public final class PlayerSection {
 					}
 					if (time > 0 && time <= difference) {
 						String message = advancedMessagesYML.getString(playerpath + ".BM" + i);
-						mData = new MessageData(message, getChannels(playerpath, advancedMessagesYML), SectionTypes.PLAYER,
+						mData = new MessageData(message, PLMToolbox.getChannels(playerpath, advancedMessagesYML), SectionTypes.PLAYER,
 								SectionSubTypes.BACKMESSAGE);
 						a = true;
 						status = true;
 					} else if (time < 0 && (time * -1) >= difference) {
 						String message = advancedMessagesYML.getString(playerpath + ".BM" + i);
-						mData = new MessageData(message, getChannels(playerpath, advancedMessagesYML), SectionTypes.PLAYER,
+						mData = new MessageData(message, PLMToolbox.getChannels(playerpath, advancedMessagesYML), SectionTypes.PLAYER,
 								SectionSubTypes.BACKMESSAGE);
 						a = true;
 						status = true;
@@ -110,8 +110,8 @@ public final class PlayerSection {
 
 	private boolean standardJoinCase() {
 		if (advancedMessagesYML.contains(playerpath + ".JM1")) {
-			mData = new MessageData(PLMToolbox.getMessage(playerpath + ".JM", advancedMessagesYML), getChannels(playerpath, advancedMessagesYML),
-					SectionTypes.PLAYER, SectionSubTypes.JOINMESSAGE);
+			mData = new MessageData(PLMToolbox.getMessage(playerpath + ".JM", advancedMessagesYML), PLMToolbox.getChannels(playerpath,
+					advancedMessagesYML), SectionTypes.PLAYER, SectionSubTypes.JOINMESSAGE);
 			return true;
 		} else {
 			return false;
@@ -120,8 +120,8 @@ public final class PlayerSection {
 
 	private boolean standardQuitCase() {
 		if (advancedMessagesYML.contains(playerpath + ".QM1")) {
-			mData = new MessageData(PLMToolbox.getMessage(playerpath + ".QM", advancedMessagesYML), getChannels(playerpath, advancedMessagesYML),
-					SectionTypes.PLAYER, SectionSubTypes.QUITMESSAGE);
+			mData = new MessageData(PLMToolbox.getMessage(playerpath + ".QM", advancedMessagesYML), PLMToolbox.getChannels(playerpath,
+					advancedMessagesYML), SectionTypes.PLAYER, SectionSubTypes.QUITMESSAGE);
 			return true;
 		} else {
 			return false;
@@ -130,8 +130,8 @@ public final class PlayerSection {
 
 	protected static boolean checkFirstMessage(String playerpath, long lastLogin, YamlConfiguration yml, AdvancedMessages am) {
 		if (lastLogin == 0L && yml.contains(playerpath + ".FM1")) {
-			am.setMessage(new MessageData(PLMToolbox.getMessage(playerpath + ".FM", yml), getChannels(playerpath, yml), SectionTypes.PLAYER,
-					SectionSubTypes.FIRSTMESSAGE));
+			am.setMessage(new MessageData(PLMToolbox.getMessage(playerpath + ".FM", yml), PLMToolbox.getChannels(playerpath, yml),
+					SectionTypes.PLAYER, SectionSubTypes.FIRSTMESSAGE));
 			return true;
 		} else {
 			return false;
@@ -160,7 +160,7 @@ public final class PlayerSection {
 
 	protected static ArrayList<MessageData> getJoinMessages(YamlConfiguration yml, long difference, long lastLogin, final String playerpath) {
 		ArrayList<MessageData> messages = new ArrayList<MessageData>();
-		String[] channels = getChannels(playerpath, yml);
+		String[] channels = PLMToolbox.getChannels(playerpath, yml);
 		if (lastLogin == 0L && yml.contains(playerpath + ".FM1")) {
 			ArrayList<String> al = PLMToolbox.getAllMessages(playerpath + ".FM", yml);
 			for (String text : al) {
@@ -184,7 +184,7 @@ public final class PlayerSection {
 
 	protected static ArrayList<MessageData> getQuitMessages(YamlConfiguration yml, String playerpath) {
 		ArrayList<MessageData> messages = new ArrayList<MessageData>();
-		String[] channels = getChannels(playerpath, yml);
+		String[] channels = PLMToolbox.getChannels(playerpath, yml);
 		if (yml.contains(playerpath + ".QM1")) {
 			ArrayList<String> al = PLMToolbox.getAllMessages(playerpath + ".QM", yml);
 			for (String text : al) {
@@ -192,14 +192,5 @@ public final class PlayerSection {
 			}
 		}
 		return messages;
-	}
-
-	private static String[] getChannels(String playerpath, YamlConfiguration yml) {
-		if (yml.contains(playerpath + ".CH")) {
-			String[] channels = yml.getString(playerpath + ".CH").split(", ");
-			return channels;
-		} else {
-			return null;
-		}
 	}
 }
