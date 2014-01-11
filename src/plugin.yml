@@ -1,5 +1,5 @@
 name: PLM
-version: 0.5.1 BETA
+version: 0.5.2 BETA prerelease
 author: FantasticSkyThrow
 softdepend: [Vault, GeoIPTools, VanishNoPacket, Herochat]
 
