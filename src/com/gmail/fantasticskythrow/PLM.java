@@ -21,7 +21,7 @@ import com.gmail.fantasticskythrow.other.Metrics.Graph;
 import com.gmail.fantasticskythrow.other.PLMLogger;
 
 /**
- * Main class. Important things: Activate "Messages" and Listener, get configuration values, setup Vault and GeoIPTools and activate Metrics
+ * Main class. Just calls basic methods
  * @author Roman
  *
  */
@@ -35,7 +35,7 @@ public final class PLM extends JavaPlugin {
 	private PLMLogger plmLogger;
 
 	/**
-	 * Setups all needed stuff like Vault, GeoIPTools, Metrics and configuration
+	 * Decides whether to use SM or AMM after it enabled the main configuration. Activates metrics, too.
 	 */
 	@Override
 	public void onEnable() {
