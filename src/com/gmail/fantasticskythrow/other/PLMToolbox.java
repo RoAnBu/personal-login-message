@@ -9,7 +9,9 @@ import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
+import com.earth2me.essentials.Essentials;
 import com.gmail.fantasticskythrow.PLM;
 import com.gmail.fantasticskythrow.messages.PLMFile;
 
@@ -72,6 +74,21 @@ public class PLMToolbox {
 	}
 
 	/**
+	 * Gets the Essentials nick name like "~Sam" if Essentials is installed
+	 * @param player The concerning player
+	 * @param plugin The main PLM class for the PLMPluginConnector
+	 * @return The nick name if available (if the player doesn't have one it returns the normal name) or null in case of disabled Essentials
+	 */
+	private static String getEssentialsNick(Player player, PLM plugin) {
+		String nickName = null;
+		Plugin pl = plugin.getPLMPluginConnector().getEssentials();
+		if (pl != null) {
+			nickName = ((Essentials) pl).getUserMap().getUser(player.getName()).getNickname();
+		}
+		return nickName;
+	}
+
+	/**
 	 * Simple replacement of %playername
 	 * @param text the text which can contain %name
 	 * @param player the player whose name is relevant
@@ -88,12 +105,16 @@ public class PLMToolbox {
 	 * @param player the concerning player
 	 * @return the replaced string if chat is available. Otherwise it will return the normal playername. %chatplayername won't exist after this.
 	 */
-	public static String getReplacedChatplayername(String text, Chat chat, Player player) {
+	public static String getReplacedChatplayername(String text, Chat chat, Player player, PLM plugin) {
 		if (chat != null && text.contains("%chatplayername")) {
-			String name = (String) (chat.getPlayerPrefix(player) + player.getName() + chat.getPlayerSuffix(player));
-			return text.replaceAll("%chatplayername", name);
+			String name = getEssentialsNick(player, plugin);
+			if (name == null)
+				name = player.getName();
+			String nameResult = (String) (chat.getPlayerPrefix(player) + name + chat.getPlayerSuffix(player));
+			return text.replaceAll("%chatplayername", nameResult);
 		} else if (chat == null && text.contains("%chatplayername")) {
 			System.out.println("[PLM] PLM was not able to identify a chat format for this player!");
+			System.out.println("[PLM] Possible reason: No vault compatible chat plugin is available!");
 			return getReplacedPlayername(text.replaceAll("%chatplayername", "%playername"), player);
 		} else {
 			return text;
@@ -139,7 +160,7 @@ public class PLMToolbox {
 	 */
 	public static String getReplacedCountry(String text, PLM plugin, Player player, PLMFile plmFile) {
 		if (text.contains("%country")) {
-			GeoIPLookup geoIP = plugin.getGeoIPLookup();
+			GeoIPLookup geoIP = plugin.getPLMPluginConnector().getGeoIPLookup();
 			if (geoIP != null) {
 				String country = "";
 				country = plmFile.getCountryName(geoIP.getCountry(player.getAddress().getAddress()).getName());
@@ -412,7 +433,7 @@ public class PLMToolbox {
 	public static String getReplacedStandardPlaceholders(String text, Player player, Chat chat, Permission permission, PLM plugin, PLMFile plmFile,
 			VanishNoPacketManager vnpHandler) {
 		text = getReplacedPlayername(text, player);
-		text = getReplacedChatplayername(text, chat, player);
+		text = getReplacedChatplayername(text, chat, player, plugin);
 		text = getReplacedGroup(text, permission, player);
 		text = getReplacedWorld(text, player);
 		text = getReplacedCountry(text, plugin, player, plmFile);
@@ -428,7 +449,7 @@ public class PLMToolbox {
 	public static String getReplacedComplexPlaceholders(String text, Player player, Chat chat, PLM plugin, PLMFile plmFile,
 			VanishNoPacketManager vnpHandler, Permission permission) {
 		text = getReplacedPlayername(text, player);
-		text = getReplacedChatplayername(text, chat, player);
+		text = getReplacedChatplayername(text, chat, player, plugin);
 		text = getReplacedWorld(text, player);
 		text = getReplacedCountry(text, plugin, player, plmFile);
 		text = getReplacedPlayerlist(text, vnpHandler, plugin.getServer());

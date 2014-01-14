@@ -5,12 +5,8 @@ import java.io.IOException;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
 
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import uk.org.whoami.geoip.GeoIPLookup;
-import uk.org.whoami.geoip.GeoIPTools;
 
 import com.gmail.fantasticskythrow.configuration.MainConfiguration;
 import com.gmail.fantasticskythrow.messages.CommonListener;
@@ -19,6 +15,7 @@ import com.gmail.fantasticskythrow.messages.VanishStatusChangeEventListener;
 import com.gmail.fantasticskythrow.other.Metrics;
 import com.gmail.fantasticskythrow.other.Metrics.Graph;
 import com.gmail.fantasticskythrow.other.PLMLogger;
+import com.gmail.fantasticskythrow.other.PLMPluginConnector;
 
 /**
  * Main class. Just calls basic methods
@@ -33,6 +30,7 @@ public final class PLM extends JavaPlugin {
 	private Permission permission = null;
 	private MainConfiguration cfg;
 	private PLMLogger plmLogger;
+	private PLMPluginConnector plmPluginConn;
 
 	/**
 	 * Decides whether to use SM or AMM after it enabled the main configuration. Activates metrics, too.
@@ -42,6 +40,7 @@ public final class PLM extends JavaPlugin {
 		try {
 			cfg = new MainConfiguration(this);
 			plmLogger = new PLMLogger(this);
+			plmPluginConn = new PLMPluginConnector(this);
 			if (cfg.getPluginStatus()) { //Activated
 				if (!cfg.getAdvancedStatus()) { //Standard mode
 					initStandardSetup();
@@ -162,19 +161,6 @@ public final class PLM extends JavaPlugin {
 		}
 	}
 
-	/**
-	 * Tries to find the plugin "GeoIPTools" and returns an GeoIPLookup Object which provides public methods for country and city information
-	 * @return A GeoIPLookup object if GeoIPTools works. Otherwise it'll return null
-	 */
-	public GeoIPLookup getGeoIPLookup() {
-		Plugin pl = this.getServer().getPluginManager().getPlugin("GeoIPTools");
-		if (pl != null) {
-			return ((GeoIPTools) pl).getGeoIPLookup();
-		} else {
-			return null;
-		}
-	}
-
 	public Permission getPermission() {
 		return permission;
 	}
@@ -189,6 +175,10 @@ public final class PLM extends JavaPlugin {
 
 	public PLMLogger getPLMLogger() {
 		return plmLogger;
+	}
+
+	public PLMPluginConnector getPLMPluginConnector() {
+		return plmPluginConn;
 	}
 
 	public void reloadMessages() {
