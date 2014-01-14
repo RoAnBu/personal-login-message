@@ -147,7 +147,7 @@ public final class DefaultSection {
 	protected static boolean checkWelcomeMessages(YamlConfiguration yml, AdvancedMessages am) {
 		final String path = defaultpath + ".WM";
 		if (yml.contains(path + "1")) {
-			am.setWelcomeMessages(PLMToolbox.getAdvancedMessages(path, yml));
+			am.setWelcomeMessages(PLMToolbox.getAllMessages(path, yml));
 			return true;
 		} else {
 			return false;
@@ -157,7 +157,7 @@ public final class DefaultSection {
 	protected static boolean checkPublicMessages(YamlConfiguration yml, AdvancedMessages am) {
 		final String path = defaultpath + ".PM";
 		if (yml.contains(path + "1")) {
-			am.setPublicMessages(PLMToolbox.getAdvancedMessages(path, yml));
+			am.setPublicMessages(PLMToolbox.getAllMessages(path, yml));
 			return true;
 		} else {
 			return false;

@@ -139,7 +139,7 @@ public final class GroupSection {
 	protected static boolean checkWelcomeMessages(String grouppath, YamlConfiguration yml, AdvancedMessages am) {
 		final String path = grouppath + ".WM";
 		if (yml.contains(path + "1")) {
-			am.setWelcomeMessages(PLMToolbox.getAdvancedMessages(path, yml));
+			am.setWelcomeMessages(PLMToolbox.getAllMessages(path, yml));
 			return true;
 		} else {
 			return false;
@@ -149,7 +149,7 @@ public final class GroupSection {
 	protected static boolean checkPublicMessages(String grouppath, YamlConfiguration yml, AdvancedMessages am) {
 		final String path = grouppath + ".PM";
 		if (yml.contains(path + "1")) {
-			am.setPublicMessages(PLMToolbox.getAdvancedMessages(path, yml));
+			am.setPublicMessages(PLMToolbox.getAllMessages(path, yml));
 			return true;
 		} else {
 			return false;

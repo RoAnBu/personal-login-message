@@ -474,19 +474,6 @@ public class PLMToolbox {
 		return messages;
 	}
 
-	public static String[] getAdvancedMessages(final String path, YamlConfiguration yml) {
-		int count = 2;
-		while (yml.contains(path + count)) {
-			count++;
-		}
-		String[] messages = new String[count - 1];
-		while (count > 1) {
-			count--;
-			messages[count - 1] = yml.getString(path + count);
-		}
-		return messages;
-	}
-
 	public static String getBackMessage(final YamlConfiguration yml, final String path, long difference) {
 		String returnMessage = null;
 		if (yml.contains(path + ".BM1")) {

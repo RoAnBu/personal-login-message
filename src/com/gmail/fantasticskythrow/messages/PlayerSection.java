@@ -141,7 +141,7 @@ public final class PlayerSection {
 	protected static boolean checkWelcomeMessages(String playerpath, YamlConfiguration yml, AdvancedMessages am) {
 		final String path = playerpath + ".WM";
 		if (yml.contains(path + "1")) {
-			am.setWelcomeMessages(PLMToolbox.getAdvancedMessages(path, yml));
+			am.setWelcomeMessages(PLMToolbox.getAllMessages(path, yml));
 			return true;
 		} else {
 			return false;
@@ -151,7 +151,7 @@ public final class PlayerSection {
 	protected static boolean checkPublicMessages(String playerpath, YamlConfiguration yml, AdvancedMessages am) {
 		final String path = playerpath + ".PM";
 		if (yml.contains(path + "1")) {
-			am.setPublicMessages(PLMToolbox.getAdvancedMessages(path, yml));
+			am.setPublicMessages(PLMToolbox.getAllMessages(path, yml));
 			return true;
 		} else {
 			return false;
