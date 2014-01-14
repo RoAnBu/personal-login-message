@@ -143,52 +143,18 @@ public final class PLM extends JavaPlugin {
 		try {
 			Metrics metrics = new Metrics(this);
 			Graph graph = metrics.createGraph("Advanced Messages Mode enabled?");
-			graph.addPlotter(new Metrics.Plotter("Yes") {
+			graph.addPlotter(new Metrics.Plotter(cfg.getAdvancedStatus() ? "Yes" : "No") {
 				@Override
 				public int getValue() {
-					if (cfg.getAdvancedStatus() == true) {
-						return 1;
-					} else {
-						return 0;
-					}
+					return 1;
 				}
-
-			});
-			graph.addPlotter(new Metrics.Plotter("No") {
-
-				@Override
-				public int getValue() {
-					if (cfg.getAdvancedStatus() == true) {
-						return 0;
-					} else {
-						return 1;
-					}
-				}
-
 			});
 			Graph graph2 = metrics.createGraph("Vault installed?");
-			graph2.addPlotter(new Metrics.Plotter("Yes") {
+			graph2.addPlotter(new Metrics.Plotter(vaultErrorStatus ? "No" : "Yes") {
 				@Override
 				public int getValue() {
-					if (vaultErrorStatus == false) {
-						return 1;
-					} else {
-						return 0;
-					}
+					return 1;
 				}
-
-			});
-			graph2.addPlotter(new Metrics.Plotter("No") {
-
-				@Override
-				public int getValue() {
-					if (vaultErrorStatus == true) {
-						return 1;
-					} else {
-						return 0;
-					}
-				}
-
 			});
 			metrics.start();
 		} catch (IOException e) {
