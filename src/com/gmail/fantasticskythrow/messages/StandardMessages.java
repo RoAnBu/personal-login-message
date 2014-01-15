@@ -12,7 +12,7 @@ import com.gmail.fantasticskythrow.other.PLMLogger;
 
 public class StandardMessages {
 
-	private File messagesFile;
+	private final File messagesFile;
 	private String joinMessage = "", quitMessage = "";
 	private PLM plugin;
 	private final PLMLogger plmLogger;
@@ -20,6 +20,7 @@ public class StandardMessages {
 	public StandardMessages(PLM p) {
 		this.plugin = p;
 		plmLogger = plugin.getPLMLogger();
+		messagesFile = new File(plugin.getDataFolder(), "messages.txt");
 		checkMessagesFile();
 	}
 
@@ -46,11 +47,9 @@ public class StandardMessages {
 
 	private void checkMessagesFile() {
 		try {
-			messagesFile = new File(plugin.getDataFolder(), "messages.txt");
 			if (!messagesFile.exists()) {
 				overwriteMessagesFile(plugin);
 			} else {
-				checkMFContent();
 				plmLogger.logInfo("[PLM] The file messages.txt was loaded");
 			}
 		} catch (Exception e) {
