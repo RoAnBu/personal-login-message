@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 
 /**
  * Prints a message for the given player after the given time
- * @author Roman, Morph
+ * @author FantasticSkyThrow, Morph
  *
  */
 public class WelcomeMessagePrinter extends Thread {
@@ -26,7 +26,11 @@ public class WelcomeMessagePrinter extends Thread {
 	}
 
 	public void start(int time, String[] messages, Player p) {
-		this.time = time;
+		if (time > 0) {
+			this.time = time;
+		} else {
+			this.time = 100;
+		}
 		this.messages = messages;
 		this.player = p;
 		super.start();
