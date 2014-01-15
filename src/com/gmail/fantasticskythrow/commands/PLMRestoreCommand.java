@@ -5,7 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.gmail.fantasticskythrow.PLM;
-import com.gmail.fantasticskythrow.messages.StandardMessages;
+import com.gmail.fantasticskythrow.other.PLMToolbox;
 
 public class PLMRestoreCommand {
 
@@ -13,7 +13,7 @@ public class PLMRestoreCommand {
 		if (sender instanceof Player) {
 			if (args.length == 1 && args[0].equalsIgnoreCase("restore")) {
 				//Correct syntax PLAYER
-				if (StandardMessages.overwriteMessagesFile(plugin)) { //Success
+				if (PLMToolbox.overwriteMessagesFile(plugin)) { //Success
 					sender.sendMessage(ChatColor.GREEN + "Messages.txt was replaced by default!");
 					System.out.println("[PLM] Messages.txt was replaced by " + sender.getName());
 				} else {//Error
@@ -27,7 +27,7 @@ public class PLMRestoreCommand {
 		} else {
 			if (args.length == 1 && args[0].equalsIgnoreCase("restore")) {
 				//Correct syntax CONSOLE
-				if (StandardMessages.overwriteMessagesFile(plugin)) {//Success
+				if (PLMToolbox.overwriteMessagesFile(plugin)) {//Success
 					System.out.println("Successfully replaced 'messages.txt' by default");
 				} else {//Error
 					System.out.println("[PLM] An error has occurred");

@@ -1,5 +1,8 @@
 package com.gmail.fantasticskythrow.other;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -55,6 +58,39 @@ public class PLMToolbox {
 			}
 		} else {
 			return true;
+		}
+	}
+
+	/**
+	 * Overwrites messages.txt from Standard mode
+	 * @param plugin The main PLM object to find the location of the file
+	 * @return true if successful, false in case of an error
+	 */
+	public static boolean overwriteMessagesFile(PLM plugin) {
+		try {
+			File messagesFile = new File(plugin.getDataFolder(), "messages.txt");
+			FileWriter fw = new FileWriter(messagesFile);
+			BufferedWriter bw = new BufferedWriter(fw);
+			bw.write("Join message:");
+			bw.newLine();
+			bw.write("&e%playername joined the game");
+			bw.newLine();
+			bw.newLine();
+			bw.write("Quit message:");
+			bw.newLine();
+			bw.write("&e%playername left the game");
+			bw.newLine();
+			bw.newLine();
+			bw.write("How to write own messages:");
+			bw.newLine();
+			bw.write("Visit http://dev.bukkit.org/bukkit-plugins/personal-login-message/pages/standard-mode/");
+			bw.newLine();
+			bw.write("NOTE: Please don't move the lines. Otherwise the plugin will return wrong values!!");
+			bw.close();
+			return true;
+		} catch (Exception e) {
+			System.out.println("[PLM] Editing 'messages.txt' was not possible! Check the plugin's folder");
+			return false;
 		}
 	}
 
