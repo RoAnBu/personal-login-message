@@ -98,31 +98,6 @@ public class StandardMessages {
 		}
 	}
 
-	private void checkMFContent() {
-		try {
-			FileReader fr = new FileReader(messagesFile);
-			BufferedReader br = new BufferedReader(fr);
-			for (int a = 12; a > 1; a--) {
-				br.readLine();
-			}
-			if (br.readLine() == null) {
-				FileWriter fw = new FileWriter(messagesFile, true);
-				BufferedWriter bw = new BufferedWriter(fw);
-				bw.newLine();
-				bw.write("%world: The world where the player spawned. Only the complete name right now.");
-				bw.newLine();
-				bw.write("%World outputs the world with a capital letter and no _");
-				bw.close();
-			}
-			br.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/*
-	 * Getters
-	 */
 	public MessageData getJoinMessage() {
 		getMessages();
 		return new MessageData(joinMessage, null);
