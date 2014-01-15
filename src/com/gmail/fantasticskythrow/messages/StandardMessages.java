@@ -8,15 +8,18 @@ import java.io.FileWriter;
 
 import com.gmail.fantasticskythrow.PLM;
 import com.gmail.fantasticskythrow.other.MessageData;
+import com.gmail.fantasticskythrow.other.PLMLogger;
 
 public class StandardMessages {
 
 	private File messagesFile;
 	private String joinMessage = "", quitMessage = "";
 	private PLM plugin;
+	private final PLMLogger plmLogger;
 
 	public StandardMessages(PLM p) {
 		this.plugin = p;
+		plmLogger = plugin.getPLMLogger();
 		checkMessagesFile();
 	}
 
@@ -33,9 +36,9 @@ public class StandardMessages {
 		}
 
 		catch (Exception e) {
-			System.out.println("[SEVERE] [PLM] An error has occurred while reading messages.txt");
-			System.out.println("[PLM] Please check the messages.txt file. Standard join and quit messages will be used");
-			System.out.println(e.getMessage());
+			plmLogger.logError("[PLM] An error has occurred while reading messages.txt");
+			plmLogger.logInfo("[PLM] Please check the messages.txt file. Standard join and quit messages will be used");
+			plmLogger.logInfo(e.getMessage());
 			joinMessage = "&e%playername joined the game";
 			quitMessage = "&e%playername left the game";
 		}
@@ -47,12 +50,12 @@ public class StandardMessages {
 			if (!messagesFile.exists()) {
 				overwriteMessagesFile(plugin);
 			} else {
-				System.out.println("[PLM] The file messages.txt was loaded");
 				checkMFContent();
+				plmLogger.logInfo("[PLM] The file messages.txt was loaded");
 			}
 		} catch (Exception e) {
-			System.out.println("[PLM] An error has occurred while checking the messages.txt");
-			System.out.println("[PLM] Trying to replace it by default...");
+			plmLogger.logError("[PLM] An error has occurred while checking the messages.txt");
+			plmLogger.logInfo("[PLM] Trying to replace it by default...");
 			overwriteMessagesFile(plugin);
 		}
 	}
