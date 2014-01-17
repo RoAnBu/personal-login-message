@@ -16,6 +16,8 @@ import org.bukkit.plugin.Plugin;
 
 import com.earth2me.essentials.Essentials;
 import com.gmail.fantasticskythrow.PLM;
+import com.gmail.fantasticskythrow.configuration.MainConfiguration;
+import com.gmail.fantasticskythrow.configuration.TimeNames;
 import com.gmail.fantasticskythrow.messages.PLMFile;
 
 import uk.org.whoami.geoip.GeoIPLookup;
@@ -567,4 +569,111 @@ public class PLMToolbox {
 		}
 		return returnMessage;
 	}
+
+	/**
+	 * Replaces %time with the period the player was offline
+	 * 
+	 * @param message the message containing the time constant
+	 * @return the message without %time
+	 */
+	public static String getReplacedTime(String message, MainConfiguration cfg, PLMFile plmFile, String playername) {
+		TimeNames tn = cfg.getTimeNames();
+		String second = tn.getSecond();
+		String seconds = tn.getSeconds();
+		String minute = tn.getMinute();
+		String minutes = tn.getMinutes();
+		String hour = tn.getHour();
+		String hours = tn.getHours();
+		String day = tn.getDay();
+		String days = tn.getDays();
+		String month = tn.getMonth();
+		String months = tn.getMonths();
+		String noLastLogin = tn.getNoLastLogin();
+		long difference;
+		if (plmFile.getLastLogin(playername) == 0L) {
+			difference = 0L;
+		} else {
+			difference = System.currentTimeMillis() - plmFile.getLastLogin(playername);
+		}
+		// No Data
+		if (difference == 0L) {
+			message = message.replaceAll("%time", noLastLogin);
+		}
+		// Less than 1 minute and is not 0
+		if (difference < 60000L && difference != 0) {
+			long a = difference / 1000L;
+			if (a == 1L) {
+				message = message.replaceAll("%time", a + " " + second);
+			} else {
+				message = message.replaceAll("%time", a + " " + seconds);
+			}
+		}
+		// More than 1 minute and less than 1 hour
+		if (difference >= 60000L && difference < 3600000L) {
+			long a = difference / 60000L;
+			if (a == 1L) {
+				message = message.replaceAll("%time", a + " " + minute);
+			} else {
+				message = message.replaceAll("%time", a + " " + minutes);
+			}
+		}
+		// More than 1 hour and less than 1 day
+		if (difference >= 3600000L && difference < 86400000L) {
+			long a = difference / 60000L;
+			long rest = a % 60;
+			a = a / 60;
+			if (a == 1L && rest == 0L) {
+				message = message.replaceAll("%time", a + " " + hour);
+			} else if (rest == 0L) {
+				message = message.replaceAll("%time", a + " " + hours);
+			} else if (a == 1L && rest == 1L) {
+				message = message.replaceAll("%time", a + " " + hour + " " + rest + " " + minute);
+			} else if (a == 1L) {
+				message = message.replaceAll("%time", a + " " + hour + " " + rest + " " + minutes);
+			} else if (rest == 1L) {
+				message = message.replaceAll("%time", a + " " + hours + " " + rest + " " + minute);
+			} else {
+				message = message.replaceAll("%time", a + " " + hours + " " + rest + " " + minutes);
+			}
+		}
+		// More than 1 day and less than 10 days
+		if (difference >= 86400000L && difference < 864000000L) {
+			long a = difference / 3600000L;
+			long rest = a % 24;
+			a = a / 24;
+			if (a == 1L && rest == 0L) {
+				message = message.replaceAll("%time", a + " " + day);
+			} else if (rest == 0L) {
+				message = message.replaceAll("%time", a + " " + days);
+			} else if (a == 1L && rest == 1L) {
+				message = message.replaceAll("%time", a + " " + day + " " + rest + " " + hour);
+			} else if (a == 1L) {
+				message = message.replaceAll("%time", a + " " + day + " " + rest + " " + hours);
+			} else if (rest == 1L) {
+				message = message.replaceAll("%time", a + " " + days + " " + rest + " " + hour);
+			} else {
+				message = message.replaceAll("%time", a + " " + days + " " + rest + " " + hours);
+			}
+		}
+		// More than 10 days and less than 30 days
+		if (difference >= 864000000L && difference < 2592000000L) {
+			long a = difference / 86400000L;
+			if (a == 1L) {
+				message = message.replaceAll("%time", a + " " + day);
+			} else {
+				message = message.replaceAll("%time", a + " " + days);
+			}
+		}
+		// More than 1 month (30 days)
+		if (difference >= 2592000000L) {
+			long a = difference / 2592000000L;
+			if (a == 1L) {
+				message = message.replaceAll("%time", a + " " + month);
+			} else {
+				message = message.replaceAll("%time", a + " " + months);
+			}
+		}
+		return message;
+	}
+
 }

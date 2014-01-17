@@ -16,7 +16,7 @@ public class MainConfiguration {
 
 	private boolean pluginStatus = true, usepermissionsGeneral, usepermissionsPM, fakejoinmessage, fakequitmessage, advancedStatus, debugStatus,
 			useChannels, useRandom;
-	public String second, seconds, minute, minutes, hour, hours, day, days, month, months, noLastLogin;
+	private TimeNames timeNames;
 	private int delay;
 	private List<String> channels;
 
@@ -66,6 +66,7 @@ public class MainConfiguration {
 			} else {
 				pluginStatus = false;
 			}
+			String second, seconds, minute, minutes, hour, hours, day, days, month, months, noLastLogin;
 			second = cfg.getString("advancedmessages.second");
 			seconds = cfg.getString("advancedmessages.seconds");
 			minute = cfg.getString("advancedmessages.minute");
@@ -77,6 +78,7 @@ public class MainConfiguration {
 			month = cfg.getString("advancedmessages.month");
 			months = cfg.getString("advancedmessages.months");
 			noLastLogin = cfg.getString("advancedmessages.no last login");
+			timeNames = new TimeNames(second, seconds, minute, minutes, hour, hours, day, days, month, months, noLastLogin);
 			if (cfg.getString("general.usepermissions").equalsIgnoreCase("true"))
 				usepermissionsGeneral = true;
 			else
@@ -175,6 +177,10 @@ public class MainConfiguration {
 
 	public boolean getUseRandom() {
 		return useRandom;
+	}
+
+	public TimeNames getTimeNames() {
+		return timeNames;
 	}
 
 }
