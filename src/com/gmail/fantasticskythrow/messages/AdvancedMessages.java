@@ -26,9 +26,6 @@ public class AdvancedMessages {
 	private MessageData mData;
 	private Permission permission;
 	private boolean errorStatus = false;
-	private PlayerSection playerS;
-	private GroupSection groupS;
-	private DefaultSection defaultS;
 	private String[] welcomeMessages, publicMessages;
 	private final String[] emptyMessages;
 	private final PLMLogger plmLogger;
@@ -39,11 +36,6 @@ public class AdvancedMessages {
 		plmLogger = plugin.getPLMLogger();
 		loadAdvancedMessagesFile();
 		emptyMessages = null;
-		if (!errorStatus) {
-			playerS = new PlayerSection();
-			groupS = new GroupSection();
-			defaultS = new DefaultSection();
-		}
 		permission = plugin.getPermission();
 	}
 
@@ -119,9 +111,9 @@ public class AdvancedMessages {
 			if (PlayerSection.checkFirstMessage(playerpath, difference, advancedMessagesYML, this)) { //Player section, first message
 			} else if (GroupSection.checkFirstMessage(grouppath, difference, advancedMessagesYML, this)) { //Group section, first message
 			} else if (DefaultSection.checkFirstMessage(difference, advancedMessagesYML, this)) { //Default section, first message
-			} else if (playerS.checkMessagesJoin(playername, playerpath, advancedMessagesYML, difference, this)) { //Player section, back/join message
-			} else if (groupS.checkMessagesJoin(grouppath, advancedMessagesYML, difference, this)) { //Group section, back/join message
-			} else if (defaultS.checkMessagesJoin(advancedMessagesYML, difference, this)) { //Default section, back/join message
+			} else if (PlayerSection.checkMessagesJoin(playername, playerpath, advancedMessagesYML, difference, this)) { //Player section, back/join message
+			} else if (GroupSection.checkMessagesJoin(grouppath, advancedMessagesYML, difference, this)) { //Group section, back/join message
+			} else if (DefaultSection.checkMessagesJoin(advancedMessagesYML, difference, this)) { //Default section, back/join message
 			} else {
 				plmLogger.logWarning("[PLM] No path found for " + p.getName() + ". Using default messages");
 				mData = new MessageData("&e%playername joined the game", null, SectionTypes.ERROR, SectionSubTypes.NOPATH);
@@ -140,9 +132,9 @@ public class AdvancedMessages {
 		String grouppath = String.format("Groups.%s", groupname);
 		if (errorStatus == true) {
 			mData = new MessageData("&e%playername left the game", null, SectionTypes.ERROR, SectionSubTypes.FILEERROR);
-		} else if (playerS.checkMessagesQuit(playername, playerpath, advancedMessagesYML, this)) {
-		} else if (groupS.checkMessagesQuit(grouppath, advancedMessagesYML, this)) {
-		} else if (defaultS.checkMessagesQuit(advancedMessagesYML, this)) {
+		} else if (PlayerSection.checkMessagesQuit(playername, playerpath, advancedMessagesYML, this)) {
+		} else if (GroupSection.checkMessagesQuit(grouppath, advancedMessagesYML, this)) {
+		} else if (DefaultSection.checkMessagesQuit(advancedMessagesYML, this)) {
 		} else {
 			plmLogger.logWarning("[PLM] No path found for " + p.getName() + ". Using default messages");
 			mData = new MessageData("&e%playername left the game", null, SectionTypes.ERROR, SectionSubTypes.NOPATH);

@@ -11,119 +11,28 @@ import com.gmail.fantasticskythrow.other.SectionTypes;
 
 public final class GroupSection {
 
-	private String grouppath;
-	private MessageData mData;
-	private YamlConfiguration advancedMessagesYML;
-	private long difference;
-
-	protected boolean checkMessagesJoin(String grouppath, YamlConfiguration yml, long difference, AdvancedMessages am) {
-		this.grouppath = grouppath;
-		this.advancedMessagesYML = yml;
-		this.difference = difference;
-		mData = null;
-		if (isSuitableJoin()) {
-			am.setMessage(mData);
+	protected static boolean checkMessagesJoin(String grouppath, YamlConfiguration yml, long difference, AdvancedMessages am) {
+		String message = PLMToolbox.getBackMessage(yml, grouppath, difference);
+		if (message != null) {
+			am.setMessage(new MessageData(message, PLMToolbox.getChannels(grouppath, yml), SectionTypes.GROUP, SectionSubTypes.BACKMESSAGE));
 			return true;
-		} else {
-			return false;
 		}
-	}
-
-	protected boolean checkMessagesQuit(String grouppath, YamlConfiguration yml, AdvancedMessages am) {
-		this.grouppath = grouppath;
-		this.advancedMessagesYML = yml;
-		mData = null;
-		if (isSuitableQuit()) {
-			am.setMessage(mData);
+		if (yml.contains(grouppath + "JM1")) {
+			message = PLMToolbox.getMessage(grouppath, yml);
+			am.setMessage(new MessageData(message, PLMToolbox.getChannels(grouppath, yml), SectionTypes.GROUP, SectionSubTypes.JOINMESSAGE));
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
-	private boolean isSuitableJoin() {
-		if (backCase())
+	protected static boolean checkMessagesQuit(String grouppath, YamlConfiguration yml, AdvancedMessages am) {
+		String message;
+		if (yml.contains(grouppath + "QM1")) {
+			message = PLMToolbox.getMessage(grouppath, yml);
+			am.setMessage(new MessageData(message, PLMToolbox.getChannels(grouppath, yml), SectionTypes.GROUP, SectionSubTypes.QUITMESSAGE));
 			return true;
-		else if (standardJoinCase())
-			return true;
-		else
-			return false;
-	}
-
-	private boolean isSuitableQuit() {
-		if (standardQuitCase())
-			return true;
-		else
-			return false;
-	}
-
-	/**
-	 * Message when a player is back after a certain period
-	 * @return
-	 */
-	private boolean backCase() {
-		boolean status = false;
-		if (advancedMessagesYML.contains(grouppath + ".BM1")) {
-			int backMessageCount = 2;
-			while (advancedMessagesYML.contains(grouppath + ".BM" + backMessageCount)) {
-				backMessageCount++;
-			}
-			boolean a = false;
-			int i = 1;
-			while (i < backMessageCount && a == false && difference > 0) {
-				String currentPath = grouppath + ".BM" + i + "T";
-				long time = 0;
-				if (advancedMessagesYML.contains(currentPath)) {
-					try {
-						time = Long.parseLong(advancedMessagesYML.getString(currentPath)) * 60000;
-					} catch (NumberFormatException e) {
-						System.out.println("[PLM] Number format at " + currentPath + " is invalid!!");
-						time = 0L;
-					}
-					if (time > 0 && time <= difference) {
-						String message = advancedMessagesYML.getString(grouppath + ".BM" + i);
-						mData = new MessageData(message, PLMToolbox.getChannels(grouppath, advancedMessagesYML), SectionTypes.GROUP,
-								SectionSubTypes.BACKMESSAGE);
-						a = true;
-						status = true;
-					} else if (time < 0 && (time * -1) >= difference) {
-						String message = advancedMessagesYML.getString(grouppath + ".BM" + i);
-						mData = new MessageData(message, PLMToolbox.getChannels(grouppath, advancedMessagesYML), SectionTypes.GROUP,
-								SectionSubTypes.BACKMESSAGE);
-						a = true;
-						status = true;
-					}
-				} else {
-					//Quit while
-					a = true;
-					System.out.println("[PLM] Couldn't find the time path for back message " + i + " at " + currentPath + " ! (Group section)");
-				}
-				i++;
-			}
-			return status;
-		} else {
-			return false;
 		}
-	}
-
-	private boolean standardJoinCase() {
-		if (advancedMessagesYML.contains(grouppath + ".JM1")) {
-			mData = new MessageData(PLMToolbox.getMessage(grouppath + ".JM", advancedMessagesYML), PLMToolbox.getChannels(grouppath,
-					advancedMessagesYML), SectionTypes.GROUP, SectionSubTypes.JOINMESSAGE);
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	private boolean standardQuitCase() {
-		if (advancedMessagesYML.contains(grouppath + ".QM1")) {
-			mData = new MessageData(PLMToolbox.getMessage(grouppath + ".QM", advancedMessagesYML), PLMToolbox.getChannels(grouppath,
-					advancedMessagesYML), SectionTypes.GROUP, SectionSubTypes.QUITMESSAGE);
-			return true;
-		} else {
-			return false;
-		}
+		return false;
 	}
 
 	protected static boolean checkFirstMessage(String grouppath, long lastLogin, YamlConfiguration yml, AdvancedMessages am) {
