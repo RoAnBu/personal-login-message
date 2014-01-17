@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import net.milkbowl.vault.chat.Chat;
@@ -568,6 +569,46 @@ public class PLMToolbox {
 			}
 		}
 		return returnMessage;
+	}
+
+	/**
+	 * Sends a message to the global defined channels (in config)
+	 * @param message The join/quit message to send
+	 * @return true if no need to use the public join/quit message system. False -> Activate join/quit message
+	 */
+	public static boolean sendMessageToConfigChannels(String message, HerochatManager chHandler, List<String> configChannels) {
+		boolean answer = true;
+		if (chHandler.isHerochatInstalled()) {
+			if (configChannels.contains("Default")) {
+				answer = false;
+				configChannels.remove("Default");
+			}
+			if (configChannels.contains("default")) {
+				answer = false;
+				configChannels.remove("default");
+			}
+			for (String s : configChannels) {
+				chHandler.sendMessage(s, message);
+			}
+			return answer;
+		} else { //Herochat not found
+			return false;
+		}
+	}
+
+	/**
+	 * Sends a message to the given channels. The channel "Default" won't be ignored
+	 * @param message The message with translated color codes
+	 * @param channels The channels which are the aim for the message.
+	 */
+	public static void sendMessageToChannels(String message, String[] channels, HerochatManager chHandler, PLMLogger plmLogger) {
+		if (chHandler.isHerochatInstalled()) {
+			for (String s : channels) {
+				chHandler.sendMessage(s, message);
+			}
+		} else { //Herochat not found
+			plmLogger.logInfo("[PLM] You defined channels but you don't have Herochat installed");
+		}
 	}
 
 	/**

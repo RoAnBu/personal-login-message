@@ -1,7 +1,5 @@
 package com.gmail.fantasticskythrow.messages;
 
-import java.util.List;
-
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
 
@@ -169,13 +167,13 @@ public class Messages {
 				if (!cfg.getUseChannels() && mData.channels == null) { //No channel use anyway
 					joinMessage = message;
 				} else if (mData.channels == null) { //No channels given with the section
-					if (!sendMessageToConfigChannels(message)) { // Returns false if the Default channel is activated
+					if (!PLMToolbox.sendMessageToConfigChannels(message, chHandler, cfg.getChannels())) { // Returns false if the Default channel is activated
 						joinMessage = message; // Brings the message to the public channel, too
 					} else { // Disable join message because it's not in the channels
 						joinMessage = null;
 					}
 				} else { //Specified channels from section are given
-					sendMessageToChannels(message, mData.channels);
+					PLMToolbox.sendMessageToChannels(message, mData.channels, chHandler, plmLogger);
 					joinMessage = null;
 				}
 
@@ -218,13 +216,13 @@ public class Messages {
 				if (!cfg.getUseChannels() && mData.channels == null) { //No channel use anyway
 					quitMessage = message;
 				} else if (mData.channels == null) { //No channels given with the section
-					if (!sendMessageToConfigChannels(message)) { // Returns false if the Default channel is activated
+					if (!PLMToolbox.sendMessageToConfigChannels(message, chHandler, cfg.getChannels())) { // Returns false if the Default channel is activated
 						quitMessage = message; // Brings the message to the public channel, too
 					} else { // Disable quit message because it's not in the channels
 						quitMessage = null;
 					}
 				} else { //Specified channels from section are given
-					sendMessageToChannels(message, mData.channels);
+					PLMToolbox.sendMessageToChannels(message, mData.channels, chHandler, plmLogger);
 					quitMessage = null;
 				}
 
@@ -404,47 +402,6 @@ public class Messages {
 	private void sendPublicMessages(Player[] receivers, String[] messages) {
 		PublicMessagePrinter pmPrinter = new PublicMessagePrinter();
 		pmPrinter.start(messages, receivers);
-	}
-
-	/**
-	 * Sends a message to the global defined channels (in config)
-	 * @param message The join/quit message to send
-	 * @return true if no need to use the public join/quit message system. False -> Activate join/quit message
-	 */
-	private boolean sendMessageToConfigChannels(String message) {
-		List<String> channels = cfg.getChannels();
-		boolean answer = true;
-		if (chHandler.isHerochatInstalled()) {
-			if (channels.contains("Default")) {
-				answer = false;
-				channels.remove("Default");
-			}
-			if (channels.contains("default")) {
-				answer = false;
-				channels.remove("default");
-			}
-			for (String s : channels) {
-				chHandler.sendMessage(s, message);
-			}
-			return answer;
-		} else { //Herochat not found
-			return false;
-		}
-	}
-
-	/**
-	 * Sends a message to the given channels. The channel "Default" won't be ignored
-	 * @param message The message with translated color codes
-	 * @param channels The channels which are the aim for the message.
-	 */
-	private void sendMessageToChannels(String message, String[] channels) {
-		if (chHandler.isHerochatInstalled()) {
-			for (String s : channels) {
-				chHandler.sendMessage(s, message);
-			}
-		} else { //Herochat not found
-			plmLogger.logInfo("[PLM] You defined channels but you don't have Herochat installed");
-		}
 	}
 
 }
