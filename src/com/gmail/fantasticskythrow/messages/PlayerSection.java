@@ -17,8 +17,8 @@ public final class PlayerSection {
 			am.setMessage(new MessageData(message, PLMToolbox.getChannels(playerpath, yml), SectionTypes.PLAYER, SectionSubTypes.BACKMESSAGE));
 			return true;
 		}
-		if (yml.contains(playerpath + "JM1")) {
-			message = PLMToolbox.getMessage(playerpath, yml);
+		if (yml.contains(playerpath + ".JM1")) {
+			message = PLMToolbox.getMessage(playerpath + ".JM", yml);
 			am.setMessage(new MessageData(message, PLMToolbox.getChannels(playerpath, yml), SectionTypes.PLAYER, SectionSubTypes.JOINMESSAGE));
 			return true;
 		}
@@ -27,8 +27,8 @@ public final class PlayerSection {
 
 	protected static boolean checkMessagesQuit(String playername, String playerpath, YamlConfiguration yml, AdvancedMessages am) {
 		String message;
-		if (yml.contains(playerpath + "QM1")) {
-			message = PLMToolbox.getMessage(playerpath, yml);
+		if (yml.contains(playerpath + ".QM1")) {
+			message = PLMToolbox.getMessage(playerpath + ".QM", yml);
 			am.setMessage(new MessageData(message, PLMToolbox.getChannels(playerpath, yml), SectionTypes.PLAYER, SectionSubTypes.QUITMESSAGE));
 			return true;
 		}

@@ -19,8 +19,8 @@ public final class DefaultSection {
 			am.setMessage(new MessageData(message, PLMToolbox.getChannels(defaultpath, yml), SectionTypes.DEFAULT, SectionSubTypes.BACKMESSAGE));
 			return true;
 		}
-		if (yml.contains(defaultpath + "JM1")) {
-			message = PLMToolbox.getMessage(defaultpath, yml);
+		if (yml.contains(defaultpath + ".JM1")) {
+			message = PLMToolbox.getMessage(defaultpath + ".JM", yml);
 			am.setMessage(new MessageData(message, PLMToolbox.getChannels(defaultpath, yml), SectionTypes.DEFAULT, SectionSubTypes.JOINMESSAGE));
 			return true;
 		}
@@ -29,8 +29,8 @@ public final class DefaultSection {
 
 	protected static boolean checkMessagesQuit(YamlConfiguration yml, AdvancedMessages am) {
 		String message;
-		if (yml.contains(defaultpath + "QM1")) {
-			message = PLMToolbox.getMessage(defaultpath, yml);
+		if (yml.contains(defaultpath + ".QM1")) {
+			message = PLMToolbox.getMessage(defaultpath + ".QM", yml);
 			am.setMessage(new MessageData(message, PLMToolbox.getChannels(defaultpath, yml), SectionTypes.GROUP, SectionSubTypes.QUITMESSAGE));
 			return true;
 		}

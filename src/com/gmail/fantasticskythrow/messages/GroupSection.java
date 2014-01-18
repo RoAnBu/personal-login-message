@@ -17,8 +17,8 @@ public final class GroupSection {
 			am.setMessage(new MessageData(message, PLMToolbox.getChannels(grouppath, yml), SectionTypes.GROUP, SectionSubTypes.BACKMESSAGE));
 			return true;
 		}
-		if (yml.contains(grouppath + "JM1")) {
-			message = PLMToolbox.getMessage(grouppath, yml);
+		if (yml.contains(grouppath + ".JM1")) {
+			message = PLMToolbox.getMessage(grouppath + ".JM", yml);
 			am.setMessage(new MessageData(message, PLMToolbox.getChannels(grouppath, yml), SectionTypes.GROUP, SectionSubTypes.JOINMESSAGE));
 			return true;
 		}
@@ -27,8 +27,8 @@ public final class GroupSection {
 
 	protected static boolean checkMessagesQuit(String grouppath, YamlConfiguration yml, AdvancedMessages am) {
 		String message;
-		if (yml.contains(grouppath + "QM1")) {
-			message = PLMToolbox.getMessage(grouppath, yml);
+		if (yml.contains(grouppath + ".QM1")) {
+			message = PLMToolbox.getMessage(grouppath + ".QM", yml);
 			am.setMessage(new MessageData(message, PLMToolbox.getChannels(grouppath, yml), SectionTypes.GROUP, SectionSubTypes.QUITMESSAGE));
 			return true;
 		}
