@@ -14,6 +14,7 @@ public class PLMPluginConnector {
 	private GeoIPLookup geoIPLookup;
 
 	public PLMPluginConnector(PLM plm) {
+		this.plm = plm;
 		initPlugins();
 
 	}
