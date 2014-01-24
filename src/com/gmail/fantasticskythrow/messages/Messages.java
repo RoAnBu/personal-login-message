@@ -85,11 +85,6 @@ public class Messages {
 		return plmFile;
 	}
 
-	protected void setPlayer(Player p) {
-		this.player = p;
-		this.playername = p.getName().toLowerCase();
-	}
-
 	protected void onPlayerJoinEvent(PlayerJoinEvent e) {
 		e.setJoinMessage(getFinalJoinMessage(e.getPlayer(), false));
 	}
