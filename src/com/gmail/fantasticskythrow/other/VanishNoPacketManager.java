@@ -13,7 +13,8 @@ public class VanishNoPacketManager {
 	private PLM plugin;
 	private final HashMap<String, Boolean> players;
 
-	public VanishNoPacketManager(PLM plugin, Player[] onlinePlayers) {
+	public VanishNoPacketManager(PLM plugin) {
+		Player[] onlinePlayers = plugin.getServer().getOnlinePlayers();
 		this.plugin = plugin;
 		Plugin pl = plugin.getServer().getPluginManager().getPlugin("VanishNoPacket");
 		if (pl != null) {

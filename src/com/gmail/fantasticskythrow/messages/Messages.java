@@ -59,7 +59,7 @@ public class Messages {
 		permission = plugin.getPermission();
 		chat = plugin.getChat();
 		plmFile = new PLMFile(plugin);
-		vnpHandler = new VanishNoPacketManager(plugin, plugin.getServer().getOnlinePlayers());
+		vnpHandler = new VanishNoPacketManager(plugin);
 		chHandler = new HerochatManager(plugin);
 		PLMCommandHandler commandHandler = new PLMCommandHandler(plugin, plmLogger, advancedStatus);
 		plugin.getCommand("plm").setExecutor(commandHandler);
