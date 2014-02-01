@@ -10,8 +10,10 @@ import java.util.Random;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
 
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -469,6 +471,88 @@ public class PLMToolbox {
 		}
 	}
 
+	/**
+	 * Replaces %slots by the number of slots
+	 * @param text The string which could contain %slots
+	 * @param server The server the plugin is running on
+	 * @return The modified string
+	 */
+	public static String getReplacedSlots(String text, Server server) {
+		if (text.contains("%slots")) {
+			text = text.replaceAll("%slots", String.valueOf(server.getMaxPlayers()));
+		}
+		return text;
+	}
+
+	/**
+	 * Replaces %levels by the number of levels
+	 * @param text The string which could contain %levels
+	 * @param player The concerning player
+	 * @return The modified string
+	 */
+	public static String getReplacedLevels(String text, Player player) {
+		if (text.contains("%levels")) {
+			text = text.replaceAll("%levels", String.valueOf(player.getLevel()));
+		}
+		return text;
+	}
+
+	/**
+	 * Replaces %health and %comparedHealth by the concerning values. Compared health looks like this "health/maximum health"
+	 * @param text The text which could contain %health or %comparedHealth
+	 * @param player The concerning player
+	 * @return The modified string
+	 */
+	public static String getReplacedHealth(String text, Player player) {
+		if (text.contains("%health")) {
+			Damageable d = (Damageable) player;
+			text = text.replaceAll("%health", String.valueOf(d.getHealth()));
+		}
+		if (text.contains("%comparedHealth")) {
+			Damageable d = (Damageable) player;
+			text = text.replaceAll("%comparedHealth", String.valueOf(d.getHealth()) + "/" + String.valueOf(d.getMaxHealth()));
+		}
+		return text;
+	}
+
+	/**
+	 * Replaces %IP by the player's address. The / in front of it will be deleted
+	 * @param text The text which could contain %IP
+	 * @param player The concerning player
+	 * @return The modified string
+	 */
+	public static String getReplacedIP(String text, Player player) {
+		if (text.contains("%IP")) {
+			text = text.replaceAll("%IP", player.getAddress().toString().replaceAll("/", ""));
+		}
+		return text;
+	}
+
+	/**
+	 * Replaces %gamemode by the current gamemode. Just using the English expressions like "Survival", "Creative" and "Adventure".
+	 * @param text The text which could contain %gamemode
+	 * @param player The concerning player
+	 * @return The modified string
+	 */
+	public static String getReplacedGamemode(String text, Player player) {
+		if (text.contains("%gamemode")) {
+			text = text.replaceAll("%gamemode", WordUtils.capitalize(player.getGameMode().toString().toLowerCase()));
+		}
+		return text;
+	}
+
+	/**
+	 * Replaces %food by the current food level
+	 * @param text The text which could contain %food
+	 * @param player The concerning player
+	 * @return The modified string
+	 */
+	public static String getReplacedFood(String text, Player player) {
+		if (text.contains("%food")) {
+			text = text.replaceAll("%food", String.valueOf(player.getFoodLevel()));
+		}
+		return text;
+	}
 	public static String getReplacedStandardPlaceholders(String text, Player player, Chat chat, Permission permission, PLM plugin, PLMFile plmFile,
 			VanishNoPacketManager vnpHandler) {
 		text = getReplacedPlayername(text, player);
@@ -482,6 +566,12 @@ public class PLMToolbox {
 		text = getReplacedOnlinePlayerNumber(text, plugin.getServer(), vnpHandler, false);
 		text = getReplacedPrefix(text, chat, player);
 		text = getReplacedSuffix(text, chat, player);
+		text = getReplacedSlots(text, plugin.getServer());
+		text = getReplacedLevels(text, player);
+		text = getReplacedHealth(text, player);
+		text = getReplacedIP(text, player);
+		text = getReplacedGamemode(text, player);
+		text = getReplacedFood(text, player);
 		return text;
 	}
 
@@ -502,6 +592,12 @@ public class PLMToolbox {
 		text = getReplacedOnlinePlayerNumber(text, plugin.getServer(), vnpHandler, false);
 		text = getReplacedPrefix(text, chat, player);
 		text = getReplacedSuffix(text, chat, player);
+		text = getReplacedSlots(text, plugin.getServer());
+		text = getReplacedLevels(text, player);
+		text = getReplacedHealth(text, player);
+		text = getReplacedIP(text, player);
+		text = getReplacedGamemode(text, player);
+		text = getReplacedFood(text, player);
 		return text;
 	}
 
