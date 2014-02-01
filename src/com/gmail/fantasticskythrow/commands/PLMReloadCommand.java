@@ -14,7 +14,7 @@ public class PLMReloadCommand {
 				//Correct syntax PLAYER
 				try {
 					plugin.reloadMessages();
-					sender.sendMessage(ChatColor.GREEN + "Advanced Messages Mode was reloaded!");
+					sender.sendMessage(ChatColor.BLUE + "[PLM] " + ChatColor.GREEN + "Advanced Messages Mode has been reloaded!");
 					System.out.println("[PLM] Advanced Messages Mode reloaded by " + sender.getName());
 				} catch (Exception e) {
 					e.printStackTrace();
