@@ -115,7 +115,7 @@ public class PLMToolbox {
 	}
 
 	/**
-	 * Gets the Essentials nick name like "~Sam" if Essentials is installed
+	 * Gets the Essentials nick name like "~Sam" if Essentials is installed and using the nick name is activated in the config
 	 * @param player The concerning player
 	 * @param plugin The main PLM class for the PLMPluginConnector
 	 * @return The nick name if available (if the player doesn't have one it returns the normal name) or null in case of disabled Essentials
@@ -123,8 +123,12 @@ public class PLMToolbox {
 	private static String getEssentialsNick(Player player, PLM plugin) {
 		String nickName = null;
 		Plugin pl = plugin.getPLMPluginConnector().getEssentials();
-		if (pl != null) {
-			nickName = ((Essentials) pl).getUserMap().getUser(player.getName()).getNickname();
+		if (pl != null && plugin.getCfg().getUseEssentialsNick()) {
+			Essentials essentials = (Essentials) pl;
+			nickName = essentials.getUserMap().getUser(player.getName()).getNickname();
+			if (nickName != null) {
+				nickName = essentials.getSettings().getNicknamePrefix() + nickName;
+			}
 		}
 		return nickName;
 	}

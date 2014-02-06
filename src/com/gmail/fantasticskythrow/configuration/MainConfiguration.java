@@ -15,7 +15,7 @@ public class MainConfiguration {
 	private final File cfgData;
 
 	private boolean pluginStatus = true, usepermissionsGeneral, usepermissionsPM, fakejoinmessage, fakequitmessage, advancedStatus, debugStatus,
-			useChannels, useRandom;
+			useChannels, useRandom, useEssentialsNick;
 	private TimeNames timeNames;
 	private int delay;
 	private List<String> channels;
@@ -34,6 +34,7 @@ public class MainConfiguration {
 			cfg = YamlConfiguration.loadConfiguration(cfgData);
 			cfg.addDefault("general.enabled", "true");
 			cfg.addDefault("general.usepermissions", "false");
+			cfg.addDefault("general.useEssentialsNickName", "true");
 			cfg.addDefault("general.debug", "false");
 			cfg.addDefault("advancedmessages.enabled", "false");
 			cfg.addDefault("advancedmessages.second", "second");
@@ -83,6 +84,10 @@ public class MainConfiguration {
 				usepermissionsGeneral = true;
 			else
 				usepermissionsGeneral = false;
+			if (cfg.getString("general.useEssentialsNickName").equalsIgnoreCase("true"))
+				useEssentialsNick = true;
+			else
+				useEssentialsNick = false;
 			if (cfg.getString("Public messages.usepermissions").equalsIgnoreCase("true"))
 				usepermissionsPM = true;
 			else
@@ -141,6 +146,10 @@ public class MainConfiguration {
 
 	public boolean getUsePermGeneral() {
 		return this.usepermissionsGeneral;
+	}
+
+	public boolean getUseEssentialsNick() {
+		return this.useEssentialsNick;
 	}
 
 	public boolean getUsePermPM() {
