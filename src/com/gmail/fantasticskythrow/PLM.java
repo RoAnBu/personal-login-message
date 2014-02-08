@@ -62,7 +62,9 @@ public final class PLM extends JavaPlugin {
 	 */
 	@Override
 	public void onDisable() {
-		m.getPlmFile().run(); //Save PLM.yml
+		if (cfg.getPluginStatus()) {
+			m.getPlmFile().run(); //Save PLM.yml
+		}
 		plmLogger.logInfo("[PLM] Personal Login Message disabled");
 	}
 
