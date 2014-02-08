@@ -14,27 +14,27 @@ public class PLMReloadCommand {
 				//Correct syntax PLAYER
 				try {
 					plugin.reloadMessages();
-					sender.sendMessage(ChatColor.BLUE + "[PLM] " + ChatColor.GREEN + "Advanced Messages Mode has been reloaded!");
-					System.out.println("[PLM] Advanced Messages Mode reloaded by " + sender.getName());
+					sender.sendMessage(ChatColor.BLUE + "[PLM] " + ChatColor.GREEN + "Messages have been reloaded!");
+					System.out.println("[PLM] Messages reloaded by " + sender.getName());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			} else {
 				//Wrong syntax PLAYER
-				sender.sendMessage(ChatColor.RED + "/plm reload");
+				sender.sendMessage(ChatColor.RED + "Too many arguments. Usage: /plm reload");
 			}
 		} else {
 			if (args.length == 1) {
 				//Correct syntax CONSOLE
 				try {
 					plugin.reloadMessages();
-					System.out.println("[PLM] Advanced Messages Mode reloaded");
+					System.out.println("[PLM] Messages reloaded");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			} else {
 				//Wrong syntax CONSOLE
-				System.out.println("Too many arguments. Usage: /plm reload");
+				System.out.println("Too many arguments. Usage: plm reload");
 			}
 		}
 	}

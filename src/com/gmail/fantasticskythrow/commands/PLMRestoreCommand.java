@@ -28,6 +28,7 @@ public class PLMRestoreCommand {
 			if (args.length == 1 && args[0].equalsIgnoreCase("restore")) {
 				//Correct syntax CONSOLE
 				if (PLMToolbox.overwriteMessagesFile(plugin)) {//Success
+					plugin.reloadMessages();
 					System.out.println("Successfully replaced 'messages.txt' by default");
 				} else {//Error
 					System.out.println("[PLM] An error has occurred");

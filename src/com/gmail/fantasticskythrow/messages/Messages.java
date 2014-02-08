@@ -74,7 +74,11 @@ public class Messages {
 	 * Creates a new instance of AdvancedMessages
 	 */
 	public void reload() {
-		am = new AdvancedMessages(plugin, plmFile);
+		if (advancedStatus) {
+			am = new AdvancedMessages(plugin, plmFile);
+		} else {
+			sm.reload();
+		}
 	}
 
 	public VanishNoPacketManager getVnpHandler() {

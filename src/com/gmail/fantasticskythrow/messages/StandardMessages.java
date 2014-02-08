@@ -21,6 +21,11 @@ public class StandardMessages {
 		plmLogger = plugin.getPLMLogger();
 		messagesFile = new File(plugin.getDataFolder(), "messages.txt");
 		checkMessagesFile();
+		getMessages();
+	}
+
+	public void reload() {
+		getMessages();
 	}
 
 	private void getMessages() {
@@ -59,12 +64,10 @@ public class StandardMessages {
 	}
 
 	public MessageData getJoinMessage() {
-		getMessages();
 		return new MessageData(joinMessage, null);
 	}
 
 	public MessageData getQuitMessage() {
-		getMessages();
 		return new MessageData(quitMessage, null);
 	}
 }

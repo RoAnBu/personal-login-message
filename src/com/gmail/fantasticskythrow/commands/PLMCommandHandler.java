@@ -34,16 +34,14 @@ public class PLMCommandHandler implements CommandExecutor {
 			 * PLAYER
 			 */
 			if (sender.hasPermission("plm.*") || sender.hasPermission("plm.admin")) {
-				if (commandType.equalsIgnoreCase("reload") && advancedStatus) { //plm reload with AMM
+				if (commandType.equalsIgnoreCase("reload")) { //plm reload
 					PLMReloadCommand.onCommand(sender, args, plugin);
-				} else if (commandType.equalsIgnoreCase("reload") && !advancedStatus) { //plm reload without AMM
-					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&1/plm reload &cis only available with Advanced Messages Mode!"));
 				} else if (commandType.equalsIgnoreCase("restore") && !advancedStatus) { //plm restore without AMM
 					PLMRestoreCommand.onCommand(plugin, sender, args);
 				} else if (commandType.equalsIgnoreCase("restore") && advancedStatus) { //plm restore with AMM
 					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&1/plm restore &cis not available with Advanced Messages Mode!"));
 				} else { // Wrong subcommand
-					sender.sendMessage("/plm " + commandType + " is not a valid command!");
+					sender.sendMessage(ChatColor.RED + "/plm " + commandType + " is not a valid command!");
 				}
 			} else { // No Permission, Player
 				sender.sendMessage(ChatColor.YELLOW + "Sorry, you are not permitted to modify PLM");
@@ -53,16 +51,14 @@ public class PLMCommandHandler implements CommandExecutor {
 			 * CONSOLE
 			 */
 		} else {
-			if (commandType.equalsIgnoreCase("reload") && advancedStatus) { //plm reload with AMM
+			if (commandType.equalsIgnoreCase("reload")) { //plm reload
 				PLMReloadCommand.onCommand(sender, args, plugin);
-			} else if (commandType.equalsIgnoreCase("reload") && !advancedStatus) { //plm reload without AMM
-				plmLogger.logInfo("/plm reload is only available with Advanced Messages Mode!");
 			} else if (commandType.equalsIgnoreCase("restore") && !advancedStatus) { //plm restore without AMM
 				PLMRestoreCommand.onCommand(plugin, sender, args);
 			} else if (commandType.equalsIgnoreCase("restore") && advancedStatus) { //plm restore with AMM
-				plmLogger.logInfo("/plm restore is not available with Advanced Messages Mode!");
+				plmLogger.logInfo("plm restore is not available with Advanced Messages Mode!");
 			} else { // Wrong subcommand
-				plmLogger.logInfo("/plm " + commandType + " is not a valid command!");
+				plmLogger.logInfo("plm " + commandType + " is not a valid command!");
 			}
 		}
 		return true;

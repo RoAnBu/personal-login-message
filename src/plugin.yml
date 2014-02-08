@@ -7,5 +7,5 @@ main: com.gmail.fantasticskythrow.PLM
 
 commands:
   plm:
-    description: Restores messages.txt or reloads Advanced Messages
-    usage: /<command> restore/reload
+    description: '"plm restore" restores messages.txt or "plm reload" reloads the messages'
+    usage: /<command> <restore|reload>
