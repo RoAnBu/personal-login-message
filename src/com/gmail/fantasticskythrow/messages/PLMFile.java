@@ -9,7 +9,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import com.gmail.fantasticskythrow.PLM;
 import com.gmail.fantasticskythrow.other.PLMLogger;
 
-public class PLMFile {
+public class PLMFile implements Runnable {
 	private PLM plugin;
 	private File PLMFileData;
 	private YamlConfiguration PConfig;
@@ -20,6 +20,7 @@ public class PLMFile {
 		plugin = p;
 		plmLogger = plugin.getPLMLogger();
 		loadFile();
+		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 12000, 12000);
 	}
 
 	private void loadFile() {
@@ -65,20 +66,12 @@ public class PLMFile {
 	}
 
 	public void setPlayerQuitTime(String playername) {
-		PConfig = YamlConfiguration.loadConfiguration(PLMFileData);
 		final String path = String.format("Players.%s", playername);
 		PConfig.set(path, System.currentTimeMillis());
-		try {
-			PConfig.save(PLMFileData);
-		} catch (IOException e) {
-			plmLogger.logWarning("[PLM] PLM.yml is not available! Could'nt save the quit time!");
-			plmLogger.logWarning("[PLM] Please check whether PLM is permitted to write in PLM.yml!");
-		}
 	}
 
 	public long getLastLogin(String playername) {
-		PConfig = YamlConfiguration.loadConfiguration(PLMFileData);
-		if (errorStatus == false) {
+		if (!errorStatus) {
 			return PConfig.getLong(String.format("Players.%s", playername));
 		} else {
 			return 0L;
@@ -96,7 +89,6 @@ public class PLMFile {
 
 	public int getPlayerLogins(String playername) {
 		final String path = String.format("logins.%s", playername);
-		PConfig = YamlConfiguration.loadConfiguration(PLMFileData);
 		if (errorStatus == false) {
 			return PConfig.getInt(path);
 		} else {
@@ -105,7 +97,6 @@ public class PLMFile {
 	}
 
 	public long getTotalLogins() {
-		PConfig = YamlConfiguration.loadConfiguration(PLMFileData);
 		if (errorStatus == false) {
 			return PConfig.getLong("totallogins");
 		} else {
@@ -114,7 +105,6 @@ public class PLMFile {
 	}
 
 	public int getUniquePlayerLogins() {
-		PConfig = YamlConfiguration.loadConfiguration(PLMFileData);
 		if (errorStatus == false) {
 			return PConfig.getInt("uniqueplayers");
 		} else {
@@ -123,8 +113,6 @@ public class PLMFile {
 	}
 
 	public void setPlayerLogin(String playername) {
-		PConfig = YamlConfiguration.loadConfiguration(PLMFileData);
-
 		if (!PConfig.contains("logins." + playername)) {
 			final int newUniqueValue;
 			if (PConfig.contains("uniqueplayers")) {
@@ -141,17 +129,9 @@ public class PLMFile {
 
 		final long newTotalValue = PConfig.getLong("totallogins") + 1L;
 		PConfig.set("totallogins", newTotalValue);
-
-		try {
-			PConfig.save(PLMFileData);
-		} catch (IOException e) {
-			plmLogger.logWarning("[PLM] PLM.yml is not available!");
-			plmLogger.logWarning("[PLM] Please check whether PLM is permitted to write in PLM.yml!");
-		}
 	}
 
 	public boolean getFirstEnabled() {
-		PConfig = YamlConfiguration.loadConfiguration(PLMFileData);
 		if (PConfig.getString("firstenabled").equalsIgnoreCase("true")) {
 			return true;
 		} else {
@@ -160,17 +140,10 @@ public class PLMFile {
 	}
 
 	public void setFirstEnabled(boolean b) {
-		PConfig = YamlConfiguration.loadConfiguration(PLMFileData);
 		if (b == true)
 			PConfig.set("firstenabled", "true");
 		else
 			PConfig.set("firstenabled", "false");
-		try {
-			PConfig.save(PLMFileData);
-		} catch (IOException e) {
-			plmLogger.logWarning("[PLM] PLM.yml is not available!");
-			plmLogger.logWarning("[PLM] Please check whether PLM is permitted to write in PLM.yml!");
-		}
 	}
 
 	public String getCountryName(String englishName) {
@@ -183,5 +156,18 @@ public class PLMFile {
 
 	public boolean getErrorStatus() {
 		return errorStatus;
+	}
+
+	@Override
+	public void run() {
+		try {
+			PConfig.save(PLMFileData);
+			PConfig = YamlConfiguration.loadConfiguration(PLMFileData);
+			plmLogger.logDebug("[PLM] PLM.yml has been saved successfully.");
+		} catch (IOException e) {
+			e.printStackTrace();
+			plmLogger.logWarning("[PLM] PLM.yml is not available!");
+			plmLogger.logWarning("[PLM] Please check whether PLM is permitted to write in PLM.yml!");
+		}
 	}
 }

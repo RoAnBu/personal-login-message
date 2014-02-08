@@ -71,7 +71,7 @@ public class Messages {
 	}
 
 	/**
-	 * Creates a new instance of AdvancedMessages
+	 * Reloads the messages of AMM or SM
 	 */
 	public void reload() {
 		if (advancedStatus) {
@@ -85,7 +85,7 @@ public class Messages {
 		return vnpHandler;
 	}
 
-	protected PLMFile getPlmFile() {
+	public PLMFile getPlmFile() {
 		return plmFile;
 	}
 
