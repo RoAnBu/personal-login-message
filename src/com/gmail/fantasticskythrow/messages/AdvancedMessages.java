@@ -289,7 +289,10 @@ public class AdvancedMessages {
 	}
 
 	protected void setWelcomeMessages(ArrayList<String> messages) {
-		this.welcomeMessages = (String[]) messages.toArray();
+		this.welcomeMessages = new String[messages.size()];
+		for (int i = 0; i < messages.size(); i++) {
+			welcomeMessages[i] = messages.get(i);
+		}
 	}
 
 	protected String[] getPublicMessages(Player p) {
@@ -320,7 +323,10 @@ public class AdvancedMessages {
 	}
 
 	protected void setPublicMessages(ArrayList<String> messages) {
-		this.publicMessages = (String[]) messages.toArray();
+		this.publicMessages = new String[messages.size()];
+		for (int i = 0; i < messages.size(); i++) {
+			publicMessages[i] = messages.get(i);
+		}
 	}
 
 	private String getReplacedWorld(String message, Player p) {
