@@ -19,6 +19,7 @@ public class WelcomeMessagePrinter extends Thread {
 		try {
 			Thread.sleep(time);
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		for (String m : messages) {
 			player.sendMessage(ChatColor.translateAlternateColorCodes('&', m));
@@ -26,7 +27,7 @@ public class WelcomeMessagePrinter extends Thread {
 	}
 
 	public void start(int time, String[] messages, Player p) {
-		if (time > 0) {
+		if (time >= 0) {
 			this.time = time;
 		} else {
 			this.time = 100;
