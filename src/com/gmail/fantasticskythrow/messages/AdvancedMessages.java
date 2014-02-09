@@ -178,7 +178,7 @@ public class AdvancedMessages {
 			/*
 			 * Selecting one of the messages randomly. If no message was found -> Error message
 			 */
-			if (!messages.isEmpty()) {
+			if (!messages.isEmpty() && messages.size() != 1) { // 2 or more messages
 				int current = 0;
 				for (MessageData md : messages) { //Message Debugging. Prints all messages to the console
 					current++;
@@ -189,9 +189,11 @@ public class AdvancedMessages {
 				Random r = new Random();
 				resultIndex = r.nextInt(length - 1);
 				mData = messages.get(resultIndex);
-			} else {
+			} else if (messages.isEmpty()) { // No message
 				plmLogger.logWarning("[PLM] No path found for " + p.getName() + ". Using default messages");
 				mData = new MessageData("&e%playername joined the game", null, SectionTypes.ERROR, SectionSubTypes.NOPATH);
+			} else { // 1 message
+				mData = messages.get(0);
 			}
 
 			mData.message = getReplacedWorld(mData.message, p);
@@ -232,7 +234,7 @@ public class AdvancedMessages {
 			/*
 			 * Selecting one of the messages randomly. If no message was found -> Error message
 			 */
-			if (!messages.isEmpty()) {
+			if (!messages.isEmpty() && messages.size() != 1) { //2 or more messages
 				int current = 0;
 				for (MessageData md : messages) { //Message Debugging. Prints all messages to the console
 					current++;
@@ -243,9 +245,11 @@ public class AdvancedMessages {
 				Random r = new Random();
 				resultIndex = r.nextInt(length - 1);
 				mData = messages.get(resultIndex);
-			} else {
+			} else if (messages.isEmpty()) { // No message
 				plmLogger.logWarning("[PLM] No path found for " + p.getName() + ". Using default messages");
 				mData = new MessageData("&e%playername left the game", null, SectionTypes.ERROR, SectionSubTypes.NOPATH);
+			} else { // 1 Message
+				mData = messages.get(0);
 			}
 
 			mData.message = getReplacedWorld(mData.message, p);
