@@ -268,7 +268,7 @@ public class PLMToolbox {
 	 * @param server the server taken from the main plugin (PLM - JavaPlugin)
 	 * @return the replaced %chatplayerlist or %playerlist if chat is null
 	 */
-	public static String getReplacedChatplayerlist(String text, Chat chat, VanishNoPacketManager vnpHandler, Server server) {
+	public static String getReplacedChatplayerlist(String text, Chat chat, VanishNoPacketManager vnpHandler, Server server, PLM plugin) {
 		if (text.contains("chatplayerlist")) {
 			if (chat != null) {
 				String m = "";
@@ -276,7 +276,7 @@ public class PLMToolbox {
 				for (int i = 0; i < (playerlist.length - 1); i++) {
 					Player p = playerlist[i];
 					if (!vnpHandler.isVanished(p.getName())) {
-						m = m + (chat.getPlayerPrefix(p) + p.getName() + chat.getPlayerSuffix(p)) + ", ";
+						m = m + getReplacedChatplayername("%chatplayername", chat, p, plugin) + ", ";
 					}
 				}
 				Player p = playerlist[playerlist.length - 1];
@@ -355,7 +355,7 @@ public class PLMToolbox {
 	 * @return the replaced %groupchatplayerlist if permission and chat is available. Otherwise -> '&4ERROR'
 	 */
 	public static String getReplacedGroupchatplayerlist(String text, VanishNoPacketManager vnpHandler, Permission permission, Chat chat,
-			Server server, Player player) {
+			Server server, Player player, PLM plugin) {
 		if (text.contains("%groupchatplayerlist")) {
 			if (permission != null && chat != null) {
 				String m = "";
@@ -363,7 +363,7 @@ public class PLMToolbox {
 				for (int i = 0; i < (playerlist.length - 1); i++) {
 					Player p = playerlist[i];
 					if (permission.getPlayerGroups(p)[0] == permission.getPlayerGroups(player)[0] && !vnpHandler.isVanished(p.getName())) {
-						m = m + (chat.getPlayerPrefix(p) + p.getName() + chat.getPlayerSuffix(p)) + ", ";
+						m = m + getReplacedChatplayername("%chatplayername", chat, p, plugin) + ", ";
 					}
 				}
 				Player p = playerlist[playerlist.length - 1];
@@ -586,9 +586,9 @@ public class PLMToolbox {
 		text = getReplacedWorld(text, player);
 		text = getReplacedCountry(text, plugin, player, plmFile);
 		text = getReplacedPlayerlist(text, vnpHandler, plugin.getServer());
-		text = getReplacedChatplayerlist(text, chat, vnpHandler, plugin.getServer());
+		text = getReplacedChatplayerlist(text, chat, vnpHandler, plugin.getServer(), plugin);
 		text = getReplacedGroupplayerlist(text, vnpHandler, permission, plugin.getServer(), player);
-		text = getReplacedGroupchatplayerlist(text, vnpHandler, permission, chat, plugin.getServer(), player);
+		text = getReplacedGroupchatplayerlist(text, vnpHandler, permission, chat, plugin.getServer(), player, plugin);
 		text = getReplacedGroup(text, permission, player);
 		text = getReplacedTotalLogins(text, plmFile);
 		text = getReplacedUniquePlayers(text, plmFile);
