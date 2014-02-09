@@ -27,7 +27,7 @@ import uk.org.whoami.geoip.GeoIPLookup;
 
 /**
  * A big arrangement of tools for replacing and checking
- * @author Roman
+ * @author FantasticSkyThrow
  *
  */
 public class PLMToolbox {
@@ -104,7 +104,7 @@ public class PLMToolbox {
 	 * @param word the string you want to be transformed
 	 * @return the corrected string
 	 */
-	public static String getCapitalWord(String word) {
+	private static String getCapitalWord(String word) {
 		String b = "";
 		b = b + word.charAt(0);
 		word = word.replaceFirst(b, b.toUpperCase());
@@ -451,6 +451,13 @@ public class PLMToolbox {
 		return text;
 	}
 
+	/**
+	 * Replaces the %prefix placeholder with the vault prefix if available. In case of Vault is not enabled it replaces %prefix by "" and outputs a warning
+	 * @param text The string which could contain %prefix
+	 * @param chat The vault chat plugin
+	 * @param player The concerning player
+	 * @return The modified string
+	 */
 	public static String getReplacedPrefix(String text, Chat chat, Player player) {
 		if (chat != null && text.contains("%prefix")) {
 			String prefix = chat.getPlayerPrefix(player);
@@ -463,6 +470,13 @@ public class PLMToolbox {
 		}
 	}
 
+	/**
+	 * Replaces the %suffix placeholder with the vault prefix if available. In case of Vault is not enabled it replaces %suffix by "" and outputs a warning
+	 * @param text The string which could contain %suffix
+	 * @param chat The vault chat plugin
+	 * @param player The concerning player
+	 * @return The modified string
+	 */
 	public static String getReplacedSuffix(String text, Chat chat, Player player) {
 		if (chat != null && text.contains("%suffix")) {
 			String suffix = chat.getPlayerSuffix(player);
@@ -557,6 +571,18 @@ public class PLMToolbox {
 		}
 		return text;
 	}
+
+	/**
+	 * Replaces the placeholders %playername, %chatplayername, %group, %world, %country, %totallogins, %uniqueplayers, %logins, %onlineplayers, %prefix, %suffix, %levels, %slots, %health, %comparedHealth, %food, %IP, %gamemode
+	 * @param text the text which can contain the placeholders
+	 * @param player the concerning player
+	 * @param chat the chat hook by vault. Can be null if not available
+	 * @param permission the permission hook by vault. Can be null if not available
+	 * @param plugin The main PLM class
+	 * @param plmFile The plmFile for information about quit time...
+	 * @param vnpHandler The VanishNoPacketManager for the lists
+	 * @return
+	 */
 	public static String getReplacedStandardPlaceholders(String text, Player player, Chat chat, Permission permission, PLM plugin, PLMFile plmFile,
 			VanishNoPacketManager vnpHandler) {
 		text = getReplacedPlayername(text, player);
@@ -579,6 +605,18 @@ public class PLMToolbox {
 		return text;
 	}
 
+	/**
+	 * Replaces the placeholders %playername, %chatplayername, %group, %world, %country, %totallogins, %uniqueplayers, %logins, %onlineplayers, %prefix, %suffix, , %levels, %slots, %health, %comparedHealth, %food, %IP, %gamemode, 
+	 *  %playerlist, %chatplayerlist, %groupplayerlist, %groupchatplayerlist
+	 * @param text the text which can contain the placeholders
+	 * @param player the concerning player
+	 * @param chat the chat hook by vault. Can be null if not available
+	 * @param plugin The main PLM class
+	 * @param plmFile The plmFile for information about quit time...
+	 * @param vnpHandler The VanishNoPacketManager for the lists
+	 * @param permission the permission hook by vault. Can be null if not available
+	 * @return
+	 */
 	public static String getReplacedComplexPlaceholders(String text, Player player, Chat chat, PLM plugin, PLMFile plmFile,
 			VanishNoPacketManager vnpHandler, Permission permission) {
 		text = getReplacedPlayername(text, player);
@@ -605,6 +643,12 @@ public class PLMToolbox {
 		return text;
 	}
 
+	/**
+	 * Looks for channels in the given section
+	 * @param path the path e.g. "Groups.Admin" without dot and additional endings
+	 * @param yml The concerning file
+	 * @return The channels or null if no channels have been found
+	 */
 	public static String[] getChannels(String path, YamlConfiguration yml) {
 		if (yml.contains(path + ".CH")) {
 			String[] channels = yml.getString(path + ".CH").split(", ");
@@ -614,6 +658,13 @@ public class PLMToolbox {
 		}
 	}
 
+	/**
+	 * Looks for a string (here: message) in the given section. If there is more than one string it chooses on randomly.
+	 * Note: Do not call this method if you haven't checked whether any message is available
+	 * @param path the path e.g. "Groups.Admin.JM" without numbers at the ending
+	 * @param yml The concerning file
+	 * @return the string with the message
+	 */
 	public static String getMessage(String path, YamlConfiguration yml) {
 		int count = 2;
 		while (yml.contains(path + count)) {
@@ -624,6 +675,12 @@ public class PLMToolbox {
 		return yml.getString(path + n);
 	}
 
+	/**
+	 * Looks for strings (here: messages) in the given section and returns any possible message in an array
+	 * @param path the basic path with endings but no numbers
+	 * @param yml the concerning file
+	 * @return the string array containing all messages
+	 */
 	public static ArrayList<String> getAllMessages(String path, YamlConfiguration yml) {
 		ArrayList<String> messages = new ArrayList<String>();
 		int count = 1;
@@ -634,6 +691,13 @@ public class PLMToolbox {
 		return messages;
 	}
 
+	/**
+	 * Looks for a fitting back message
+	 * @param yml the concerning file
+	 * @param path the basic path without .BM<number>
+	 * @param difference the difference between logout and the login
+	 * @return the back message or null if not available
+	 */
 	public static String getBackMessage(final YamlConfiguration yml, final String path, long difference) {
 		String returnMessage = null;
 		if (yml.contains(path + ".BM1")) {
