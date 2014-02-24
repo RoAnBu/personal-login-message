@@ -154,12 +154,13 @@ public class PLMToolbox {
 	 * @param text the string which can contain %chatplayername
 	 * @param chat the Chat object
 	 * @param player the concerning player
+	 * @param plugin the PLM object for essentials
 	 * @return the replaced string if chat is available. Otherwise it will return the normal playername. %chatplayername won't exist after this.
 	 */
 	public static String getReplacedChatplayername(String text, Chat chat, Player player, PLM plugin) {
 		if (chat != null && text.contains("%chatplayername")) {
 			String name = getEssentialsNick(player, plugin);
-			if (name == null)
+			if (name == null) //Use the normal name if no essentials name was available
 				name = player.getName();
 			String nameResult = (String) (chat.getPlayerPrefix(player) + name + chat.getPlayerSuffix(player));
 			return text.replaceAll("%chatplayername", nameResult);
