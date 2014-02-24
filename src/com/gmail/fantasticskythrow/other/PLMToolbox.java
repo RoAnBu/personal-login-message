@@ -173,6 +173,25 @@ public class PLMToolbox {
 	}
 
 	/**
+	 * Replaces %nickname with the standard name or Essentials nick name (no prefix and suffix!)
+	 * @param text the string which can contain %nickname
+	 * @param player the concerning player
+	 * @param plugin the PLM object for essentials
+	 * @return the replaced string
+	 */
+	public static String getReplacedNickname(String text, Player player, PLM plugin) {
+		if (text.contains("%nickname")) {
+			String name = getEssentialsNick(player, plugin);
+			if (name == null) { //Use the normal name if no essentials name was available
+				name = player.getName();
+			}
+			return text.replaceAll("%nickname", name);
+		} else {
+			return text;
+		}
+	}
+
+	/**
 	 * Replaces %group with the first group found if a permissions plugin was hooked
 	 * @param text the string which can contain %group
 	 * @param permission the Permission object
@@ -593,6 +612,7 @@ public class PLMToolbox {
 			VanishNoPacketManager vnpHandler) {
 		text = getReplacedPlayername(text, player);
 		text = getReplacedChatplayername(text, chat, player, plugin);
+		text = getReplacedNickname(text, player, plugin);
 		text = getReplacedGroup(text, permission, player);
 		text = getReplacedWorld(text, player);
 		text = getReplacedCountry(text, plugin, player, plmFile);
@@ -627,6 +647,7 @@ public class PLMToolbox {
 			VanishNoPacketManager vnpHandler, Permission permission) {
 		text = getReplacedPlayername(text, player);
 		text = getReplacedChatplayername(text, chat, player, plugin);
+		text = getReplacedNickname(text, player, plugin);
 		text = getReplacedWorld(text, player);
 		text = getReplacedCountry(text, plugin, player, plmFile);
 		text = getReplacedPlayerlist(text, vnpHandler, plugin.getServer());
