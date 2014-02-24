@@ -125,9 +125,15 @@ public class PLMToolbox {
 		Plugin pl = plugin.getPLMPluginConnector().getEssentials();
 		if (pl != null && plugin.getCfg().getUseEssentialsNick()) {
 			Essentials essentials = (Essentials) pl;
-			nickName = essentials.getUserMap().getUser(player.getName()).getNickname();
-			if (nickName != null) {
-				nickName = essentials.getSettings().getNicknamePrefix() + nickName;
+			try {
+				nickName = essentials.getUserMap().getUser(player.getName()).getNickname();
+
+				if (nickName != null && !nickName.equals(player.getName())) {
+					nickName = essentials.getSettings().getNicknamePrefix() + nickName;
+				}
+			} catch (Error e) {
+				plugin.getPLMLogger().logError(
+						"[PLM] Could not connect to Essentials! Please use a newer version of Essentials or disable the Essentials connection");
 			}
 		}
 		return nickName;
