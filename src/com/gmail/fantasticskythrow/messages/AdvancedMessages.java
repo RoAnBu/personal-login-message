@@ -258,7 +258,7 @@ public class AdvancedMessages {
 	}
 
 	protected void setMessage(MessageData mData) {
-		if (mData.message != "") {
+		if (!mData.message.equalsIgnoreCase("")) {
 			this.mData = mData;
 		} else {
 			this.mData.message = "&e%playername joined the game";

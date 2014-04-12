@@ -343,12 +343,12 @@ public class PLMToolbox {
 				Player[] playerlist = server.getOnlinePlayers();
 				for (int i = 0; i < (playerlist.length - 1); i++) {
 					Player p = playerlist[i];
-					if (permission.getPlayerGroups(p)[0] == permission.getPlayerGroups(player)[0] && !vnpHandler.isVanished(p.getName())) {
+					if (permission.getPlayerGroups(p)[0].equals(permission.getPlayerGroups(player)[0]) && !vnpHandler.isVanished(p.getName())) {
 						m = m + p.getName() + ", ";
 					}
 				}
 				Player p = playerlist[playerlist.length - 1];
-				if (permission.getPlayerGroups(p)[0] == permission.getPlayerGroups(player)[0] && !vnpHandler.isVanished(p.getName())) {
+				if (permission.getPlayerGroups(p)[0].equals(permission.getPlayerGroups(player)[0]) && !vnpHandler.isVanished(p.getName())) {
 					m = m + p.getName();
 				} else {
 					StringBuffer s1 = new StringBuffer();
@@ -388,12 +388,12 @@ public class PLMToolbox {
 				Player[] playerlist = server.getOnlinePlayers();
 				for (int i = 0; i < (playerlist.length - 1); i++) {
 					Player p = playerlist[i];
-					if (permission.getPlayerGroups(p)[0] == permission.getPlayerGroups(player)[0] && !vnpHandler.isVanished(p.getName())) {
+					if (permission.getPlayerGroups(p)[0].equals(permission.getPlayerGroups(player)[0]) && !vnpHandler.isVanished(p.getName())) {
 						m = m + getReplacedChatplayername("%chatplayername", chat, p, plugin) + ", ";
 					}
 				}
 				Player p = playerlist[playerlist.length - 1];
-				if (permission.getPlayerGroups(p)[0] == permission.getPlayerGroups(player)[0] && !vnpHandler.isVanished(p.getName())) {
+				if (permission.getPlayerGroups(p)[0].equals(permission.getPlayerGroups(player)[0]) && !vnpHandler.isVanished(p.getName())) {
 					m = m + (chat.getPlayerPrefix(p) + p.getName() + chat.getPlayerSuffix(p));
 				} else {
 					StringBuffer s1 = new StringBuffer();
