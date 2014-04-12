@@ -14,8 +14,8 @@ public class MainConfiguration {
 	private YamlConfiguration cfg;
 	private final File cfgData;
 
-	private boolean pluginStatus = true, usepermissionsGeneral, usepermissionsPM, fakejoinmessage, fakequitmessage, advancedStatus, debugStatus,
-			useChannels, useRandom, useEssentialsNick;
+	private boolean pluginStatus = true, usepermissionsGeneral, usepermissionsPM, fakejoinmessage, fakequitmessage, replaceVnpFakeMsg,
+			advancedStatus, debugStatus, useChannels, useRandom, useEssentialsNick;
 	private TimeNames timeNames;
 	private int delay;
 	private List<String> channels;
@@ -53,6 +53,7 @@ public class MainConfiguration {
 			cfg.addDefault("Public messages.usepermissions", "false");
 			cfg.addDefault("VanishNoPacket.usefakejoinmessage", "false");
 			cfg.addDefault("VanishNoPacket.usefakequitmessage", "false");
+			cfg.addDefault("VanishNoPacket.replaceVNPfakemessages", "false");
 			cfg.addDefault("Use Channels", "false");
 			List<String> channelList = new ArrayList<String>();
 			channelList.add("Default");
@@ -100,6 +101,10 @@ public class MainConfiguration {
 				fakequitmessage = true;
 			else
 				fakequitmessage = false;
+			if (cfg.getString("VanishNoPacket.replaceVNPfakemessages").equalsIgnoreCase("true"))
+				replaceVnpFakeMsg = true;
+			else
+				replaceVnpFakeMsg = false;
 			if (cfg.getString("advancedmessages.enabled").equalsIgnoreCase("true"))
 				advancedStatus = true;
 			else
@@ -162,6 +167,10 @@ public class MainConfiguration {
 
 	public boolean getUseFakeQuitMsg() {
 		return this.fakequitmessage;
+	}
+
+	public boolean getReplaceVnpFakeMsg() {
+		return replaceVnpFakeMsg;
 	}
 
 	public int getDelay() {

@@ -11,6 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.gmail.fantasticskythrow.configuration.MainConfiguration;
 import com.gmail.fantasticskythrow.messages.CommonListener;
 import com.gmail.fantasticskythrow.messages.Messages;
+import com.gmail.fantasticskythrow.messages.VanishStatusChangeEventFakeMessageListener;
 import com.gmail.fantasticskythrow.messages.VanishStatusChangeEventListener;
 import com.gmail.fantasticskythrow.other.Metrics;
 import com.gmail.fantasticskythrow.other.Metrics.Graph;
@@ -72,8 +73,10 @@ public final class PLM extends JavaPlugin {
 		setupChat();
 		setupPermissions();
 		m = new Messages(this, false);
-		if (m.getVnpHandler().isPluginInstalled()) {
+		if (m.getVnpHandler().isPluginInstalled() && !cfg.getReplaceVnpFakeMsg()) {
 			this.getServer().getPluginManager().registerEvents(new VanishStatusChangeEventListener(m), this);
+		} else if (m.getVnpHandler().isPluginInstalled() && cfg.getReplaceVnpFakeMsg()) {
+			this.getServer().getPluginManager().registerEvents(new VanishStatusChangeEventFakeMessageListener(m), this);
 		} else {
 			this.getServer().getPluginManager().registerEvents(new CommonListener(m), this);
 		}
@@ -88,8 +91,10 @@ public final class PLM extends JavaPlugin {
 			initStandardSetup();
 		} else { //Activate AdvancedMessages, because vault is active and it's enabled
 			m = new Messages(this, true);
-			if (m.getVnpHandler().isPluginInstalled()) {
+			if (m.getVnpHandler().isPluginInstalled() && !cfg.getReplaceVnpFakeMsg()) {
 				this.getServer().getPluginManager().registerEvents(new VanishStatusChangeEventListener(m), this);
+			} else if (m.getVnpHandler().isPluginInstalled() && cfg.getReplaceVnpFakeMsg()) {
+				this.getServer().getPluginManager().registerEvents(new VanishStatusChangeEventFakeMessageListener(m), this);
 			} else {
 				this.getServer().getPluginManager().registerEvents(new CommonListener(m), this);
 			}

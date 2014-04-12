@@ -1,10 +1,14 @@
 package com.gmail.fantasticskythrow.messages;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -44,6 +48,7 @@ public class Messages {
 	private final VanishNoPacketManager vnpHandler;
 	private final PLMLogger plmLogger;
 	private HerochatManager chHandler;
+	private List<String> vnpFakeMsg = new ArrayList<String>();
 
 	/**
 	 * Uses the given status to control whether AdvancedStatus should be enabled  or not.
@@ -120,13 +125,18 @@ public class Messages {
 	protected void onVanishStatusChangeEvent(VanishStatusChangeEvent e) {
 		try {
 			if (!vnpHandler.isJustJoinedPlayer(e.getPlayer().getName())) {
-				if (e.isVanishing() && cfg.getUseFakeQuitMsg()) { // -> Quit message (Fake)
+				boolean vnpFakeCmdUser = false;
+				if (vnpFakeMsg.contains(e.getPlayer().getName())) {
+					vnpFakeCmdUser = true;
+					vnpFakeMsg.remove(e.getPlayer().getName());
+				}
+				if (e.isVanishing() && (cfg.getUseFakeQuitMsg() || vnpFakeCmdUser)) { // -> Quit message (Fake)
 					String fakeQuitMessage = getFinalQuitMessage(e.getPlayer());
 					if (fakeQuitMessage != null) {
 						plugin.getServer().broadcastMessage(fakeQuitMessage);
 					}
 					plmFile.setPlayerQuitTime(e.getPlayer().getName().toLowerCase());
-				} else if (!e.isVanishing() && cfg.getUseFakeJoinMsg()) { // Join  message (Fake)
+				} else if (!e.isVanishing() && (cfg.getUseFakeJoinMsg() || vnpFakeCmdUser)) { // Join  message (Fake)
 					String fakeJoinMessage = getFinalJoinMessage(e.getPlayer(), true);
 					if (fakeJoinMessage != null) {
 						plugin.getServer().broadcastMessage(fakeJoinMessage);
@@ -137,6 +147,32 @@ public class Messages {
 			ex.printStackTrace();
 			plmLogger.logError("[PLM] An unknown error has occurred at VanishStatusChangeEvent!");
 			plmLogger.logError("[PLM] Please make sure that all configuration files are available");
+		}
+	}
+
+	protected void onPlayerCommandPreprocessEvent(PlayerCommandPreprocessEvent e) {
+		try {
+			String cmd = e.getMessage().replaceAll("/", "");
+			if (cmd.equals("v fq") || cmd.equals("vanish fq")) {
+				if (!vnpHandler.isVanished(e.getPlayer().getName())) {
+					vnpFakeMsg.add(e.getPlayer().getName());
+					e.setMessage("/vanish");
+				} else {
+					e.setCancelled(true);
+					e.getPlayer().sendMessage(ChatColor.RED + "Already invisible :)");
+				}
+			} else if (cmd.equals("v fj") || cmd.equals("vanish fj")) {
+				if (vnpHandler.isVanished(e.getPlayer().getName())) {
+					vnpFakeMsg.add(e.getPlayer().getName());
+					e.setMessage("/vanish");
+				} else {
+					e.setCancelled(true);
+					e.getPlayer().sendMessage(ChatColor.RED + "Already visible :)");
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			plmLogger.logError("An error has occurred at onPlayerCommandPreprocessEvent!");
 		}
 	}
 
