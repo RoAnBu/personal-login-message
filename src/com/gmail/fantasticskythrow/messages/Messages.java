@@ -35,7 +35,6 @@ import com.gmail.fantasticskythrow.other.WelcomeMessagePrinter;
 public class Messages {
 
 	private final PLM plugin;
-	private String playername;
 	private Chat chat = null;
 	private Permission permission = null;
 	private final MainConfiguration cfg;
@@ -63,7 +62,11 @@ public class Messages {
 		this.advancedStatus = advancedStatus;
 		permission = plugin.getPermission();
 		chat = plugin.getChat();
-		plmFile = new PLMFile(plugin);
+		if (PLMToolbox.getMinecraftVersion(plugin) >= 178) {
+			plmFile = new NewPLMFile(plugin);
+		} else {
+			plmFile = new OldPLMFile(plugin);
+		}
 		vnpHandler = new VanishNoPacketManager(plugin);
 		chHandler = new HerochatManager(plugin);
 		PLMCommandHandler commandHandler = new PLMCommandHandler(plugin, plmLogger, advancedStatus);
@@ -135,7 +138,7 @@ public class Messages {
 					if (fakeQuitMessage != null) {
 						plugin.getServer().broadcastMessage(fakeQuitMessage);
 					}
-					plmFile.setPlayerQuitTime(e.getPlayer().getName().toLowerCase());
+					plmFile.setPlayerQuitTime(e.getPlayer());
 				} else if (!e.isVanishing() && (cfg.getUseFakeJoinMsg() || vnpFakeCmdUser)) { // Join  message (Fake)
 					String fakeJoinMessage = getFinalJoinMessage(e.getPlayer(), true);
 					if (fakeJoinMessage != null) {
@@ -181,8 +184,7 @@ public class Messages {
 			String joinMessage = null;
 			vnpHandler.addJoinedPlayer(player.getName());
 			this.player = player;
-			this.playername = player.getName().toLowerCase();
-			plmFile.setPlayerLogin(playername);
+			plmFile.setPlayerLogin(player);
 			MessageData mData;
 			if (!cfg.getUseRandom()) {
 				mData = getMessagesJoin();
@@ -237,7 +239,6 @@ public class Messages {
 		try {
 			String quitMessage = null;
 			this.player = player;
-			this.playername = player.getName().toLowerCase();
 			MessageData mData;
 			if (!cfg.getUseRandom()) {
 				mData = getMessagesQuit();
@@ -265,7 +266,7 @@ public class Messages {
 				quitMessage = null;
 			}
 
-			plmFile.setPlayerQuitTime(player.getName().toLowerCase());
+			plmFile.setPlayerQuitTime(player);
 			if (mData.type == null) {
 				plmLogger.logDebug("PLM's quit message is: " + message);
 			} else {
@@ -303,7 +304,7 @@ public class Messages {
 		 * Replace %time when it was found in the string
 		 */
 		if (joinMessage.contains("%time")) {
-			joinMessage = PLMToolbox.getReplacedTime(joinMessage, cfg, plmFile, playername);
+			joinMessage = PLMToolbox.getReplacedTime(joinMessage, cfg, plmFile, player);
 		}
 		mData.message = joinMessage;
 		return mData;
@@ -345,7 +346,7 @@ public class Messages {
 			 * Replace %time when it was found in the string
 			 */
 			if (joinMessage.contains("%time")) {
-				joinMessage = PLMToolbox.getReplacedTime(joinMessage, cfg, plmFile, playername);
+				joinMessage = PLMToolbox.getReplacedTime(joinMessage, cfg, plmFile, player);
 			}
 			mData.message = joinMessage;
 			return mData;
@@ -373,7 +374,7 @@ public class Messages {
 			for (int i = 0; i < welcomeMessages.length; i++) {
 				String m = welcomeMessages[i];
 				m = PLMToolbox.getReplacedComplexPlaceholders(m, player, chat, plugin, plmFile, vnpHandler, permission);
-				m = PLMToolbox.getReplacedTime(m, cfg, plmFile, playername);
+				m = PLMToolbox.getReplacedTime(m, cfg, plmFile, player);
 				welcomeMessages[i] = m;
 			}
 			int time = cfg.getDelay();
@@ -388,7 +389,7 @@ public class Messages {
 			for (int i = 0; i < publicMessages.length; i++) {
 				String m = publicMessages[i];
 				m = PLMToolbox.getReplacedComplexPlaceholders(m, player, chat, plugin, plmFile, vnpHandler, permission);
-				m = PLMToolbox.getReplacedTime(m, cfg, plmFile, playername);
+				m = PLMToolbox.getReplacedTime(m, cfg, plmFile, player);
 				publicMessages[i] = m;
 			}
 			Player[] onlinePlayer = plugin.getServer().getOnlinePlayers();

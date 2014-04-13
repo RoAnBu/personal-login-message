@@ -2,7 +2,9 @@ package com.gmail.fantasticskythrow.other;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -420,9 +422,9 @@ public class PLMToolbox {
 	 * @param plmFile
 	 * @return the string with replaced %logins
 	 */
-	public static String getReplacedPlayerLogins(String text, String playername, PLMFile plmFile) {
+	public static String getReplacedPlayerLogins(String text, Player player, PLMFile plmFile) {
 		if (text.contains("%logins")) {
-			text = text.replaceAll("%logins", String.valueOf(plmFile.getPlayerLogins(playername)));
+			text = text.replaceAll("%logins", String.valueOf(plmFile.getPlayerLogins(player)));
 		}
 		return text;
 	}
@@ -619,7 +621,7 @@ public class PLMToolbox {
 		text = getReplacedCountry(text, plugin, player, plmFile);
 		text = getReplacedTotalLogins(text, plmFile);
 		text = getReplacedUniquePlayers(text, plmFile);
-		text = getReplacedPlayerLogins(text, player.getName().toLowerCase(), plmFile);
+		text = getReplacedPlayerLogins(text, player, plmFile);
 		text = getReplacedOnlinePlayerNumber(text, plugin.getServer(), vnpHandler, false);
 		text = getReplacedPrefix(text, chat, player);
 		text = getReplacedSuffix(text, chat, player);
@@ -658,7 +660,7 @@ public class PLMToolbox {
 		text = getReplacedGroup(text, permission, player);
 		text = getReplacedTotalLogins(text, plmFile);
 		text = getReplacedUniquePlayers(text, plmFile);
-		text = getReplacedPlayerLogins(text, player.getName().toLowerCase(), plmFile);
+		text = getReplacedPlayerLogins(text, player, plmFile);
 		text = getReplacedOnlinePlayerNumber(text, plugin.getServer(), vnpHandler, false);
 		text = getReplacedPrefix(text, chat, player);
 		text = getReplacedSuffix(text, chat, player);
@@ -809,7 +811,7 @@ public class PLMToolbox {
 	 * @param message the message containing the time constant
 	 * @return the message without %time
 	 */
-	public static String getReplacedTime(String message, MainConfiguration cfg, PLMFile plmFile, String playername) {
+	public static String getReplacedTime(String message, MainConfiguration cfg, PLMFile plmFile, Player player) {
 		TimeNames tn = cfg.getTimeNames();
 		String second = tn.getSecond();
 		String seconds = tn.getSeconds();
@@ -823,10 +825,10 @@ public class PLMToolbox {
 		String months = tn.getMonths();
 		String noLastLogin = tn.getNoLastLogin();
 		long difference;
-		if (plmFile.getLastLogin(playername) == 0L) {
+		if (plmFile.getLastLogin(player) == 0L) {
 			difference = 0L;
 		} else {
-			difference = System.currentTimeMillis() - plmFile.getLastLogin(playername);
+			difference = System.currentTimeMillis() - plmFile.getLastLogin(player);
 		}
 		// No Data
 		if (difference == 0L) {
@@ -907,6 +909,65 @@ public class PLMToolbox {
 			}
 		}
 		return message;
+	}
+
+	public static YamlConfiguration loadPLMFile(final File PLMFileData, final PLM plugin) {
+		YamlConfiguration PConfig = YamlConfiguration.loadConfiguration(PLMFileData);
+		if (!PConfig.contains("firstenabled")) {
+			PConfig.set("firstenabled", "false");
+		}
+		if (!PConfig.contains("Countries")) {
+			PConfig.set("Countries.United States", "United States");
+			PConfig.set("Countries.France", "France");
+			PConfig.set("Countries.Germany", "Germany");
+			PConfig.set("Countries.Brazil", "Brazil");
+			PConfig.set("Countries.Netherlands", "Netherlands");
+			PConfig.set("Countries.United Kingdom", "United Kingdom");
+			PConfig.set("Countries.Slovenia", "Slovenia");
+			PConfig.set("Countries.Bulgaria", "Bulgaria");
+			PConfig.set("Countries.Canada", "Canada");
+			PConfig.set("Countries.Mexico", "Mexico");
+			PConfig.set("Countries.Italy", "Italy");
+			PConfig.set("Countries.Spain", "Spain");
+			PConfig.set("Countries.Australia", "Australia");
+			PConfig.set("Countries.India", "India");
+			PConfig.set("Countries.Russian Federation", "Russian Federation");
+			PConfig.set("Countries.Your Country", "Your Country");
+		}
+		if (!PConfig.contains("totallogins")) {
+			PConfig.set("totallogins", 0L);
+		}
+		if (!PConfig.contains("uniqueplayers")) {
+			PConfig.set("uniqueplayers", 0);
+		}
+		try {
+			PConfig.save(PLMFileData);
+			return PConfig;
+		} catch (FileNotFoundException ex) {
+			PLMLogger plmLogger = plugin.getPLMLogger();
+			plmLogger.logError(ex.getMessage());
+			plmLogger.logError("[PLM] PLM.yml is not available!");
+			plmLogger.logInfo("[PLM] Please check whether PLM is permitted to write in PLM.yml!");
+			return null;
+		} catch (IOException e) {
+			PLMLogger plmLogger = plugin.getPLMLogger();
+			plmLogger.logError(e.getMessage());
+			plmLogger.logError("[PLM] PLM.yml is not available!");
+			plmLogger.logInfo("[PLM] Please check whether PLM is permitted to write in PLM.yml!");
+			return null;
+		}
+	}
+
+	public static int getMinecraftVersion(PLM plugin) {
+		String version = plugin.getServer().getBukkitVersion().split("-")[0];
+		version = version.replaceAll("\\.", "");
+		int versionNumber = 0;
+		try {
+			versionNumber = Integer.parseInt(version);
+		} catch (NumberFormatException ne) {
+			ne.printStackTrace();
+		}
+		return versionNumber;
 	}
 
 }

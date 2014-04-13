@@ -107,7 +107,7 @@ public class AdvancedMessages {
 			String groupname = permission.getPlayerGroups(p)[0];
 			String grouppath = String.format("Groups.%s", groupname);
 
-			long difference = settings.getDifference(playername);
+			long difference = settings.getDifference(p);
 			if (PlayerSection.checkFirstMessage(playerpath, difference, advancedMessagesYML, this)) { //Player section, first message
 			} else if (GroupSection.checkFirstMessage(grouppath, difference, advancedMessagesYML, this)) { //Group section, first message
 			} else if (DefaultSection.checkFirstMessage(difference, advancedMessagesYML, this)) { //Default section, first message
@@ -160,8 +160,8 @@ public class AdvancedMessages {
 			final String groupname = permission.getPlayerGroups(p)[0];
 			final String grouppath = String.format("Groups.%s", groupname);
 			final ArrayList<MessageData> messages = new ArrayList<MessageData>();
-			final long lastLogin = settings.getLastLogin(playername);
-			final long difference = settings.getDifference(playername);
+			final long lastLogin = settings.getLastLogin(p);
+			final long difference = settings.getDifference(p);
 
 			ArrayList<MessageData> pm = PlayerSection.getJoinMessages(advancedMessagesYML, difference, lastLogin, playerpath);
 			ArrayList<MessageData> gm = GroupSection.getJoinMessages(advancedMessagesYML, difference, lastLogin, grouppath);
