@@ -1,5 +1,5 @@
 name: PLM
-version: 0.6.0 ALPHA prerelease
+version: 0.6 ALPHA
 author: FantasticSkyThrow
 softdepend: [Vault, GeoIPTools, VanishNoPacket, Herochat, Essentials]
 
