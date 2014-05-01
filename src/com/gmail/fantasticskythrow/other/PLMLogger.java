@@ -15,15 +15,15 @@ public class PLMLogger {
 	}
 
 	public void logInfo(String message) {
-		LOGGER.info(message);
+		LOGGER.info("[PLM] " + message);
 	}
 
 	public void logError(String message) {
-		LOGGER.severe(message);
+		LOGGER.severe("[PLM] " + message);
 	}
 
 	public void logWarning(String message) {
-		LOGGER.warning(message);
+		LOGGER.warning("[PLM] " + message);
 	}
 
 	public void logDebug(String message) {

@@ -41,8 +41,8 @@ public class StandardMessages {
 		}
 
 		catch (Exception e) {
-			plmLogger.logError("[PLM] An error has occurred while reading messages.txt");
-			plmLogger.logInfo("[PLM] Please check the messages.txt file. Standard join and quit messages will be used");
+			plmLogger.logError("An error has occurred while reading messages.txt");
+			plmLogger.logInfo("Please check the messages.txt file. Standard join and quit messages will be used");
 			plmLogger.logInfo(e.getMessage());
 			joinMessage = "&e%playername joined the game";
 			quitMessage = "&e%playername left the game";
@@ -54,11 +54,11 @@ public class StandardMessages {
 			if (!messagesFile.exists()) {
 				PLMToolbox.overwriteMessagesFile(plugin);
 			} else {
-				plmLogger.logInfo("[PLM] The file messages.txt was loaded");
+				plmLogger.logInfo("The file messages.txt was loaded");
 			}
 		} catch (Exception e) {
-			plmLogger.logError("[PLM] An error has occurred while checking the messages.txt");
-			plmLogger.logInfo("[PLM] Trying to replace it by default...");
+			plmLogger.logError("An error has occurred while checking the messages.txt");
+			plmLogger.logInfo("Trying to replace it by default...");
 			PLMToolbox.overwriteMessagesFile(plugin);
 		}
 	}

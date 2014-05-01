@@ -45,7 +45,7 @@ public class PLMCommandHandler implements CommandExecutor {
 				}
 			} else { // No Permission, Player
 				sender.sendMessage(ChatColor.YELLOW + "Sorry, you are not permitted to modify PLM");
-				plmLogger.logInfo("[PLM] " + sender.getName() + " tried to execute a command although he is not permitted to do that");
+				plmLogger.logInfo(sender.getName() + " tried to execute a command although he is not permitted to do that");
 			}
 			/*
 			 * CONSOLE

@@ -169,10 +169,10 @@ public class NewPLMFile implements PLMFile, Runnable {
 			plmLogger.logDebug("[PLM] PLM.yml has been saved successfully.");
 		} catch (IOException e) {
 			e.printStackTrace();
-			plmLogger.logWarning("[PLM] PLM.yml is not available!");
-			plmLogger.logWarning("[PLM] Please check whether PLM is permitted to write in PLM.yml!");
+			plmLogger.logWarning("PLM.yml is not available!");
+			plmLogger.logWarning("Please check whether PLM is permitted to write in PLM.yml!");
 		} catch (NullPointerException ne) {
-			plmLogger.logError("[PLM] PLM.yml could not be loaded or saved. Login and logout information will be lost");
+			plmLogger.logError("PLM.yml could not be loaded or saved. Login and logout information will be lost");
 		}
 	}
 

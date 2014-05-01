@@ -135,7 +135,7 @@ public class PLMToolbox {
 				}
 			} catch (Error e) {
 				plugin.getPLMLogger().logError(
-						"[PLM] Could not connect to Essentials! Please use a newer version of Essentials or disable the Essentials connection");
+						"Could not connect to Essentials! Please use a newer version of Essentials or disable the Essentials connection");
 			}
 		}
 		return nickName;
@@ -243,8 +243,8 @@ public class PLMToolbox {
 				text = text.replaceAll("%country", country);
 				return text;
 			} else {
-				plugin.getPLMLogger().logWarning("[PLM] You used %country but GeoIPTools is not installed or no database is initialized");
-				plugin.getPLMLogger().logWarning("[PLM] Use /geoupdate if it's installed");
+				plugin.getPLMLogger().logWarning("You used %country but GeoIPTools is not installed or no database is initialized");
+				plugin.getPLMLogger().logWarning("Use /geoupdate if it's installed");
 				text = text.replaceAll("%country", "unknown");
 				return text;
 			}
@@ -801,7 +801,7 @@ public class PLMToolbox {
 				chHandler.sendMessage(s, message);
 			}
 		} else { //Herochat not found
-			plmLogger.logInfo("[PLM] You defined channels but you don't have Herochat installed");
+			plmLogger.logInfo("You defined channels but you don't have Herochat installed");
 		}
 	}
 
@@ -946,14 +946,14 @@ public class PLMToolbox {
 		} catch (FileNotFoundException ex) {
 			PLMLogger plmLogger = plugin.getPLMLogger();
 			plmLogger.logError(ex.getMessage());
-			plmLogger.logError("[PLM] PLM.yml is not available!");
-			plmLogger.logInfo("[PLM] Please check whether PLM is permitted to write in PLM.yml!");
+			plmLogger.logError("PLM.yml is not available!");
+			plmLogger.logInfo("Please check whether PLM is permitted to write in PLM.yml!");
 			return null;
 		} catch (IOException e) {
 			PLMLogger plmLogger = plugin.getPLMLogger();
 			plmLogger.logError(e.getMessage());
-			plmLogger.logError("[PLM] PLM.yml is not available!");
-			plmLogger.logInfo("[PLM] Please check whether PLM is permitted to write in PLM.yml!");
+			plmLogger.logError("PLM.yml is not available!");
+			plmLogger.logInfo("Please check whether PLM is permitted to write in PLM.yml!");
 			return null;
 		}
 	}
@@ -971,8 +971,8 @@ public class PLMToolbox {
 			versionNumber = Integer.parseInt(version);
 		} catch (NumberFormatException ne) {
 			PLMLogger plmLogger = plugin.getPLMLogger();
-			plmLogger.logError("[PLM] An error occurred while analysing the Minecraft server version!");
-			plmLogger.logError("[PLM] Please report this problem as fast as possible");
+			plmLogger.logError("An error occurred while analysing the Minecraft server version!");
+			plmLogger.logError("Please report this problem as fast as possible");
 		}
 		return versionNumber;
 	}

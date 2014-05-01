@@ -148,8 +148,8 @@ public class Messages {
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			plmLogger.logError("[PLM] An unknown error has occurred at VanishStatusChangeEvent!");
-			plmLogger.logError("[PLM] Please make sure that all configuration files are available");
+			plmLogger.logError("An unknown error has occurred at VanishStatusChangeEvent!");
+			plmLogger.logError("Please make sure that all configuration files are available");
 		}
 	}
 
@@ -229,8 +229,8 @@ public class Messages {
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			plmLogger.logError("[PLM] An unknown error has occurred at PlayerJoinEvent!");
-			plmLogger.logError("[PLM] Please make sure that all configuration files are available");
+			plmLogger.logError("An unknown error has occurred at PlayerJoinEvent!");
+			plmLogger.logError("Please make sure that all configuration files are available");
 			return null;
 		}
 	}
@@ -275,8 +275,8 @@ public class Messages {
 			return quitMessage;
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			plmLogger.logError("[PLM] An unknown error has occurred at PlayerQuitEvent!");
-			plmLogger.logError("[PLM] Please make sure that all configuration files are available");
+			plmLogger.logError("An unknown error has occurred at PlayerQuitEvent!");
+			plmLogger.logError("Please make sure that all configuration files are available");
 			return null;
 		}
 	}
