@@ -104,7 +104,13 @@ public class AdvancedMessages {
 		{
 			String playername = p.getName().toLowerCase();
 			String playerpath = String.format("players.%s", playername);
-			String groupname = permission.getPlayerGroups(p)[0];
+			String groupname;
+			groupname = permission.getPrimaryGroup(p);
+			if (groupname == null) {
+				groupname = "";
+				plmLogger.logWarning("[PLM] PLM was not able to find " + p.getName() + "'s group!");
+				plmLogger.logWarning("[PLM] Group section will be ignored for this player!");
+			}
 			String grouppath = String.format("Groups.%s", groupname);
 
 			long difference = settings.getDifference(p);
@@ -128,7 +134,12 @@ public class AdvancedMessages {
 	protected MessageData getQuitMessage(Player p) {
 		String playername = p.getName().toLowerCase();
 		String playerpath = String.format("players.%s", playername);
-		String groupname = permission.getPlayerGroups(p)[0];
+		String groupname = permission.getPrimaryGroup(p);
+		if (groupname == null) {
+			groupname = "";
+			plmLogger.logWarning("[PLM] PLM was not able to find " + p.getName() + "'s group!");
+			plmLogger.logWarning("[PLM] Group section will be ignored for this player!");
+		}
 		String grouppath = String.format("Groups.%s", groupname);
 		if (errorStatus == true) {
 			mData = new MessageData("&e%playername left the game", null, SectionTypes.ERROR, SectionSubTypes.FILEERROR);
@@ -157,7 +168,12 @@ public class AdvancedMessages {
 		{
 			final String playername = p.getName().toLowerCase();
 			final String playerpath = String.format("players.%s", playername);
-			final String groupname = permission.getPlayerGroups(p)[0];
+			String groupname = permission.getPrimaryGroup(p);
+			if (groupname == null) {
+				groupname = "";
+				plmLogger.logWarning("[PLM] PLM was not able to find " + p.getName() + "'s group!");
+				plmLogger.logWarning("[PLM] Group section will be ignored for this player!");
+			}
 			final String grouppath = String.format("Groups.%s", groupname);
 			final ArrayList<MessageData> messages = new ArrayList<MessageData>();
 			final long lastLogin = settings.getLastLogin(p);
@@ -215,7 +231,12 @@ public class AdvancedMessages {
 		{
 			final String playername = p.getName().toLowerCase();
 			final String playerpath = String.format("players.%s", playername);
-			final String groupname = permission.getPlayerGroups(p)[0];
+			String groupname = permission.getPrimaryGroup(p);
+			if (groupname == null) {
+				groupname = "";
+				plmLogger.logWarning("[PLM] PLM was not able to find " + p.getName() + "'s group!");
+				plmLogger.logWarning("[PLM] Group section will be ignored for this player!");
+			}
 			final String grouppath = String.format("Groups.%s", groupname);
 			final ArrayList<MessageData> messages = new ArrayList<MessageData>();
 
@@ -266,7 +287,12 @@ public class AdvancedMessages {
 	}
 
 	protected String[] getWelcomeMessages(Player p) {
-		String groupname = permission.getPlayerGroups(p)[0];
+		String groupname = permission.getPrimaryGroup(p);
+		if (groupname == null) {
+			groupname = "";
+			plmLogger.logWarning("[PLM] PLM was not able to find " + p.getName() + "'s group!");
+			plmLogger.logWarning("[PLM] Group section will be ignored for this player!");
+		}
 		String grouppath = String.format("Groups.%s", groupname);
 		String playername = p.getName().toLowerCase();
 		String playerpath = String.format("players.%s", playername);
@@ -300,7 +326,12 @@ public class AdvancedMessages {
 	}
 
 	protected String[] getPublicMessages(Player p) {
-		String groupname = permission.getPlayerGroups(p)[0];
+		String groupname = permission.getPrimaryGroup(p);
+		if (groupname == null) {
+			groupname = "";
+			plmLogger.logWarning("[PLM] PLM was not able to find " + p.getName() + "'s group!");
+			plmLogger.logWarning("[PLM] Group section will be ignored for this player!");
+		}
 		String grouppath = String.format("Groups.%s", groupname);
 		String playername = p.getName().toLowerCase();
 		String playerpath = String.format("players.%s", playername);
