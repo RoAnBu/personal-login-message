@@ -21,7 +21,6 @@ public class PLMCommandHandler implements CommandExecutor {
 		this.plugin = plugin;
 	}
 
-	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		String commandType;
 		if (args.length != 0) {

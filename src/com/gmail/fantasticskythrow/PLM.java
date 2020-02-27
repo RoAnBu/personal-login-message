@@ -1,22 +1,16 @@
 package com.gmail.fantasticskythrow;
 
-import java.io.IOException;
-
-import net.milkbowl.vault.chat.Chat;
-import net.milkbowl.vault.permission.Permission;
-
-import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import com.gmail.fantasticskythrow.configuration.MainConfiguration;
 import com.gmail.fantasticskythrow.messages.CommonListener;
 import com.gmail.fantasticskythrow.messages.Messages;
 import com.gmail.fantasticskythrow.messages.VanishStatusChangeEventFakeMessageListener;
 import com.gmail.fantasticskythrow.messages.VanishStatusChangeEventListener;
-import com.gmail.fantasticskythrow.other.Metrics;
-import com.gmail.fantasticskythrow.other.Metrics.Graph;
 import com.gmail.fantasticskythrow.other.PLMLogger;
 import com.gmail.fantasticskythrow.other.PLMPluginConnector;
+import net.milkbowl.vault.chat.Chat;
+import net.milkbowl.vault.permission.Permission;
+import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Main class. Just calls basic methods
@@ -25,7 +19,7 @@ import com.gmail.fantasticskythrow.other.PLMPluginConnector;
  */
 public final class PLM extends JavaPlugin {
 
-	private Messages m = null;
+	private Messages messages = null;
 	private boolean vaultErrorStatus = false;
 	private Chat chat = null;
 	private Permission permission = null;
@@ -48,7 +42,6 @@ public final class PLM extends JavaPlugin {
 				} else { //Advanced messages mode
 					initAdvancedSetup();
 				}
-				activateMetrics();
 			} else { //Not activated
 				plmLogger.logInfo("Personal Login Message is not enabled in config");
 			}
@@ -64,7 +57,7 @@ public final class PLM extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		if (cfg.getPluginStatus()) {
-			m.getPlmFile().run(); //Save PLM.yml
+			messages.getPlmFile().run(); //Save PLM.yml
 		}
 		plmLogger.logInfo("Personal Login Message disabled");
 	}
@@ -72,13 +65,13 @@ public final class PLM extends JavaPlugin {
 	private void initStandardSetup() {
 		setupChat();
 		setupPermissions();
-		m = new Messages(this, false);
-		if (m.getVnpHandler().isPluginInstalled() && !cfg.getReplaceVnpFakeMsg()) {
-			this.getServer().getPluginManager().registerEvents(new VanishStatusChangeEventListener(m), this);
-		} else if (m.getVnpHandler().isPluginInstalled() && cfg.getReplaceVnpFakeMsg()) {
-			this.getServer().getPluginManager().registerEvents(new VanishStatusChangeEventFakeMessageListener(m), this);
+		messages = new Messages(this, false);
+		if (messages.getVnpHandler().isPluginInstalled() && !cfg.getReplaceVnpFakeMsg()) {
+			this.getServer().getPluginManager().registerEvents(new VanishStatusChangeEventListener(messages), this);
+		} else if (messages.getVnpHandler().isPluginInstalled() && cfg.getReplaceVnpFakeMsg()) {
+			this.getServer().getPluginManager().registerEvents(new VanishStatusChangeEventFakeMessageListener(messages), this);
 		} else {
-			this.getServer().getPluginManager().registerEvents(new CommonListener(m), this);
+			this.getServer().getPluginManager().registerEvents(new CommonListener(messages), this);
 		}
 		plmLogger.logInfo("Personal Login Message is enabled");
 	}
@@ -86,17 +79,18 @@ public final class PLM extends JavaPlugin {
 	private void initAdvancedSetup() {
 		setupChat();
 		setupPermissions();
-		if (vaultErrorStatus == true || permission == null) { //If vault or permission/chat plugin is not available -> Standard setup
+		if (vaultErrorStatus || permission == null) { //If vault or permission/chat plugin is not available -> Standard setup
 			plmLogger.logWarning("Sorry, you need Vault and a compatible permissions plugin to use the advanced messages mode!");
 			initStandardSetup();
 		} else { //Activate AdvancedMessages, because vault is active and it's enabled
-			m = new Messages(this, true);
-			if (m.getVnpHandler().isPluginInstalled() && !cfg.getReplaceVnpFakeMsg()) {
-				this.getServer().getPluginManager().registerEvents(new VanishStatusChangeEventListener(m), this);
-			} else if (m.getVnpHandler().isPluginInstalled() && cfg.getReplaceVnpFakeMsg()) {
-				this.getServer().getPluginManager().registerEvents(new VanishStatusChangeEventFakeMessageListener(m), this);
+			messages = new Messages(this, true);
+			if (messages.getVnpHandler().isPluginInstalled() && !cfg.getReplaceVnpFakeMsg()) {
+				this.getServer().getPluginManager().registerEvents(new VanishStatusChangeEventListener(messages), this);
+			} else if (messages.getVnpHandler().isPluginInstalled() && cfg.getReplaceVnpFakeMsg()) {
+				this.getServer().getPluginManager().registerEvents(new VanishStatusChangeEventFakeMessageListener(
+						messages), this);
 			} else {
-				this.getServer().getPluginManager().registerEvents(new CommonListener(m), this);
+				this.getServer().getPluginManager().registerEvents(new CommonListener(messages), this);
 			}
 			plmLogger.logInfo("Advanced messages mode is enabled");
 		}
@@ -138,34 +132,8 @@ public final class PLM extends JavaPlugin {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} catch (Error er) {
-			if (vaultErrorStatus == false)
+			if (!vaultErrorStatus)
 				plmLogger.logError("An unknown error has occurred concerning Vault");
-		}
-	}
-
-	/**
-	 * Activates metrics which are in an other package
-	 */
-	private void activateMetrics() {
-		try {
-			Metrics metrics = new Metrics(this);
-			Graph graph = metrics.createGraph("Advanced Messages Mode enabled?");
-			graph.addPlotter(new Metrics.Plotter(cfg.getAdvancedStatus() ? "Yes" : "No") {
-				@Override
-				public int getValue() {
-					return 1;
-				}
-			});
-			Graph graph2 = metrics.createGraph("Vault installed?");
-			graph2.addPlotter(new Metrics.Plotter(vaultErrorStatus ? "No" : "Yes") {
-				@Override
-				public int getValue() {
-					return 1;
-				}
-			});
-			metrics.start();
-		} catch (IOException e) {
-			plmLogger.logError(e.getMessage());
 		}
 	}
 
@@ -191,7 +159,7 @@ public final class PLM extends JavaPlugin {
 
 	public void reloadMessages() {
 		cfg.reloadConfiguration();
-		m.reload();
+		messages.reload();
 	}
 
 }

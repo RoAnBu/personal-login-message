@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="PLM:jar">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="PLM.jar">
+      <element id="module-output" name="PLM" />
+    </root>
+  </artifact>
+</component>

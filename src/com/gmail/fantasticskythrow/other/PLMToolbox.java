@@ -1,31 +1,24 @@
 package com.gmail.fantasticskythrow.other;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
+import com.earth2me.essentials.Essentials;
+import com.gmail.fantasticskythrow.PLM;
+import com.gmail.fantasticskythrow.configuration.MainConfiguration;
+import com.gmail.fantasticskythrow.configuration.TimeNames;
+import com.gmail.fantasticskythrow.messages.PLMFile;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
-
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-
-import com.earth2me.essentials.Essentials;
-import com.gmail.fantasticskythrow.PLM;
-import com.gmail.fantasticskythrow.configuration.MainConfiguration;
-import com.gmail.fantasticskythrow.configuration.TimeNames;
-import com.gmail.fantasticskythrow.messages.PLMFile;
-
 import uk.org.whoami.geoip.GeoIPLookup;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Random;
 
 /**
  * A big arrangement of tools for replacing and checking
@@ -263,7 +256,8 @@ public class PLMToolbox {
 	public static String getReplacedPlayerlist(String text, VanishNoPacketManager vnpHandler, Server server) {
 		if (text.contains("%playerlist")) {
 			String m = "";
-			Player[] playerlist = server.getOnlinePlayers();
+			Player[] playerlist = server.getOnlinePlayers()
+			                            .toArray(new Player[0]);
 			for (int i = 0; i < (playerlist.length - 1); i++) {
 				Player p = playerlist[i];
 				if (!vnpHandler.isVanished(p.getName())) {
@@ -300,7 +294,8 @@ public class PLMToolbox {
 		if (text.contains("chatplayerlist")) {
 			if (chat != null) {
 				String m = "";
-				Player[] playerlist = server.getOnlinePlayers();
+				Player[] playerlist = server.getOnlinePlayers()
+				                            .toArray(new Player[0]);
 				for (int i = 0; i < (playerlist.length - 1); i++) {
 					Player p = playerlist[i];
 					if (!vnpHandler.isVanished(p.getName())) {
@@ -342,7 +337,8 @@ public class PLMToolbox {
 		if (text.contains("%groupplayerlist")) {
 			if (permission != null) {
 				String m = "";
-				Player[] playerlist = server.getOnlinePlayers();
+				Player[] playerlist = server.getOnlinePlayers()
+				                            .toArray(new Player[0]);
 				for (int i = 0; i < (playerlist.length - 1); i++) {
 					Player p = playerlist[i];
 					if (permission.getPlayerGroups(p)[0].equals(permission.getPlayerGroups(player)[0]) && !vnpHandler.isVanished(p.getName())) {
@@ -387,7 +383,8 @@ public class PLMToolbox {
 		if (text.contains("%groupchatplayerlist")) {
 			if (permission != null && chat != null) {
 				String m = "";
-				Player[] playerlist = server.getOnlinePlayers();
+				Player[] playerlist = server.getOnlinePlayers()
+				                            .toArray(new Player[0]);
 				for (int i = 0; i < (playerlist.length - 1); i++) {
 					Player p = playerlist[i];
 					if (permission.getPlayerGroups(p)[0].equals(permission.getPlayerGroups(player)[0]) && !vnpHandler.isVanished(p.getName())) {
@@ -418,8 +415,8 @@ public class PLMToolbox {
 	/**
 	 * Replaces %logins with the number of times the concerning player joined (The current join, too)
 	 * @param text the string which can contain %logins
-	 * @param playername the name of the player in lowercase!
-	 * @param plmFile
+	 * @param
+	 * @param
 	 * @return the string with replaced %logins
 	 */
 	public static String getReplacedPlayerLogins(String text, Player player, PLMFile plmFile) {
@@ -464,7 +461,7 @@ public class PLMToolbox {
 	 */
 	public static String getReplacedOnlinePlayerNumber(String text, Server server, VanishNoPacketManager vnpHandler, boolean isQuitting) {
 		if (text.contains("%onlineplayers")) {
-			Player[] playerlist = server.getOnlinePlayers();
+			Collection<? extends Player> playerlist = server.getOnlinePlayers();
 			int number = 0;
 			for (Player p : playerlist) {
 				if (!vnpHandler.isVanished(p.getName())) {
@@ -763,46 +760,6 @@ public class PLMToolbox {
 			}
 		}
 		return returnMessage;
-	}
-
-	/**
-	 * Sends a message to the global defined channels (in config)
-	 * @param message The join/quit message to send
-	 * @return true if no need to use the public join/quit message system. False -> Activate join/quit message
-	 */
-	public static boolean sendMessageToConfigChannels(String message, HerochatManager chHandler, List<String> configChannels) {
-		boolean answer = true;
-		if (chHandler.isHerochatInstalled()) {
-			if (configChannels.contains("Default")) {
-				answer = false;
-				configChannels.remove("Default");
-			}
-			if (configChannels.contains("default")) {
-				answer = false;
-				configChannels.remove("default");
-			}
-			for (String s : configChannels) {
-				chHandler.sendMessage(s, message);
-			}
-			return answer;
-		} else { //Herochat not found
-			return false;
-		}
-	}
-
-	/**
-	 * Sends a message to the given channels. The channel "Default" won't be ignored
-	 * @param message The message with translated color codes
-	 * @param channels The channels which are the aim for the message.
-	 */
-	public static void sendMessageToChannels(String message, String[] channels, HerochatManager chHandler, PLMLogger plmLogger) {
-		if (chHandler.isHerochatInstalled()) {
-			for (String s : channels) {
-				chHandler.sendMessage(s, message);
-			}
-		} else { //Herochat not found
-			plmLogger.logInfo("You defined channels but you don't have Herochat installed");
-		}
 	}
 
 	/**

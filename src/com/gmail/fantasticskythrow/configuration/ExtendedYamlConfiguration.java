@@ -20,6 +20,7 @@ public class ExtendedYamlConfiguration extends YamlConfiguration {
 		try {
 			config.load(file);
 		} catch (FileNotFoundException ex) {
+			// TODO error handling
 		} catch (IOException ex) {
 			Bukkit.getLogger().log(Level.SEVERE, "Cannot load " + file, ex);
 		} catch (InvalidConfigurationException ex) {

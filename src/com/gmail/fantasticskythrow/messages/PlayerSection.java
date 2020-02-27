@@ -14,12 +14,12 @@ public final class PlayerSection {
 	protected static boolean checkMessagesJoin(String playername, String playerpath, YamlConfiguration yml, long difference, AdvancedMessages am) {
 		String message = PLMToolbox.getBackMessage(yml, playerpath, difference);
 		if (message != null) {
-			am.setMessage(new MessageData(message, PLMToolbox.getChannels(playerpath, yml), SectionTypes.PLAYER, SectionSubTypes.BACKMESSAGE));
+			am.setMessage(new MessageData(message, PLMToolbox.getChannels(playerpath, yml), SectionTypes.PLAYER, SectionSubTypes.BACK_MESSAGE));
 			return true;
 		}
 		if (yml.contains(playerpath + ".JM1")) {
 			message = PLMToolbox.getMessage(playerpath + ".JM", yml);
-			am.setMessage(new MessageData(message, PLMToolbox.getChannels(playerpath, yml), SectionTypes.PLAYER, SectionSubTypes.JOINMESSAGE));
+			am.setMessage(new MessageData(message, PLMToolbox.getChannels(playerpath, yml), SectionTypes.PLAYER, SectionSubTypes.JOIN_MESSAGE));
 			return true;
 		}
 		return false;
@@ -29,7 +29,7 @@ public final class PlayerSection {
 		String message;
 		if (yml.contains(playerpath + ".QM1")) {
 			message = PLMToolbox.getMessage(playerpath + ".QM", yml);
-			am.setMessage(new MessageData(message, PLMToolbox.getChannels(playerpath, yml), SectionTypes.PLAYER, SectionSubTypes.QUITMESSAGE));
+			am.setMessage(new MessageData(message, PLMToolbox.getChannels(playerpath, yml), SectionTypes.PLAYER, SectionSubTypes.QUIT_MESSAGE));
 			return true;
 		}
 		return false;
@@ -38,7 +38,7 @@ public final class PlayerSection {
 	protected static boolean checkFirstMessage(String playerpath, long lastLogin, YamlConfiguration yml, AdvancedMessages am) {
 		if (lastLogin == 0L && yml.contains(playerpath + ".FM1")) {
 			am.setMessage(new MessageData(PLMToolbox.getMessage(playerpath + ".FM", yml), PLMToolbox.getChannels(playerpath, yml),
-					SectionTypes.PLAYER, SectionSubTypes.FIRSTMESSAGE));
+					SectionTypes.PLAYER, SectionSubTypes.FIRST_MESSAGE));
 			return true;
 		} else {
 			return false;
@@ -71,19 +71,19 @@ public final class PlayerSection {
 		if (lastLogin == 0L && yml.contains(playerpath + ".FM1")) {
 			ArrayList<String> al = PLMToolbox.getAllMessages(playerpath + ".FM", yml);
 			for (String text : al) {
-				messages.add(new MessageData(text, channels, SectionTypes.PLAYER, SectionSubTypes.FIRSTMESSAGE));
+				messages.add(new MessageData(text, channels, SectionTypes.PLAYER, SectionSubTypes.FIRST_MESSAGE));
 			}
 		}
 		if (yml.contains(playerpath + ".JM1")) {
 			ArrayList<String> al = PLMToolbox.getAllMessages(playerpath + ".JM", yml);
 			for (String text : al) {
-				messages.add(new MessageData(text, channels, SectionTypes.PLAYER, SectionSubTypes.JOINMESSAGE));
+				messages.add(new MessageData(text, channels, SectionTypes.PLAYER, SectionSubTypes.JOIN_MESSAGE));
 			}
 		}
 		if (yml.contains(playerpath + ".BM1")) {
 			String text = PLMToolbox.getBackMessage(yml, playerpath, difference);
 			if (text != null) {
-				messages.add(new MessageData(text, channels, SectionTypes.PLAYER, SectionSubTypes.BACKMESSAGE));
+				messages.add(new MessageData(text, channels, SectionTypes.PLAYER, SectionSubTypes.BACK_MESSAGE));
 			}
 		}
 		return messages;
@@ -95,7 +95,7 @@ public final class PlayerSection {
 		if (yml.contains(playerpath + ".QM1")) {
 			ArrayList<String> al = PLMToolbox.getAllMessages(playerpath + ".QM", yml);
 			for (String text : al) {
-				messages.add(new MessageData(text, channels, SectionTypes.PLAYER, SectionSubTypes.QUITMESSAGE));
+				messages.add(new MessageData(text, channels, SectionTypes.PLAYER, SectionSubTypes.QUIT_MESSAGE));
 			}
 		}
 		return messages;

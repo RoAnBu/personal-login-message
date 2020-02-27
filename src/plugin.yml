@@ -1,7 +1,7 @@
 name: PLM
-version: 0.6.1 ALPHA prerelease
+version: 0.7.0 pr
 author: FantasticSkyThrow
-softdepend: [Vault, GeoIPTools, VanishNoPacket, Herochat, Essentials]
+softdepend: [Vault, GeoIPTools, VanishNoPacket, EssentialsX]
 
 main: com.gmail.fantasticskythrow.PLM
 

@@ -18,6 +18,7 @@ public class PublicMessagePrinter extends Thread {
 		try {
 			Thread.sleep(100);
 		} catch (Exception e) {
+			// TODO refactor
 		}
 		try {
 			if (receivers != null && messages != null) {
@@ -28,7 +29,7 @@ public class PublicMessagePrinter extends Thread {
 				}
 			}
 		} catch (NullPointerException ex) {
-
+			// TODO refactor
 		}
 	}
 

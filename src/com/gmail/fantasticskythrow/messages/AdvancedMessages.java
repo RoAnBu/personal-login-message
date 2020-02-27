@@ -20,7 +20,6 @@ import com.gmail.fantasticskythrow.other.SectionTypes;
 public class AdvancedMessages {
 
 	private PLM plugin;
-	private File advancedMessagesData;
 	private YamlConfiguration advancedMessagesYML;
 	private PLMFile settings;
 	private MessageData mData;
@@ -41,9 +40,9 @@ public class AdvancedMessages {
 
 	private void loadAdvancedMessagesFile() {
 		try {
-			advancedMessagesData = new File(plugin.getDataFolder(), "AdvancedMessages.yml");
+			File advancedMessagesData = new File(plugin.getDataFolder(), "AdvancedMessages.yml");
 			advancedMessagesYML = ExtendedYamlConfiguration.loadConfiguration(advancedMessagesData);
-			if (settings.getFirstEnabled() == false || !advancedMessagesData.exists()) {
+			if (!settings.getFirstEnabled() || !advancedMessagesData.exists()) {
 				advancedMessagesYML.set("Default.JM1", "%chatplayername &ejoined the game");
 				advancedMessagesYML.set("Default.QM1", "%chatplayername &eleft the game");
 				advancedMessagesYML.set("Groups.examplegroup.JM1", "&4Admin %playername joined the game");
@@ -94,9 +93,9 @@ public class AdvancedMessages {
 		/*
 		 * Error -> Skips message checking
 		 */
-		if (errorStatus == true) {
+		if (errorStatus) {
 			return new MessageData("&4An error has occurred at the messages file! &e%playername joined", null, SectionTypes.ERROR,
-					SectionSubTypes.FILEERROR);
+					SectionSubTypes.FILE_ERROR);
 		} else
 		/*
 		 * No error -> Looking for fitting message
@@ -122,7 +121,7 @@ public class AdvancedMessages {
 			} else if (DefaultSection.checkMessagesJoin(advancedMessagesYML, difference, this)) { //Default section, back/join message
 			} else {
 				plmLogger.logWarning("No path found for " + p.getName() + ". Using default messages");
-				mData = new MessageData("&e%playername joined the game", null, SectionTypes.ERROR, SectionSubTypes.NOPATH);
+				mData = new MessageData("&e%playername joined the game", null, SectionTypes.ERROR, SectionSubTypes.NO_PATH);
 			}
 			mData.message = getReplacedWorld(mData.message, p);
 			return mData;
@@ -141,14 +140,14 @@ public class AdvancedMessages {
 			plmLogger.logWarning("Group section will be ignored for this player!");
 		}
 		String grouppath = String.format("Groups.%s", groupname);
-		if (errorStatus == true) {
-			mData = new MessageData("&e%playername left the game", null, SectionTypes.ERROR, SectionSubTypes.FILEERROR);
+		if (errorStatus) {
+			mData = new MessageData("&e%playername left the game", null, SectionTypes.ERROR, SectionSubTypes.FILE_ERROR);
 		} else if (PlayerSection.checkMessagesQuit(playername, playerpath, advancedMessagesYML, this)) {
 		} else if (GroupSection.checkMessagesQuit(grouppath, advancedMessagesYML, this)) {
 		} else if (DefaultSection.checkMessagesQuit(advancedMessagesYML, this)) {
 		} else {
 			plmLogger.logWarning("No path found for " + p.getName() + ". Using default messages");
-			mData = new MessageData("&e%playername left the game", null, SectionTypes.ERROR, SectionSubTypes.NOPATH);
+			mData = new MessageData("&e%playername left the game", null, SectionTypes.ERROR, SectionSubTypes.NO_PATH);
 		}
 		mData.message = getReplacedWorld(mData.message, p);
 		return mData;
@@ -158,9 +157,9 @@ public class AdvancedMessages {
 		/*
 		 * Error -> Skips message checking
 		 */
-		if (errorStatus == true) {
+		if (errorStatus) {
 			return new MessageData("&4An error has occurred at the messages file! &e%playername joined", null, SectionTypes.ERROR,
-					SectionSubTypes.FILEERROR);
+					SectionSubTypes.FILE_ERROR);
 		} else
 		/*
 		 * No error -> Looking for fitting messages
@@ -207,7 +206,7 @@ public class AdvancedMessages {
 				mData = messages.get(resultIndex);
 			} else if (messages.isEmpty()) { // No message
 				plmLogger.logWarning("No path found for " + p.getName() + ". Using default messages");
-				mData = new MessageData("&e%playername joined the game", null, SectionTypes.ERROR, SectionSubTypes.NOPATH);
+				mData = new MessageData("&e%playername joined the game", null, SectionTypes.ERROR, SectionSubTypes.NO_PATH);
 			} else { // 1 message
 				mData = messages.get(0);
 			}
@@ -221,9 +220,9 @@ public class AdvancedMessages {
 		/*
 		 * Error -> Skips message checking
 		 */
-		if (errorStatus == true) {
+		if (errorStatus) {
 			return new MessageData("&4An error has occurred at the messages file! &e%playername left the game", null, SectionTypes.ERROR,
-					SectionSubTypes.FILEERROR);
+					SectionSubTypes.FILE_ERROR);
 		} else
 		/*
 		 * No error -> Looking for fitting messages
@@ -268,7 +267,7 @@ public class AdvancedMessages {
 				mData = messages.get(resultIndex);
 			} else if (messages.isEmpty()) { // No message
 				plmLogger.logWarning("No path found for " + p.getName() + ". Using default messages");
-				mData = new MessageData("&e%playername left the game", null, SectionTypes.ERROR, SectionSubTypes.NOPATH);
+				mData = new MessageData("&e%playername left the game", null, SectionTypes.ERROR, SectionSubTypes.NO_PATH);
 			} else { // 1 Message
 				mData = messages.get(0);
 			}
@@ -296,7 +295,7 @@ public class AdvancedMessages {
 		String grouppath = String.format("Groups.%s", groupname);
 		String playername = p.getName().toLowerCase();
 		String playerpath = String.format("players.%s", playername);
-		if (errorStatus == true) {
+		if (errorStatus) {
 			return emptyMessages;
 		} else if (PlayerSection.checkWelcomeMessages(playerpath, advancedMessagesYML, this)) {
 			for (int i = 0; i < welcomeMessages.length; i++) {
@@ -335,7 +334,7 @@ public class AdvancedMessages {
 		String grouppath = String.format("Groups.%s", groupname);
 		String playername = p.getName().toLowerCase();
 		String playerpath = String.format("players.%s", playername);
-		if (errorStatus == true) {
+		if (errorStatus) {
 			return emptyMessages;
 		} else if (PlayerSection.checkPublicMessages(playerpath, advancedMessagesYML, this)) {
 			for (int i = 0; i < publicMessages.length; i++) {
