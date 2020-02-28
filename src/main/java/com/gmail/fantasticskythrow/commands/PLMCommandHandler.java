@@ -1,22 +1,22 @@
 package com.gmail.fantasticskythrow.commands;
 
+import com.gmail.fantasticskythrow.PLM;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.gmail.fantasticskythrow.PLM;
-import com.gmail.fantasticskythrow.other.PLMLogger;
-
 public class PLMCommandHandler implements CommandExecutor {
 
-	private PLMLogger plmLogger;
+	private static final Logger logger = LogManager.getLogger(PLMCommandHandler.class);
+
 	private boolean advancedStatus;
 	private PLM plugin;
 
-	public PLMCommandHandler(PLM plugin, PLMLogger plmLogger, boolean advancedStatus) {
-		this.plmLogger = plmLogger;
+	public PLMCommandHandler(PLM plugin, boolean advancedStatus) {
 		this.advancedStatus = advancedStatus;
 		this.plugin = plugin;
 	}
@@ -44,7 +44,7 @@ public class PLMCommandHandler implements CommandExecutor {
 				}
 			} else { // No Permission, Player
 				sender.sendMessage(ChatColor.YELLOW + "Sorry, you are not permitted to modify PLM");
-				plmLogger.logInfo(sender.getName() + " tried to execute a command although he is not permitted to do that");
+				logger.info(sender.getName() + " tried to execute a command although he is not permitted to do that");
 			}
 			/*
 			 * CONSOLE
@@ -55,9 +55,9 @@ public class PLMCommandHandler implements CommandExecutor {
 			} else if (commandType.equalsIgnoreCase("restore") && !advancedStatus) { //plm restore without AMM
 				PLMRestoreCommand.onCommand(plugin, sender, args);
 			} else if (commandType.equalsIgnoreCase("restore") && advancedStatus) { //plm restore with AMM
-				plmLogger.logInfo("plm restore is not available with Advanced Messages Mode!");
+				logger.info("plm restore is not available with Advanced Messages Mode!");
 			} else { // Wrong subcommand
-				plmLogger.logInfo("plm " + commandType + " is not a valid command!");
+				logger.info("plm " + commandType + " is not a valid command!");
 			}
 		}
 		return true;

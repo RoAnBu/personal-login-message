@@ -1,13 +1,11 @@
 package com.gmail.fantasticskythrow.configuration
 
-import com.gmail.fantasticskythrow.PLM
 import org.apache.logging.log4j.LogManager
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 
-class AppConfiguration(private val plugin: PLM) {
+class AppConfiguration(private val configFile: File) {
     private var cfg: YamlConfiguration? = null
-    private val cfgData: File = File(this.plugin.dataFolder, "config.yml")
 
     var pluginEnabled = true
         private set
@@ -44,7 +42,7 @@ class AppConfiguration(private val plugin: PLM) {
             /*
 			 * Set default values if necessary
 			 */
-            cfg = YamlConfiguration.loadConfiguration(cfgData)
+            cfg = YamlConfiguration.loadConfiguration(configFile)
             cfg!!.addDefault("general.enabled", "true")
             cfg!!.addDefault("general.usepermissions", "false")
             cfg!!.addDefault("general.useEssentialsNickName", "true")
@@ -68,7 +66,7 @@ class AppConfiguration(private val plugin: PLM) {
             cfg!!.addDefault("VanishNoPacket.usefakequitmessage", "false")
             cfg!!.addDefault("VanishNoPacket.replaceVNPfakemessages", "false")
             cfg!!.options().copyDefaults(true)
-            cfg!!.save(cfgData)
+            cfg!!.save(configFile)
 
             /*
 			 * Load values

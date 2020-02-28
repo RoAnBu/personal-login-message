@@ -7,13 +7,14 @@ import java.util.Random;
 
 import net.milkbowl.vault.permission.Permission;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import com.gmail.fantasticskythrow.PLM;
 import com.gmail.fantasticskythrow.configuration.ExtendedYamlConfiguration;
 import com.gmail.fantasticskythrow.other.MessageData;
-import com.gmail.fantasticskythrow.other.PLMLogger;
 import com.gmail.fantasticskythrow.other.SectionSubTypes;
 import com.gmail.fantasticskythrow.other.SectionTypes;
 
@@ -21,18 +22,18 @@ public class AdvancedMessages {
 
 	private PLM plugin;
 	private YamlConfiguration advancedMessagesYML;
-	private PLMFile settings;
+	private IPLMFile settings;
 	private MessageData mData;
 	private Permission permission;
 	private boolean errorStatus = false;
 	private String[] welcomeMessages, publicMessages;
 	private final String[] emptyMessages;
-	private final PLMLogger plmLogger;
 
-	public AdvancedMessages(PLM p, PLMFile f) {
+	private static final Logger logger = LogManager.getLogger(AdvancedMessages.class);
+
+	public AdvancedMessages(PLM p, IPLMFile f) {
 		settings = f;
 		plugin = p;
-		plmLogger = plugin.getPLMLogger();
 		loadAdvancedMessagesFile();
 		emptyMessages = null;
 		permission = plugin.getPermission();
@@ -76,14 +77,16 @@ public class AdvancedMessages {
 			}
 		} catch (IllegalStateException ex) {
 			errorStatus = true;
-			plmLogger.logError("Couldn't read AdvancedMessages.yml");
-			plmLogger.logInfo("Please make sure that you used ' in front any special letter (%, &,...)");
-			plmLogger.logInfo("More information on PLM's BukkitDev page!");
+			logger.error(ex.getMessage());
+			logger.error("Couldn't read AdvancedMessages.yml");
+			logger.info("Please make sure that you used ' in front any special letter (%, &,...)");
+			logger.info("More information on PLM's BukkitDev page!");
 		} catch (IOException io) {
-			plmLogger.logError("An error has occurred while saving AdvancedMessages.yml");
-			plmLogger.logInfo("Please check whether PLM has all rights to do this!");
+			logger.error(io);
+			logger.error("An error has occurred while saving AdvancedMessages.yml");
+			logger.error("Please check whether PLM has all rights to do this!");
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 	}
 
@@ -107,8 +110,8 @@ public class AdvancedMessages {
 			groupname = permission.getPrimaryGroup(p);
 			if (groupname == null) {
 				groupname = "";
-				plmLogger.logWarning("PLM was not able to find " + p.getName() + "'s group!");
-				plmLogger.logWarning("Group section will be ignored for this player!");
+				logger.warn("PLM was not able to find " + p.getName() + "'s group!");
+				logger.warn("Group section will be ignored for this player!");
 			}
 			String grouppath = String.format("Groups.%s", groupname);
 
@@ -120,7 +123,7 @@ public class AdvancedMessages {
 			} else if (GroupSection.checkMessagesJoin(grouppath, advancedMessagesYML, difference, this)) { //Group section, back/join message
 			} else if (DefaultSection.checkMessagesJoin(advancedMessagesYML, difference, this)) { //Default section, back/join message
 			} else {
-				plmLogger.logWarning("No path found for " + p.getName() + ". Using default messages");
+				logger.warn("No path found for " + p.getName() + ". Using default messages");
 				mData = new MessageData("&e%playername joined the game", null, SectionTypes.ERROR, SectionSubTypes.NO_PATH);
 			}
 			mData.message = getReplacedWorld(mData.message, p);
@@ -136,8 +139,8 @@ public class AdvancedMessages {
 		String groupname = permission.getPrimaryGroup(p);
 		if (groupname == null) {
 			groupname = "";
-			plmLogger.logWarning("PLM was not able to find " + p.getName() + "'s group!");
-			plmLogger.logWarning("Group section will be ignored for this player!");
+			logger.warn("PLM was not able to find " + p.getName() + "'s group!");
+			logger.warn("Group section will be ignored for this player!");
 		}
 		String grouppath = String.format("Groups.%s", groupname);
 		if (errorStatus) {
@@ -146,7 +149,7 @@ public class AdvancedMessages {
 		} else if (GroupSection.checkMessagesQuit(grouppath, advancedMessagesYML, this)) {
 		} else if (DefaultSection.checkMessagesQuit(advancedMessagesYML, this)) {
 		} else {
-			plmLogger.logWarning("No path found for " + p.getName() + ". Using default messages");
+			logger.warn("No path found for " + p.getName() + ". Using default messages");
 			mData = new MessageData("&e%playername left the game", null, SectionTypes.ERROR, SectionSubTypes.NO_PATH);
 		}
 		mData.message = getReplacedWorld(mData.message, p);
@@ -170,8 +173,8 @@ public class AdvancedMessages {
 			String groupname = permission.getPrimaryGroup(p);
 			if (groupname == null) {
 				groupname = "";
-				plmLogger.logWarning("PLM was not able to find " + p.getName() + "'s group!");
-				plmLogger.logWarning("Group section will be ignored for this player!");
+				logger.warn("PLM was not able to find " + p.getName() + "'s group!");
+				logger.warn("Group section will be ignored for this player!");
 			}
 			final String grouppath = String.format("Groups.%s", groupname);
 			final ArrayList<MessageData> messages = new ArrayList<MessageData>();
@@ -197,7 +200,7 @@ public class AdvancedMessages {
 				int current = 0;
 				for (MessageData md : messages) { //Message Debugging. Prints all messages to the console
 					current++;
-					this.plmLogger.logDebug("Message " + current + ": " + md.message);
+					logger.debug("Message " + current + ": " + md.message);
 				}
 				int length = messages.size();
 				int resultIndex;
@@ -205,7 +208,7 @@ public class AdvancedMessages {
 				resultIndex = r.nextInt(length - 1);
 				mData = messages.get(resultIndex);
 			} else if (messages.isEmpty()) { // No message
-				plmLogger.logWarning("No path found for " + p.getName() + ". Using default messages");
+				logger.warn("No path found for " + p.getName() + ". Using default messages");
 				mData = new MessageData("&e%playername joined the game", null, SectionTypes.ERROR, SectionSubTypes.NO_PATH);
 			} else { // 1 message
 				mData = messages.get(0);
@@ -216,6 +219,7 @@ public class AdvancedMessages {
 		}
 	}
 
+	// TODO massive code duplication
 	protected MessageData getRandomQuitMessage(Player p) {
 		/*
 		 * Error -> Skips message checking
@@ -233,8 +237,8 @@ public class AdvancedMessages {
 			String groupname = permission.getPrimaryGroup(p);
 			if (groupname == null) {
 				groupname = "";
-				plmLogger.logWarning("PLM was not able to find " + p.getName() + "'s group!");
-				plmLogger.logWarning("Group section will be ignored for this player!");
+				logger.warn("PLM was not able to find " + p.getName() + "'s group!");
+				logger.warn("Group section will be ignored for this player!");
 			}
 			final String grouppath = String.format("Groups.%s", groupname);
 			final ArrayList<MessageData> messages = new ArrayList<MessageData>();
@@ -258,7 +262,7 @@ public class AdvancedMessages {
 				int current = 0;
 				for (MessageData md : messages) { //Message Debugging. Prints all messages to the console
 					current++;
-					this.plmLogger.logDebug("Message " + current + ": " + md.message);
+					logger.debug("Message " + current + ": " + md.message);
 				}
 				int length = messages.size();
 				int resultIndex;
@@ -266,7 +270,7 @@ public class AdvancedMessages {
 				resultIndex = r.nextInt(length - 1);
 				mData = messages.get(resultIndex);
 			} else if (messages.isEmpty()) { // No message
-				plmLogger.logWarning("No path found for " + p.getName() + ". Using default messages");
+				logger.warn("No path found for " + p.getName() + ". Using default messages");
 				mData = new MessageData("&e%playername left the game", null, SectionTypes.ERROR, SectionSubTypes.NO_PATH);
 			} else { // 1 Message
 				mData = messages.get(0);
@@ -289,8 +293,8 @@ public class AdvancedMessages {
 		String groupname = permission.getPrimaryGroup(p);
 		if (groupname == null) {
 			groupname = "";
-			plmLogger.logWarning("PLM was not able to find " + p.getName() + "'s group!");
-			plmLogger.logWarning("Group section will be ignored for this player!");
+			logger.warn("PLM was not able to find " + p.getName() + "'s group!");
+			logger.warn("Group section will be ignored for this player!");
 		}
 		String grouppath = String.format("Groups.%s", groupname);
 		String playername = p.getName().toLowerCase();
@@ -328,8 +332,8 @@ public class AdvancedMessages {
 		String groupname = permission.getPrimaryGroup(p);
 		if (groupname == null) {
 			groupname = "";
-			plmLogger.logWarning("PLM was not able to find " + p.getName() + "'s group!");
-			plmLogger.logWarning("Group section will be ignored for this player!");
+			logger.warn("PLM was not able to find " + p.getName() + "'s group!");
+			logger.warn("Group section will be ignored for this player!");
 		}
 		String grouppath = String.format("Groups.%s", groupname);
 		String playername = p.getName().toLowerCase();

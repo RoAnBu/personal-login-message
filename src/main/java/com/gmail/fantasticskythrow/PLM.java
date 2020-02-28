@@ -5,36 +5,34 @@ import com.gmail.fantasticskythrow.messages.CommonListener;
 import com.gmail.fantasticskythrow.messages.Messages;
 import com.gmail.fantasticskythrow.messages.VanishStatusChangeEventFakeMessageListener;
 import com.gmail.fantasticskythrow.messages.VanishStatusChangeEventListener;
-import com.gmail.fantasticskythrow.other.PLMLogger;
 import com.gmail.fantasticskythrow.other.PLMPluginConnector;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-/**
- * Main class. Just calls basic methods
- * @author Roman
- *
- */
+import java.io.File;
+
 public final class PLM extends JavaPlugin {
 
 	private Messages messages = null;
-	private boolean vaultErrorStatus = false;
+	private boolean isVaultUnavailable = false;
 	private Chat chat = null;
 	private Permission permission = null;
 	private AppConfiguration cfg;
-	private PLMLogger plmLogger;
 	private PLMPluginConnector plmPluginConn;
 
+	private static final Logger logger = LogManager.getLogger(PLM.class);
+
 	/**
-	 * Decides whether to use SM or AMM after it enabled the main configuration. Activates metrics, too.
+	 * Decides whether to use SM or AMM after it enabled the main configuration.
 	 */
 	@Override
 	public void onEnable() {
 		try {
-			cfg = new AppConfiguration(this);
-			plmLogger = new PLMLogger(this);
+			cfg = new AppConfiguration(new File(this.getDataFolder(), "config.yml"));
 			plmPluginConn = new PLMPluginConnector(this);
 			if (cfg.getPluginEnabled()) { //Activated
 				if (!cfg.getAdvancedStatus()) { //Standard mode
@@ -43,23 +41,20 @@ public final class PLM extends JavaPlugin {
 					initAdvancedSetup();
 				}
 			} else { //Not activated
-				plmLogger.logInfo("Personal Login Message is not enabled in config");
+				logger.info("Personal Login Message is not enabled in config");
 			}
 		} catch (Exception e) { // Not handled exceptions
-			plmLogger.logError("An unknown error has occurred while setting up PLM!");
-			e.printStackTrace();
+			logger.error("An unknown error has occurred while setting up PLM!");
+			logger.error(e);
 		}
 	}
 
-	/**
-	 * Just a simple message that it was disabled
-	 */
 	@Override
 	public void onDisable() {
 		if (cfg.getPluginEnabled()) {
 			messages.getPlmFile().run(); //Save PLM.yml
 		}
-		plmLogger.logInfo("Personal Login Message disabled");
+		logger.info("Personal Login Message disabled");
 	}
 
 	private void initStandardSetup() {
@@ -73,14 +68,14 @@ public final class PLM extends JavaPlugin {
 		} else {
 			this.getServer().getPluginManager().registerEvents(new CommonListener(messages), this);
 		}
-		plmLogger.logInfo("Personal Login Message is enabled");
+		logger.info("Personal Login Message is enabled");
 	}
 
 	private void initAdvancedSetup() {
 		setupChat();
 		setupPermissions();
-		if (vaultErrorStatus || permission == null) { //If vault or permission/chat plugin is not available -> Standard setup
-			plmLogger.logWarning("Sorry, you need Vault and a compatible permissions plugin to use the advanced messages mode!");
+		if (isVaultUnavailable || permission == null) { //If vault or permission/chat plugin is not available -> Standard setup
+			logger.warn("Sorry, you need Vault and a compatible permissions plugin to use the advanced messages mode!");
 			initStandardSetup();
 		} else { //Activate AdvancedMessages, because vault is active and it's enabled
 			messages = new Messages(this, true);
@@ -92,7 +87,7 @@ public final class PLM extends JavaPlugin {
 			} else {
 				this.getServer().getPluginManager().registerEvents(new CommonListener(messages), this);
 			}
-			plmLogger.logInfo("Advanced messages mode is enabled");
+			logger.info("Advanced messages mode is enabled");
 		}
 	}
 
@@ -105,14 +100,15 @@ public final class PLM extends JavaPlugin {
 			if (chatProvider != null) {
 				chat = chatProvider.getProvider();
 			} else {
-				plmLogger.logInfo("Found no chat plugin. Standard player format will be used.");
+				logger.info("Found no chat plugin. Standard player format will be used.");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} catch (Error er) {
-			plmLogger.logWarning("PLM was not able to find 'Vault'. Is it installed?");
-			plmLogger.logWarning("Using chat format is now disabled");
-			vaultErrorStatus = true;
+			logger.warn("PLM was not able to find 'Vault'. Is it installed?");
+			logger.warn("Using chat format is now disabled");
+			logger.trace(er);
+			isVaultUnavailable = true;
 		}
 	}
 
@@ -127,13 +123,15 @@ public final class PLM extends JavaPlugin {
 			if (permissionProvider != null) {
 				permission = permissionProvider.getProvider();
 			} else {
-				plmLogger.logWarning("Found no permission plugin!");
+				logger.warn("Found no permission plugin!");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} catch (Error er) {
-			if (!vaultErrorStatus)
-				plmLogger.logError("An unknown error has occurred concerning Vault");
+			if (!isVaultUnavailable) {
+				logger.error("An unknown error has occurred concerning Vault");
+				logger.error(er);
+			}
 		}
 	}
 
@@ -147,10 +145,6 @@ public final class PLM extends JavaPlugin {
 
 	public AppConfiguration getCfg() {
 		return cfg;
-	}
-
-	public PLMLogger getPLMLogger() {
-		return plmLogger;
 	}
 
 	public PLMPluginConnector getPLMPluginConnector() {

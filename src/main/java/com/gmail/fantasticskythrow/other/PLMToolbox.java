@@ -4,10 +4,12 @@ import com.earth2me.essentials.Essentials;
 import com.gmail.fantasticskythrow.PLM;
 import com.gmail.fantasticskythrow.configuration.AppConfiguration;
 import com.gmail.fantasticskythrow.configuration.TimeNames;
-import com.gmail.fantasticskythrow.messages.PLMFile;
+import com.gmail.fantasticskythrow.messages.IPLMFile;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
 import org.apache.commons.lang.WordUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Damageable;
@@ -15,10 +17,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import uk.org.whoami.geoip.GeoIPLookup;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
+
+// TODO complete refactor
 
 /**
  * A big arrangement of tools for replacing and checking
@@ -26,6 +33,8 @@ import java.util.Random;
  *
  */
 public class PLMToolbox {
+
+	private static final Logger logger = LogManager.getLogger(PLMToolbox.class);
 
 	/**
 	 * Checks whether the player has permission 'plm.join'
@@ -127,8 +136,8 @@ public class PLMToolbox {
 					nickName = essentials.getSettings().getNicknamePrefix() + nickName;
 				}
 			} catch (Error e) {
-				plugin.getPLMLogger().logError(
-						"Could not connect to Essentials! Please use a newer version of Essentials or disable the Essentials connection");
+				logger.error("Could not connect to Essentials! Please use a newer version of Essentials or disable the " +
+						             "Essentials connection");
 			}
 		}
 		return nickName;
@@ -224,7 +233,7 @@ public class PLMToolbox {
 	 * @param plmFile the plmfile which contains the information for the country names
 	 * @return replaced %country if possible. Otherwise it will return unknown
 	 */
-	public static String getReplacedCountry(String text, PLM plugin, Player player, PLMFile plmFile) {
+	public static String getReplacedCountry(String text, PLM plugin, Player player, IPLMFile plmFile) {
 		if (text.contains("%country")) {
 			GeoIPLookup geoIP = plugin.getPLMPluginConnector().getGeoIPLookup();
 			if (geoIP != null) {
@@ -236,8 +245,8 @@ public class PLMToolbox {
 				text = text.replaceAll("%country", country);
 				return text;
 			} else {
-				plugin.getPLMLogger().logWarning("You used %country but GeoIPTools is not installed or no database is initialized");
-				plugin.getPLMLogger().logWarning("Use /geoupdate if it's installed");
+				logger.warn("You used %country but GeoIPTools is not installed or no database is initialized");
+				logger.warn("Use /geoupdate if it's installed");
 				text = text.replaceAll("%country", "unknown");
 				return text;
 			}
@@ -419,7 +428,7 @@ public class PLMToolbox {
 	 * @param
 	 * @return the string with replaced %logins
 	 */
-	public static String getReplacedPlayerLogins(String text, Player player, PLMFile plmFile) {
+	public static String getReplacedPlayerLogins(String text, Player player, IPLMFile plmFile) {
 		if (text.contains("%logins")) {
 			text = text.replaceAll("%logins", String.valueOf(plmFile.getPlayerLogins(player)));
 		}
@@ -432,7 +441,7 @@ public class PLMToolbox {
 	 * @param plmFile
 	 * @return the string with replaced %totallogins
 	 */
-	public static String getReplacedTotalLogins(String text, PLMFile plmFile) {
+	public static String getReplacedTotalLogins(String text, IPLMFile plmFile) {
 		if (text.contains("%totallogins")) {
 			text = text.replaceAll("%totallogins", String.valueOf(plmFile.getTotalLogins()));
 		}
@@ -445,7 +454,7 @@ public class PLMToolbox {
 	 * @param plmFile
 	 * @return the string with replaced %uniqueplayers
 	 */
-	public static String getReplacedUniquePlayers(String text, PLMFile plmFile) {
+	public static String getReplacedUniquePlayers(String text, IPLMFile plmFile) {
 		if (text.contains("%uniqueplayers")) {
 			text = text.replaceAll("%uniqueplayers", String.valueOf(plmFile.getUniquePlayerLogins()));
 		}
@@ -608,7 +617,7 @@ public class PLMToolbox {
 	 * @param vnpHandler The VanishNoPacketManager for the lists
 	 * @return
 	 */
-	public static String getReplacedStandardPlaceholders(String text, Player player, Chat chat, Permission permission, PLM plugin, PLMFile plmFile,
+	public static String getReplacedStandardPlaceholders(String text, Player player, Chat chat, Permission permission, PLM plugin, IPLMFile plmFile,
 			VanishNoPacketManager vnpHandler) {
 		text = getReplacedPlayername(text, player);
 		text = getReplacedChatplayername(text, chat, player, plugin);
@@ -643,7 +652,7 @@ public class PLMToolbox {
 	 * @param permission the permission hook by vault. Can be null if not available
 	 * @return
 	 */
-	public static String getReplacedComplexPlaceholders(String text, Player player, Chat chat, PLM plugin, PLMFile plmFile,
+	public static String getReplacedComplexPlaceholders(String text, Player player, Chat chat, PLM plugin, IPLMFile plmFile,
 			VanishNoPacketManager vnpHandler, Permission permission) {
 		text = getReplacedPlayername(text, player);
 		text = getReplacedChatplayername(text, chat, player, plugin);
@@ -768,7 +777,7 @@ public class PLMToolbox {
 	 * @param message the message containing the time constant
 	 * @return the message without %time
 	 */
-	public static String getReplacedTime(String message, AppConfiguration cfg, PLMFile plmFile, Player player) {
+	public static String getReplacedTime(String message, AppConfiguration cfg, IPLMFile plmFile, Player player) {
 		TimeNames tn = cfg.getTimeNames();
 		if (tn == null) {
 			return message;
@@ -903,17 +912,11 @@ public class PLMToolbox {
 		try {
 			PConfig.save(PLMFileData);
 			return PConfig;
-		} catch (FileNotFoundException ex) {
-			PLMLogger plmLogger = plugin.getPLMLogger();
-			plmLogger.logError(ex.getMessage());
-			plmLogger.logError("PLM.yml is not available!");
-			plmLogger.logInfo("Please check whether PLM is permitted to write in PLM.yml!");
-			return null;
-		} catch (IOException e) {
-			PLMLogger plmLogger = plugin.getPLMLogger();
-			plmLogger.logError(e.getMessage());
-			plmLogger.logError("PLM.yml is not available!");
-			plmLogger.logInfo("Please check whether PLM is permitted to write in PLM.yml!");
+		} catch (IOException ex) {
+			logger.error(ex.getMessage());
+			logger.error("PLM.yml is not available!");
+			logger.error("Please check whether PLM is permitted to write in PLM.yml!");
+			// TODO duplicate code, null return
 			return null;
 		}
 	}
@@ -930,9 +933,8 @@ public class PLMToolbox {
 		try {
 			versionNumber = Integer.parseInt(version);
 		} catch (NumberFormatException ne) {
-			PLMLogger plmLogger = plugin.getPLMLogger();
-			plmLogger.logError("An error occurred while analysing the Minecraft server version!");
-			plmLogger.logError("Please report this problem as fast as possible");
+			logger.error("An error occurred while analysing the Minecraft server version!");
+			logger.error("Please report this problem as fast as possible");
 		}
 		return versionNumber;
 	}

@@ -1,5 +1,7 @@
 package com.gmail.fantasticskythrow.commands;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -8,6 +10,8 @@ import com.gmail.fantasticskythrow.PLM;
 
 public class PLMReloadCommand {
 
+	private static final Logger logger = LogManager.getLogger(PLMCommandHandler.class);
+
 	public static void onCommand(CommandSender sender, String[] args, PLM plugin) {
 		if (sender instanceof Player) {
 			if (args.length == 1) {
@@ -15,9 +19,9 @@ public class PLMReloadCommand {
 				try {
 					plugin.reloadMessages();
 					sender.sendMessage(ChatColor.BLUE + "[PLM] " + ChatColor.GREEN + "Messages have been reloaded!");
-					System.out.println("[PLM] Messages reloaded by " + sender.getName());
+					logger.info("Messages reloaded by " + sender.getName());
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error(e);
 				}
 			} else {
 				//Wrong syntax PLAYER
@@ -28,13 +32,15 @@ public class PLMReloadCommand {
 				//Correct syntax CONSOLE
 				try {
 					plugin.reloadMessages();
-					System.out.println("[PLM] Messages reloaded");
+					System.out.println("Messages reloaded");
+					logger.info("Messages reloaded");
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error(e);
 				}
 			} else {
 				//Wrong syntax CONSOLE
 				System.out.println("Too many arguments. Usage: plm reload");
+				logger.info("Too many arguments. Usage: plm reload");
 			}
 		}
 	}
