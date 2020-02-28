@@ -2,7 +2,7 @@ package com.gmail.fantasticskythrow.messages;
 
 import com.gmail.fantasticskythrow.PLM;
 import com.gmail.fantasticskythrow.commands.PLMCommandHandler;
-import com.gmail.fantasticskythrow.configuration.MainConfiguration;
+import com.gmail.fantasticskythrow.configuration.AppConfiguration;
 import com.gmail.fantasticskythrow.other.*;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
@@ -29,7 +29,7 @@ public class Messages {
 	private final PLM plugin;
 	private Chat chat = null;
 	private Permission permission = null;
-	private final MainConfiguration cfg;
+	private final AppConfiguration cfg;
 	private boolean advancedStatus = false;
 	private static boolean alreadyQuit = false;
 	private StandardMessages sm = null;

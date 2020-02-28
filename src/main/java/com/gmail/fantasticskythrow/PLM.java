@@ -1,6 +1,6 @@
 package com.gmail.fantasticskythrow;
 
-import com.gmail.fantasticskythrow.configuration.MainConfiguration;
+import com.gmail.fantasticskythrow.configuration.AppConfiguration;
 import com.gmail.fantasticskythrow.messages.CommonListener;
 import com.gmail.fantasticskythrow.messages.Messages;
 import com.gmail.fantasticskythrow.messages.VanishStatusChangeEventFakeMessageListener;
@@ -23,7 +23,7 @@ public final class PLM extends JavaPlugin {
 	private boolean vaultErrorStatus = false;
 	private Chat chat = null;
 	private Permission permission = null;
-	private MainConfiguration cfg;
+	private AppConfiguration cfg;
 	private PLMLogger plmLogger;
 	private PLMPluginConnector plmPluginConn;
 
@@ -33,10 +33,10 @@ public final class PLM extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		try {
-			cfg = new MainConfiguration(this);
+			cfg = new AppConfiguration(this);
 			plmLogger = new PLMLogger(this);
 			plmPluginConn = new PLMPluginConnector(this);
-			if (cfg.getPluginStatus()) { //Activated
+			if (cfg.getPluginEnabled()) { //Activated
 				if (!cfg.getAdvancedStatus()) { //Standard mode
 					initStandardSetup();
 				} else { //Advanced messages mode
@@ -56,7 +56,7 @@ public final class PLM extends JavaPlugin {
 	 */
 	@Override
 	public void onDisable() {
-		if (cfg.getPluginStatus()) {
+		if (cfg.getPluginEnabled()) {
 			messages.getPlmFile().run(); //Save PLM.yml
 		}
 		plmLogger.logInfo("Personal Login Message disabled");
@@ -145,7 +145,7 @@ public final class PLM extends JavaPlugin {
 		return chat;
 	}
 
-	public MainConfiguration getCfg() {
+	public AppConfiguration getCfg() {
 		return cfg;
 	}
 

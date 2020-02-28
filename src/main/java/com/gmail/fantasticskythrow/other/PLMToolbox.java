@@ -2,7 +2,7 @@ package com.gmail.fantasticskythrow.other;
 
 import com.earth2me.essentials.Essentials;
 import com.gmail.fantasticskythrow.PLM;
-import com.gmail.fantasticskythrow.configuration.MainConfiguration;
+import com.gmail.fantasticskythrow.configuration.AppConfiguration;
 import com.gmail.fantasticskythrow.configuration.TimeNames;
 import com.gmail.fantasticskythrow.messages.PLMFile;
 import net.milkbowl.vault.chat.Chat;
@@ -768,8 +768,11 @@ public class PLMToolbox {
 	 * @param message the message containing the time constant
 	 * @return the message without %time
 	 */
-	public static String getReplacedTime(String message, MainConfiguration cfg, PLMFile plmFile, Player player) {
+	public static String getReplacedTime(String message, AppConfiguration cfg, PLMFile plmFile, Player player) {
 		TimeNames tn = cfg.getTimeNames();
+		if (tn == null) {
+			return message;
+		}
 		String second = tn.getSecond();
 		String seconds = tn.getSeconds();
 		String minute = tn.getMinute();
