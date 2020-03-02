@@ -5,27 +5,27 @@ import org.bukkit.entity.Player;
 public interface IPLMFile
 {
 
-	public void setPlayerQuitTime(Player player);
+	void setPlayerQuitTime(Player player);
 
-	public long getLastLogin(Player player);
+	long getLastLogin(Player player);
 
-	public long getDifference(Player player);
+	long getDifference(Player player);
 
-	public int getPlayerLogins(Player player);
+	int getPlayerLogins(Player player);
 
-	public long getTotalLogins();
+	long getTotalLogins();
 
-	public int getUniquePlayerLogins();
+	int getUniquePlayerLogins();
 
-	public void setPlayerLogin(Player player);
+	void setPlayerLogin(Player player);
 
-	public boolean getFirstEnabled();
+	boolean getFirstEnabled();
 
-	public void setFirstEnabled(boolean b);
+	void setFirstEnabled(boolean b);
 
-	public String getCountryName(String englishName);
+	String getCountryName(String englishName);
 
-	public boolean getErrorStatus();
+	boolean getErrorStatus();
 
-	public void run();
+	void run();
 }
