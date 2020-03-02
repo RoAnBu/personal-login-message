@@ -1,16 +1,14 @@
 package com.gmail.fantasticskythrow.commands;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.gmail.fantasticskythrow.PLM;
+import com.gmail.fantasticskythrow.other.logging.ILoggerWrapper;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.gmail.fantasticskythrow.PLM;
-
 public class PLMReloadCommand {
 
-	private static final Logger logger = LogManager.getLogger(PLMCommandHandler.class);
+	private static final ILoggerWrapper logger = PLM.logger();
 
 	public static void onCommand(CommandSender sender, String[] args, PLM plugin) {
 		if (sender instanceof Player) {

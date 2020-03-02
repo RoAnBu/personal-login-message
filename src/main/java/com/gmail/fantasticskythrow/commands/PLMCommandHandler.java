@@ -1,8 +1,7 @@
 package com.gmail.fantasticskythrow.commands;
 
 import com.gmail.fantasticskythrow.PLM;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.gmail.fantasticskythrow.other.logging.ILoggerWrapper;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -11,7 +10,7 @@ import org.bukkit.entity.Player;
 
 public class PLMCommandHandler implements CommandExecutor {
 
-	private static final Logger logger = LogManager.getLogger(PLMCommandHandler.class);
+	private static final ILoggerWrapper logger = PLM.logger();
 
 	private boolean advancedStatus;
 	private PLM plugin;

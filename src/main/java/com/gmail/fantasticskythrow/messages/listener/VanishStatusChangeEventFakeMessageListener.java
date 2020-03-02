@@ -1,5 +1,6 @@
-package com.gmail.fantasticskythrow.messages;
+package com.gmail.fantasticskythrow.messages.listener;
 
+import com.gmail.fantasticskythrow.messages.Messages;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;

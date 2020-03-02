@@ -1,18 +1,16 @@
 package com.gmail.fantasticskythrow.messages;
 
-import java.io.File;
-import java.io.IOException;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.gmail.fantasticskythrow.PLM;
+import com.gmail.fantasticskythrow.other.PLMToolbox;
+import com.gmail.fantasticskythrow.other.logging.ILoggerWrapper;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-import com.gmail.fantasticskythrow.PLM;
-import com.gmail.fantasticskythrow.other.PLMToolbox;
+import java.io.File;
+import java.io.IOException;
 
 public class PLMFile implements IPLMFile, Runnable {
-	private static final Logger logger = LogManager.getLogger(PLMFile.class);
+	private static final ILoggerWrapper logger = PLM.logger();
 
 	private final File PLMFileData;
 	private YamlConfiguration PConfig;

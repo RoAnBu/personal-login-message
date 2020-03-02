@@ -1,22 +1,19 @@
 package com.gmail.fantasticskythrow.messages;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Random;
-
-import net.milkbowl.vault.permission.Permission;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
-
 import com.gmail.fantasticskythrow.PLM;
 import com.gmail.fantasticskythrow.configuration.ExtendedYamlConfiguration;
 import com.gmail.fantasticskythrow.other.MessageData;
 import com.gmail.fantasticskythrow.other.SectionSubTypes;
 import com.gmail.fantasticskythrow.other.SectionTypes;
+import com.gmail.fantasticskythrow.other.logging.ILoggerWrapper;
+import net.milkbowl.vault.permission.Permission;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class AdvancedMessages {
 
@@ -29,7 +26,7 @@ public class AdvancedMessages {
 	private String[] welcomeMessages, publicMessages;
 	private final String[] emptyMessages;
 
-	private static final Logger logger = LogManager.getLogger(AdvancedMessages.class);
+	private static final ILoggerWrapper logger = PLM.logger();
 
 	public AdvancedMessages(PLM p, IPLMFile f) {
 		settings = f;

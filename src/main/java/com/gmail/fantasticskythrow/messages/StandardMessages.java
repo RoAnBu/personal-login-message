@@ -3,8 +3,7 @@ package com.gmail.fantasticskythrow.messages;
 import com.gmail.fantasticskythrow.PLM;
 import com.gmail.fantasticskythrow.other.MessageData;
 import com.gmail.fantasticskythrow.other.PLMToolbox;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.gmail.fantasticskythrow.other.logging.ILoggerWrapper;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,7 +16,7 @@ public class StandardMessages {
 	private String joinMessage = "", quitMessage = "";
 	private PLM plugin;
 
-	private static final Logger logger = LogManager.getLogger(StandardMessages.class);
+	private static final ILoggerWrapper logger = PLM.logger();
 
 	public StandardMessages(PLM p) {
 		this.plugin = p;

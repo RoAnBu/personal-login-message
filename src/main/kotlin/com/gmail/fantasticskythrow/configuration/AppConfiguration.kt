@@ -1,6 +1,6 @@
 package com.gmail.fantasticskythrow.configuration
 
-import org.apache.logging.log4j.LogManager
+import com.gmail.fantasticskythrow.PLM
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 
@@ -37,8 +37,8 @@ class AppConfiguration(private val configFile: File) {
     }
 
     private fun loadConfiguration() {
-        logger.traceEntry()
         try {
+            logger.info("Loading config...")
             /*
 			 * Set default values if necessary
 			 */
@@ -124,7 +124,7 @@ class AppConfiguration(private val configFile: File) {
     }
 
     companion object {
-        private val logger = LogManager.getLogger(AppConfiguration::class.java)
+        private val logger = PLM.logger()
     }
 
 }

@@ -1,19 +1,20 @@
 package com.gmail.fantasticskythrow;
 
 import com.gmail.fantasticskythrow.configuration.AppConfiguration;
-import com.gmail.fantasticskythrow.messages.CommonListener;
 import com.gmail.fantasticskythrow.messages.Messages;
-import com.gmail.fantasticskythrow.messages.VanishStatusChangeEventFakeMessageListener;
-import com.gmail.fantasticskythrow.messages.VanishStatusChangeEventListener;
+import com.gmail.fantasticskythrow.messages.listener.CommonListener;
+import com.gmail.fantasticskythrow.messages.listener.VanishStatusChangeEventFakeMessageListener;
+import com.gmail.fantasticskythrow.messages.listener.VanishStatusChangeEventListener;
 import com.gmail.fantasticskythrow.other.PLMPluginConnector;
+import com.gmail.fantasticskythrow.other.logging.BukkitLoggerWrapper;
+import com.gmail.fantasticskythrow.other.logging.ILoggerWrapper;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+
 
 public final class PLM extends JavaPlugin {
 
@@ -24,13 +25,16 @@ public final class PLM extends JavaPlugin {
 	private AppConfiguration cfg;
 	private PLMPluginConnector plmPluginConn;
 
-	private static final Logger logger = LogManager.getLogger(PLM.class);
+	private static BukkitLoggerWrapper logger = new BukkitLoggerWrapper(null);
+
+	public static ILoggerWrapper logger() { return logger; }
 
 	/**
 	 * Decides whether to use SM or AMM after it enabled the main configuration.
 	 */
 	@Override
 	public void onEnable() {
+		logger.setLogger(this.getLogger());
 		try {
 			cfg = new AppConfiguration(new File(this.getDataFolder(), "config.yml"));
 			plmPluginConn = new PLMPluginConnector(this);

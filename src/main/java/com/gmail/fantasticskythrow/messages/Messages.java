@@ -4,11 +4,10 @@ import com.gmail.fantasticskythrow.PLM;
 import com.gmail.fantasticskythrow.commands.PLMCommandHandler;
 import com.gmail.fantasticskythrow.configuration.AppConfiguration;
 import com.gmail.fantasticskythrow.other.*;
+import com.gmail.fantasticskythrow.other.logging.ILoggerWrapper;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
 import org.apache.commons.lang.NotImplementedException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -42,7 +41,7 @@ public class Messages {
 	private final VanishNoPacketManager vnpHandler;
 	private List<String> vnpFakeMsg = new ArrayList<String>();
 
-	private static final Logger logger = LogManager.getLogger(Messages.class);
+	private static final ILoggerWrapper logger = PLM.logger();
 
 	/**
 	 * Uses the given status to control whether AdvancedStatus should be enabled  or not.
@@ -92,12 +91,11 @@ public class Messages {
 		return plmFile;
 	}
 
-	protected void onPlayerJoinEvent(PlayerJoinEvent e) {
+	public void onPlayerJoinEvent(PlayerJoinEvent e) {
 		e.setJoinMessage(getFinalJoinMessage(e.getPlayer(), false));
 	}
 
-	protected void onEarlyQuitEvent(PlayerQuitEvent e) {
-		logger.traceEntry();
+	public void onEarlyQuitEvent(PlayerQuitEvent e) {
 		try {
 			alreadyQuit = false;
 			boolean isVanished = vnpHandler.isVanished(e.getPlayer().getName());
@@ -111,17 +109,17 @@ public class Messages {
 		}
 	}
 
-	protected void onLatePlayerQuitEvent(PlayerQuitEvent e) {
+	public void onLatePlayerQuitEvent(PlayerQuitEvent e) {
 		if (!alreadyQuit) {
 			e.setQuitMessage(getFinalQuitMessage(e.getPlayer()));
 		}
 	}
 
-	protected void onPlayerKickEvent(PlayerKickEvent e) {
+	public void onPlayerKickEvent(PlayerKickEvent e) {
 		e.setLeaveMessage(getFinalQuitMessage(e.getPlayer()));
 	}
 
-	protected void onVanishStatusChangeEvent(VanishStatusChangeEvent event) {
+	public void onVanishStatusChangeEvent(VanishStatusChangeEvent event) {
 		try {
 			if (!vnpHandler.isJustJoinedPlayer(event.getPlayer().getName())) {
 				boolean vnpFakeCmdUser = false;
@@ -149,7 +147,7 @@ public class Messages {
 		}
 	}
 
-	protected void onPlayerCommandPreprocessEvent(PlayerCommandPreprocessEvent event) {
+	public void onPlayerCommandPreprocessEvent(PlayerCommandPreprocessEvent event) {
 		try {
 			String cmd = event.getMessage().replaceAll("/", "");
 			if (cmd.equals("v fq") || cmd.equals("vanish fq")) {

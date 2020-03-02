@@ -5,11 +5,10 @@ import com.gmail.fantasticskythrow.PLM;
 import com.gmail.fantasticskythrow.configuration.AppConfiguration;
 import com.gmail.fantasticskythrow.configuration.TimeNames;
 import com.gmail.fantasticskythrow.messages.IPLMFile;
+import com.gmail.fantasticskythrow.other.logging.ILoggerWrapper;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
 import org.apache.commons.lang.WordUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Damageable;
@@ -34,7 +33,7 @@ import java.util.Random;
  */
 public class PLMToolbox {
 
-	private static final Logger logger = LogManager.getLogger(PLMToolbox.class);
+	private static final ILoggerWrapper logger = PLM.logger();
 
 	/**
 	 * Checks whether the player has permission 'plm.join'
