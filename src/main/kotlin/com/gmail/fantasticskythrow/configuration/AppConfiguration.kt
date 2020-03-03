@@ -21,8 +21,6 @@ class AppConfiguration(private val configFile: File) {
         private set
     var advancedStatus = false
         private set
-    var debugStatus = false
-        private set
     var useRandom = false
         private set
     var useEssentialsNick = false
@@ -46,7 +44,6 @@ class AppConfiguration(private val configFile: File) {
             cfg!!.addDefault("general.enabled", "true")
             cfg!!.addDefault("general.usepermissions", "false")
             cfg!!.addDefault("general.useEssentialsNickName", "true")
-            cfg!!.addDefault("general.debug", "false")
             cfg!!.addDefault("advancedmessages.enabled", "false")
             cfg!!.addDefault("advancedmessages.second", "second")
             cfg!!.addDefault("advancedmessages.seconds", "seconds")
@@ -94,7 +91,6 @@ class AppConfiguration(private val configFile: File) {
             useFakeQuitMsg = cfg!!.getString("VanishNoPacket.usefakequitmessage").equals("true", ignoreCase = true)
             replaceVnpFakeMsg = cfg!!.getString("VanishNoPacket.replaceVNPfakemessages").equals("true", ignoreCase = true)
             advancedStatus = cfg!!.getString("advancedmessages.enabled").equals("true", ignoreCase = true)
-            debugStatus = cfg!!.getString("general.debug").equals("true", ignoreCase = true)
             useRandom = cfg!!.getString("advancedmessages.userandom").equals("true", ignoreCase = true)
             setInternalDelay()
 
