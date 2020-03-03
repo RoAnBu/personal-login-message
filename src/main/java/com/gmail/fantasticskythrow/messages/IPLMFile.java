@@ -27,5 +27,5 @@ public interface IPLMFile
 
 	boolean getErrorStatus();
 
-	void run();
+	void save();
 }

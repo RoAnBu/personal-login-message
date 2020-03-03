@@ -158,6 +158,10 @@ public class PLMFile implements IPLMFile, Runnable {
 		return errorStatus;
 	}
 
+	@Override public void save() {
+		this.run();
+	}
+
 	@Override
 	public void run() {
 		try {

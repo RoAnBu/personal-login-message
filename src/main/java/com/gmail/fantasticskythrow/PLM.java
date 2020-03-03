@@ -30,21 +30,21 @@ public final class PLM extends JavaPlugin {
 	public static ILoggerWrapper logger() { return logger; }
 
 	/**
-	 * Decides whether to use SM or AMM after it enabled the main configuration.
+	 * Decides whether to use StandardMode or AdvancedMessagesMode after it enabled the main configuration.
 	 */
 	@Override
 	public void onEnable() {
-		logger.setLogger(this.getLogger());
+		setupLogging();
 		try {
 			cfg = new AppConfiguration(new File(this.getDataFolder(), "config.yml"));
 			plmPluginConn = new PLMPluginConnector(this);
-			if (cfg.getPluginEnabled()) { //Activated
+			if (cfg.getPluginEnabled()) {
 				if (!cfg.getAdvancedStatus()) { //Standard mode
 					initStandardSetup();
 				} else { //Advanced messages mode
 					initAdvancedSetup();
 				}
-			} else { //Not activated
+			} else {
 				logger.info("Personal Login Message is not enabled in config");
 			}
 		} catch (Exception e) { // Not handled exceptions
@@ -56,9 +56,13 @@ public final class PLM extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		if (cfg.getPluginEnabled()) {
-			messages.getPlmFile().run(); //Save PLM.yml
+			messages.getPlmFile().save();
 		}
 		logger.info("Personal Login Message disabled");
+	}
+
+	private void setupLogging() {
+		logger.setLogger(this.getLogger());
 	}
 
 	private void initStandardSetup() {
