@@ -1,6 +1,6 @@
 package com.gmail.fantasticskythrow.messages.listener;
 
-import com.gmail.fantasticskythrow.messages.Messages;
+import com.gmail.fantasticskythrow.messages.MessagesModeManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -11,34 +11,34 @@ import org.kitteh.vanish.event.VanishStatusChangeEvent;
 
 public class VanishStatusChangeEventListener implements Listener {
 
-	private Messages messages;
+	private MessagesModeManager messagesModeManager;
 
-	public VanishStatusChangeEventListener(Messages messages) {
-		this.messages = messages;
+	public VanishStatusChangeEventListener(MessagesModeManager messagesModeManager) {
+		this.messagesModeManager = messagesModeManager;
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerJoinEvent(PlayerJoinEvent e) {
-		messages.onPlayerJoinEvent(e);
+		messagesModeManager.onPlayerJoinEvent(e);
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onEarlyQuitEvent(PlayerQuitEvent e) {
-		messages.onEarlyQuitEvent(e);
+		messagesModeManager.onEarlyQuitEvent(e);
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onLatePlayerQuitEvent(PlayerQuitEvent e) {
-		messages.onLatePlayerQuitEvent(e);
+		messagesModeManager.onLatePlayerQuitEvent(e);
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerKickEvent(PlayerKickEvent e) {
-		messages.onPlayerKickEvent(e);
+		messagesModeManager.onPlayerKickEvent(e);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onVanishStatusChangeEvent(VanishStatusChangeEvent e) {
-		messages.onVanishStatusChangeEvent(e);
+		messagesModeManager.onVanishStatusChangeEvent(e);
 	}
 }

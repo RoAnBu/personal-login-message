@@ -25,7 +25,8 @@ import java.util.List;
  * @author Roman
  * 
  */
-public class Messages {
+public class MessagesModeManager
+{
 
 	private final PLM plugin;
 	private Chat chat;
@@ -48,7 +49,7 @@ public class Messages {
 	 * @param plugin The main plugin alias JavaPlugin
 	 * @param advancedStatus Decide whether AdvancedStatus should be true or false
 	 */
-	public Messages(PLM plugin, boolean advancedStatus) {
+	public MessagesModeManager(PLM plugin, boolean advancedStatus) {
 		this.plugin = plugin;
 
 		appConfiguration = plugin.getCfg();

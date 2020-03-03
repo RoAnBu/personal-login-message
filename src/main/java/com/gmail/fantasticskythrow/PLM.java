@@ -1,7 +1,7 @@
 package com.gmail.fantasticskythrow;
 
 import com.gmail.fantasticskythrow.configuration.AppConfiguration;
-import com.gmail.fantasticskythrow.messages.Messages;
+import com.gmail.fantasticskythrow.messages.MessagesModeManager;
 import com.gmail.fantasticskythrow.messages.listener.CommonListener;
 import com.gmail.fantasticskythrow.messages.listener.VanishStatusChangeEventFakeMessageListener;
 import com.gmail.fantasticskythrow.messages.listener.VanishStatusChangeEventListener;
@@ -18,7 +18,7 @@ import java.io.File;
 
 public final class PLM extends JavaPlugin {
 
-	private Messages messages = null;
+	private MessagesModeManager messagesModeManager = null;
 	private boolean isVaultUnavailable = false;
 	private Chat chat = null;
 	private Permission permission = null;
@@ -61,7 +61,7 @@ public final class PLM extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		if (cfg.getPluginEnabled()) {
-			messages.getPlmFile().save();
+			messagesModeManager.getPlmFile().save();
 		}
 		logger.info("Personal Login Message disabled");
 	}
@@ -72,7 +72,7 @@ public final class PLM extends JavaPlugin {
 
 	private void initStandardMode() {
 		setupProviders();
-		messages = new Messages(this, false);
+		messagesModeManager = new MessagesModeManager(this, false);
 		registerEventListeners();
 		logger.info("Personal Login Message is enabled");
 	}
@@ -83,7 +83,7 @@ public final class PLM extends JavaPlugin {
 			logger.warn("Sorry, you need Vault and a compatible permissions plugin to use the advanced messages mode!");
 			initStandardMode();
 		} else { //Activate AdvancedMessages, because vault is active and it's enabled
-			messages = new Messages(this, true);
+			messagesModeManager = new MessagesModeManager(this, true);
 			registerEventListeners();
 			logger.info("Advanced messages mode is enabled");
 		}
@@ -95,20 +95,20 @@ public final class PLM extends JavaPlugin {
 	}
 
 	private void registerEventListeners() {
-		if (messages.getVanishNoPacketManager()
-		            .isPluginInstalled() && !cfg.getReplaceVnpFakeMsg()) {
+		if (messagesModeManager.getVanishNoPacketManager()
+		                       .isPluginInstalled() && !cfg.getReplaceVnpFakeMsg()) {
 			this.getServer()
 			    .getPluginManager()
-			    .registerEvents(new VanishStatusChangeEventListener(messages), this);
-		} else if (messages.getVanishNoPacketManager()
-		                   .isPluginInstalled() && cfg.getReplaceVnpFakeMsg()) {
+			    .registerEvents(new VanishStatusChangeEventListener(messagesModeManager), this);
+		} else if (messagesModeManager.getVanishNoPacketManager()
+		                              .isPluginInstalled() && cfg.getReplaceVnpFakeMsg()) {
 			this.getServer()
 			    .getPluginManager()
-			    .registerEvents(new VanishStatusChangeEventFakeMessageListener(messages), this);
+			    .registerEvents(new VanishStatusChangeEventFakeMessageListener(messagesModeManager), this);
 		} else {
 			this.getServer()
 			    .getPluginManager()
-			    .registerEvents(new CommonListener(messages), this);
+			    .registerEvents(new CommonListener(messagesModeManager), this);
 		}
 	}
 
@@ -191,7 +191,7 @@ public final class PLM extends JavaPlugin {
 
 	public void reloadMessages() {
 		cfg.reloadConfiguration();
-		messages.reloadMessageConfigFiles();
+		messagesModeManager.reloadMessageConfigFiles();
 	}
 
 }

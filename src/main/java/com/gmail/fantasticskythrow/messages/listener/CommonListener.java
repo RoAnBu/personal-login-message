@@ -1,6 +1,6 @@
 package com.gmail.fantasticskythrow.messages.listener;
 
-import com.gmail.fantasticskythrow.messages.Messages;
+import com.gmail.fantasticskythrow.messages.MessagesModeManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -10,24 +10,24 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class CommonListener implements Listener {
 
-	private Messages messages;
+	private MessagesModeManager messagesModeManager;
 
-	public CommonListener(Messages messages) {
-		this.messages = messages;
+	public CommonListener(MessagesModeManager messagesModeManager) {
+		this.messagesModeManager = messagesModeManager;
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerJoinEvent(PlayerJoinEvent e) {
-		messages.onPlayerJoinEvent(e);
+		messagesModeManager.onPlayerJoinEvent(e);
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onLatePlayerQuitEvent(PlayerQuitEvent e) {
-		messages.onLatePlayerQuitEvent(e);
+		messagesModeManager.onLatePlayerQuitEvent(e);
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerKickEvent(PlayerKickEvent e) {
-		messages.onPlayerKickEvent(e);
+		messagesModeManager.onPlayerKickEvent(e);
 	}
 }
