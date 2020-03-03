@@ -920,22 +920,4 @@ public class PLMToolbox {
 		}
 	}
 
-	/**
-	 * Use this function to compare server versions
-	 * @param plugin the PLM object
-	 * @return the version as an integer e.g.: 1.6.4-R2.0 -> 164
-	 */
-	public static int getMinecraftVersion(PLM plugin) {
-		String version = plugin.getServer().getBukkitVersion().split("-")[0];
-		version = version.replaceAll("\\.", "");
-		int versionNumber = 0;
-		try {
-			versionNumber = Integer.parseInt(version);
-		} catch (NumberFormatException ne) {
-			logger.error("An error occurred while analysing the Minecraft server version!");
-			logger.error("Please report this problem as fast as possible");
-		}
-		return versionNumber;
-	}
-
 }

@@ -7,7 +7,6 @@ import com.gmail.fantasticskythrow.other.*;
 import com.gmail.fantasticskythrow.other.logging.ILoggerWrapper;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
-import org.apache.commons.lang.NotImplementedException;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -29,17 +28,17 @@ import java.util.List;
 public class Messages {
 
 	private final PLM plugin;
-	private Chat chat = null;
-	private Permission permission = null;
+	private Chat chat;
+	private Permission permission;
 	private final AppConfiguration appConfiguration;
-	private boolean advancedStatus = false;
+	private boolean advancedStatus;
 	private static boolean alreadyQuit = false;
 	private StandardMessages standardMessages = null;
 	private AdvancedMessages advancedMessages = null;
 	private IPLMFile plmFile;
 	private Player player;
-	private final VanishNoPacketManager vnpHandler;
-	private List<String> vnpFakeMsg = new ArrayList<String>();
+	private final VanishNoPacketManager vanishNoPacketManager;
+	private List<String> vnpFakeMsg = new ArrayList<>();
 
 	private static final ILoggerWrapper logger = PLM.logger();
 
@@ -56,13 +55,8 @@ public class Messages {
 		this.advancedStatus = advancedStatus;
 		permission = plugin.getPermission();
 		chat = plugin.getChat();
-		if (PLMToolbox.getMinecraftVersion(plugin) >= 178) {
-			plmFile = new PLMFile(plugin);
-		} else {
-			throw new NotImplementedException();
-			// TODO handle old versions
-		}
-		vnpHandler = new VanishNoPacketManager(plugin);
+		plmFile = new PLMFile(plugin);
+		vanishNoPacketManager = new VanishNoPacketManager(plugin);
 		PLMCommandHandler commandHandler = new PLMCommandHandler(plugin, advancedStatus);
 		plugin.getCommand("plm").setExecutor(commandHandler);
 		if (!advancedStatus) { // StandardMessages
@@ -75,7 +69,7 @@ public class Messages {
 	/**
 	 * Reloads the messages of AMM or SM
 	 */
-	public void reload() {
+	public void reloadMessageConfigFiles() {
 		if (advancedStatus) {
 			advancedMessages = new AdvancedMessages(plugin, plmFile);
 		} else {
@@ -83,8 +77,8 @@ public class Messages {
 		}
 	}
 
-	public VanishNoPacketManager getVnpHandler() {
-		return vnpHandler;
+	public VanishNoPacketManager getVanishNoPacketManager() {
+		return vanishNoPacketManager;
 	}
 
 	public IPLMFile getPlmFile() {
@@ -98,12 +92,12 @@ public class Messages {
 	public void onEarlyQuitEvent(PlayerQuitEvent e) {
 		try {
 			alreadyQuit = false;
-			boolean isVanished = vnpHandler.isVanished(e.getPlayer().getName());
+			boolean isVanished = vanishNoPacketManager.isVanished(e.getPlayer().getName());
 			if (isVanished) {
 				alreadyQuit = true;
 				logger.debug("No quit message because the player was vanished!");
 			}
-			vnpHandler.removeJoinedPlayer(e.getPlayer().getName());
+			vanishNoPacketManager.removeJoinedPlayer(e.getPlayer().getName());
 		} catch (Exception ex) {
 			logger.error(ex);
 		}
@@ -121,7 +115,7 @@ public class Messages {
 
 	public void onVanishStatusChangeEvent(VanishStatusChangeEvent event) {
 		try {
-			if (!vnpHandler.isJustJoinedPlayer(event.getPlayer().getName())) {
+			if (!vanishNoPacketManager.isJustJoinedPlayer(event.getPlayer().getName())) {
 				boolean vnpFakeCmdUser = false;
 				if (vnpFakeMsg.contains(event.getPlayer().getName())) {
 					vnpFakeCmdUser = true;
@@ -151,7 +145,7 @@ public class Messages {
 		try {
 			String cmd = event.getMessage().replaceAll("/", "");
 			if (cmd.equals("v fq") || cmd.equals("vanish fq")) {
-				if (!vnpHandler.isVanished(event.getPlayer().getName())) {
+				if (!vanishNoPacketManager.isVanished(event.getPlayer().getName())) {
 					vnpFakeMsg.add(event.getPlayer().getName());
 					event.setMessage("/vanish");
 				} else {
@@ -159,7 +153,7 @@ public class Messages {
 					event.getPlayer().sendMessage(ChatColor.RED + "Already invisible :)");
 				}
 			} else if (cmd.equals("v fj") || cmd.equals("vanish fj")) {
-				if (vnpHandler.isVanished(event.getPlayer().getName())) {
+				if (vanishNoPacketManager.isVanished(event.getPlayer().getName())) {
 					vnpFakeMsg.add(event.getPlayer().getName());
 					event.setMessage("/vanish");
 				} else {
@@ -176,7 +170,7 @@ public class Messages {
 	private String getFinalJoinMessage(Player player, final boolean ignoreVanish) {
 		try {
 			String joinMessage = null;
-			vnpHandler.addJoinedPlayer(player.getName());
+			vanishNoPacketManager.addJoinedPlayer(player.getName());
 			this.player = player;
 			plmFile.setPlayerLogin(player);
 			MessageData mData;
@@ -190,7 +184,7 @@ public class Messages {
 			if (ignoreVanish) {
 				isVanished = false;
 			} else {
-				isVanished = vnpHandler.isVanished(player.getName());
+				isVanished = vanishNoPacketManager.isVanished(player.getName());
 			}
 
 			if (PLMToolbox.getPermissionJoin(appConfiguration.getUsePermGeneral(), player) && !message.equalsIgnoreCase("off") && !isVanished) {
@@ -264,7 +258,8 @@ public class Messages {
 		/*
 		 * Replace placeholders
 		 */
-		joinMessage = PLMToolbox.getReplacedStandardPlaceholders(joinMessage, player, chat, permission, plugin, plmFile, vnpHandler);
+		joinMessage = PLMToolbox.getReplacedStandardPlaceholders(joinMessage, player, chat, permission, plugin, plmFile,
+		                                                         vanishNoPacketManager);
 		/*
 		 * Replace %time when it was found in the string
 		 */
@@ -285,7 +280,8 @@ public class Messages {
 			mData = advancedMessages.getQuitMessage(player);
 			quitMessage = mData.message;
 		}
-		quitMessage = PLMToolbox.getReplacedStandardPlaceholders(quitMessage, player, chat, permission, plugin, plmFile, vnpHandler);
+		quitMessage = PLMToolbox.getReplacedStandardPlaceholders(quitMessage, player, chat, permission, plugin, plmFile,
+		                                                         vanishNoPacketManager);
 		mData.message = quitMessage;
 		return mData;
 	}
@@ -306,7 +302,8 @@ public class Messages {
 			/*
 			 * Replace placeholders
 			 */
-			joinMessage = PLMToolbox.getReplacedStandardPlaceholders(joinMessage, player, chat, permission, plugin, plmFile, vnpHandler);
+			joinMessage = PLMToolbox.getReplacedStandardPlaceholders(joinMessage, player, chat, permission, plugin, plmFile,
+			                                                         vanishNoPacketManager);
 			/*
 			 * Replace %time when it was found in the string
 			 */
@@ -326,7 +323,8 @@ public class Messages {
 		} else {
 			mData = advancedMessages.getRandomQuitMessage(player);
 			quitMessage = mData.message;
-			quitMessage = PLMToolbox.getReplacedStandardPlaceholders(quitMessage, player, chat, permission, plugin, plmFile, vnpHandler);
+			quitMessage = PLMToolbox.getReplacedStandardPlaceholders(quitMessage, player, chat, permission, plugin, plmFile,
+			                                                         vanishNoPacketManager);
 			mData.message = quitMessage;
 			return mData;
 		}
@@ -338,7 +336,8 @@ public class Messages {
 		if (welcomeMessages != null) {
 			for (int i = 0; i < welcomeMessages.length; i++) {
 				String message = welcomeMessages[i];
-				message = PLMToolbox.getReplacedComplexPlaceholders(message, player, chat, plugin, plmFile, vnpHandler, permission);
+				message = PLMToolbox.getReplacedComplexPlaceholders(message, player, chat, plugin, plmFile,
+				                                                    vanishNoPacketManager, permission);
 				message = PLMToolbox.getReplacedTime(message, appConfiguration, plmFile, player);
 				welcomeMessages[i] = message;
 			}
@@ -351,10 +350,11 @@ public class Messages {
 	// TODO code duplication
 	private void printPublicMessages(AdvancedMessages am) {
 		String[] publicMessages = am.getPublicMessages(player);
-		if (publicMessages != null && !vnpHandler.isVanished(player.getName())) {
+		if (publicMessages != null && !vanishNoPacketManager.isVanished(player.getName())) {
 			for (int i = 0; i < publicMessages.length; i++) {
 				String message = publicMessages[i];
-				message = PLMToolbox.getReplacedComplexPlaceholders(message, player, chat, plugin, plmFile, vnpHandler, permission);
+				message = PLMToolbox.getReplacedComplexPlaceholders(message, player, chat, plugin, plmFile,
+				                                                    vanishNoPacketManager, permission);
 				message = PLMToolbox.getReplacedTime(message, appConfiguration, plmFile, player);
 				publicMessages[i] = message;
 			}

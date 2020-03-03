@@ -35,6 +35,11 @@ public final class PLM extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		setupLogging();
+		if (!isMinecraftVersionSupported()) {
+			logger.error("Minecraft version below 1.7.8 are no longer supported, your version is: " + getMinecraftVersion());
+			logger.error("Disabling PLM");
+			return;
+		}
 		try {
 			cfg = new AppConfiguration(new File(this.getDataFolder(), "config.yml"));
 			plmPluginConn = new PLMPluginConnector(this);
@@ -90,12 +95,12 @@ public final class PLM extends JavaPlugin {
 	}
 
 	private void registerEventListeners() {
-		if (messages.getVnpHandler()
+		if (messages.getVanishNoPacketManager()
 		            .isPluginInstalled() && !cfg.getReplaceVnpFakeMsg()) {
 			this.getServer()
 			    .getPluginManager()
 			    .registerEvents(new VanishStatusChangeEventListener(messages), this);
-		} else if (messages.getVnpHandler()
+		} else if (messages.getVanishNoPacketManager()
 		                   .isPluginInstalled() && cfg.getReplaceVnpFakeMsg()) {
 			this.getServer()
 			    .getPluginManager()
@@ -146,6 +151,28 @@ public final class PLM extends JavaPlugin {
 		}
 	}
 
+	private boolean isMinecraftVersionSupported() {
+		return getMinecraftVersion() < 178;
+
+	}
+
+	/**
+	 * Use this function to compare server versions
+	 * @return the version as an integer e.g.: 1.6.4-R2.0 -> 164
+	 */
+	private int getMinecraftVersion() {
+		String version = getServer().getBukkitVersion().split("-")[0];
+		version = version.replaceAll("\\.", "");
+		int versionNumber = 0;
+		try {
+			versionNumber = Integer.parseInt(version);
+		} catch (NumberFormatException ne) {
+			logger.error("An error occurred while analysing the Minecraft server version!");
+			logger.error("Please report this problem as fast as possible");
+		}
+		return versionNumber;
+	}
+
 	public Permission getPermission() {
 		return permission;
 	}
@@ -164,7 +191,7 @@ public final class PLM extends JavaPlugin {
 
 	public void reloadMessages() {
 		cfg.reloadConfiguration();
-		messages.reload();
+		messages.reloadMessageConfigFiles();
 	}
 
 }
