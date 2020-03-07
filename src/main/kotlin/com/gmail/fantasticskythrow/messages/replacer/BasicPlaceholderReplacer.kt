@@ -1,6 +1,5 @@
 package com.gmail.fantasticskythrow.messages.replacer
 
-import com.earth2me.essentials.Essentials
 import com.gmail.fantasticskythrow.PLM
 import com.gmail.fantasticskythrow.configuration.TimeNames
 import com.gmail.fantasticskythrow.messages.IPLMFile
@@ -9,6 +8,8 @@ import com.gmail.fantasticskythrow.other.VanishNoPacketManager
 import net.milkbowl.vault.chat.Chat
 import net.milkbowl.vault.permission.Permission
 import org.apache.commons.lang.WordUtils
+import org.bukkit.Server
+import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Damageable
 import org.bukkit.entity.Player
 
@@ -18,7 +19,8 @@ class BasicPlaceholderReplacer(private val plugin: PLM,
                                private val plmFile: IPLMFile,
                                private val vanishNoPacketManager: VanishNoPacketManager,
                                private val timeNames: TimeNames,
-                               private val worldRenameConfig: IWorldRenameConfig? = null
+                               private val worldRenameConfig: IWorldRenameConfig? = null,
+                               private val server: Server
 ): IPlaceholderReplacer {
 
 
@@ -69,9 +71,8 @@ class BasicPlaceholderReplacer(private val plugin: PLM,
      */
     private fun getEssentialsNick(player: Player): String? {
         var nickName: String? = null
-        val pl = plugin.plmPluginConnector.essentials
-        if (pl != null && plugin.cfg.useEssentialsNick) {
-            val essentials = pl as Essentials
+        val essentials = plugin.plmPluginConnector.essentials
+        if (essentials != null && plugin.cfg.useEssentialsNick) {
             try {
                 nickName = essentials.userMap.getUser(player.name).nickname
                 if (nickName != null && nickName != player.name) {
@@ -177,7 +178,7 @@ class BasicPlaceholderReplacer(private val plugin: PLM,
     private fun getReplacedCountry(inputText: String, player: Player): String {
         var text = inputText
         return if (text.contains("%country")) {
-            val geoIP = plugin.plmPluginConnector.geoIPLookup
+            val geoIP = plugin.plmPluginConnector.ipLookup
             if (geoIP != null) {
                 var country: String
                 country = plmFile.getCountryName(geoIP.getCountry(player.address!!.address).name)
@@ -244,7 +245,7 @@ class BasicPlaceholderReplacer(private val plugin: PLM,
     private fun getReplacedOnlinePlayerNumber(inputText: String, isQuitting: Boolean): String {
         var text = inputText
         if (text.contains("%onlineplayers")) {
-            val playerList = plugin.server.onlinePlayers
+            val playerList = server.onlinePlayers
             var number = 0
             for (p in playerList) {
                 if (!vanishNoPacketManager.isVanished(p.name)) {
@@ -303,7 +304,7 @@ class BasicPlaceholderReplacer(private val plugin: PLM,
     private fun getReplacedSlots(inputText: String): String {
         var text = inputText
         if (text.contains("%slots")) {
-            text = text.replace("%slots", plugin.server.maxPlayers.toString())
+            text = text.replace("%slots", server.maxPlayers.toString())
         }
         return text
     }
@@ -331,12 +332,14 @@ class BasicPlaceholderReplacer(private val plugin: PLM,
     private fun getReplacedHealth(inputText: String, player: Player): String {
         var text = inputText
         if (text.contains("%health")) {
-            val d = player as Damageable
-            text = text.replace("%health", d.health.toString())
+            val damageable = player as Damageable
+
+            text = text.replace("%health", damageable.health.toString())
         }
         if (text.contains("%comparedHealth")) {
-            val d = player as Damageable
-            text = text.replace("%comparedHealth", d.health.toString() + "/" + d.maxHealth.toString())
+            val damageable = player as Damageable
+            text = text.replace("%comparedHealth", damageable.health.toString() + "/" +
+                    player.getAttribute(Attribute.GENERIC_MAX_HEALTH).toString())
         }
         return text
     }

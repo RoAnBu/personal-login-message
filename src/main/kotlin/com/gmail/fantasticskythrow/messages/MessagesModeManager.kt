@@ -29,7 +29,7 @@ import java.util.*
  * Provides event listeners and creates the instances which are needed to get
  * the wanted string
  */
-class MessagesModeManager(private val plugin: PLM, private val advancedStatus: Boolean) {
+class MessagesModeManager(private val plugin: PLM, advancedStatus: Boolean) {
     private val chat: Chat? = plugin.chat
     private val permission: Permission? = plugin.permission
     private val appConfiguration: AppConfiguration = plugin.cfg
@@ -48,7 +48,7 @@ class MessagesModeManager(private val plugin: PLM, private val advancedStatus: B
         if (!advancedStatus) { // StandardMessages
             basicMessageGenerator = StandardModeMessageGenerator(plugin,
                     StandardMessagesFile(File(plugin.dataFolder, "messages.txt")),
-                    BasicPlaceholderReplacer(plugin, chat, permission, plmFile, vanishNoPacketManager, getTimeNames()))
+                    BasicPlaceholderReplacer(plugin, chat, permission, plmFile, vanishNoPacketManager, getTimeNames(), server = plugin.server))
         } else { // Advanced messages mode
             basicMessageGenerator = try {
                 AdvancedModeMessageGenerator(appConfiguration, permission!!,
@@ -60,7 +60,7 @@ class MessagesModeManager(private val plugin: PLM, private val advancedStatus: B
                 logger.error(e)
                 StandardModeMessageGenerator(plugin,
                         StandardMessagesFile(File(plugin.dataFolder, "messages.txt")),
-                        BasicPlaceholderReplacer(plugin, chat, permission, plmFile, vanishNoPacketManager, getTimeNames()))
+                        BasicPlaceholderReplacer(plugin, chat, permission, plmFile, vanishNoPacketManager, getTimeNames(), server = plugin.server))
             }
         }
         additionalMessagesGenerator = if (basicMessageGenerator is AdvancedModeMessageGenerator) {

@@ -17,7 +17,7 @@ class FullPlaceholderReplacer(
         timeNames: TimeNames
 ) : IPlaceholderReplacer {
 
-    private val basicPlaceholderReplacer = BasicPlaceholderReplacer(plugin, chat, permission, plmFile, vanishNoPacketManager, timeNames)
+    private val basicPlaceholderReplacer = BasicPlaceholderReplacer(plugin, chat, permission, plmFile, vanishNoPacketManager, timeNames, server = plugin.server)
 
     override fun replacePlaceholders(message: String, player: Player, isQuitting: Boolean): String {
         var modMessage = message

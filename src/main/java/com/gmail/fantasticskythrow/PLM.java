@@ -5,9 +5,10 @@ import com.gmail.fantasticskythrow.messages.MessagesModeManager;
 import com.gmail.fantasticskythrow.messages.listener.CommonListener;
 import com.gmail.fantasticskythrow.messages.listener.VanishStatusChangeEventFakeMessageListener;
 import com.gmail.fantasticskythrow.messages.listener.VanishStatusChangeEventListener;
-import com.gmail.fantasticskythrow.other.PLMPluginConnector;
 import com.gmail.fantasticskythrow.other.logging.BukkitLoggerWrapper;
 import com.gmail.fantasticskythrow.other.logging.ILoggerWrapper;
+import com.gmail.fantasticskythrow.other.plugins.IPLMPluginConnector;
+import com.gmail.fantasticskythrow.other.plugins.PLMPluginConnector;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -42,7 +43,7 @@ public final class PLM extends JavaPlugin {
 		}
 		try {
 			cfg = new AppConfiguration(new File(this.getDataFolder(), "config.yml"));
-			plmPluginConn = new PLMPluginConnector(this);
+			plmPluginConn = new PLMPluginConnector(this.getServer().getPluginManager());
 			if (cfg.getPluginEnabled()) {
 				if (!cfg.getAdvancedStatus()) { //Standard mode
 					initStandardMode();
@@ -185,7 +186,7 @@ public final class PLM extends JavaPlugin {
 		return cfg;
 	}
 
-	public PLMPluginConnector getPLMPluginConnector() {
+	public IPLMPluginConnector getPLMPluginConnector() {
 		return plmPluginConn;
 	}
 
