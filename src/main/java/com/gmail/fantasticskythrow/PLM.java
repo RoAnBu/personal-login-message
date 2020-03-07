@@ -153,7 +153,7 @@ public final class PLM extends JavaPlugin {
 	}
 
 	private boolean isMinecraftVersionSupported() {
-		return getMinecraftVersion() < 178;
+		return getMinecraftVersion() >= 178;
 
 	}
 
