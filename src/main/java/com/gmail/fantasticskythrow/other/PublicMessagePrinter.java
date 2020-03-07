@@ -3,6 +3,9 @@ package com.gmail.fantasticskythrow.other;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
+
 /**
  * Prints a message for the given player after the given time
  * @author Roman, Morph
@@ -10,8 +13,8 @@ import org.bukkit.entity.Player;
  */
 public class PublicMessagePrinter extends Thread {
 
-	private String[] messages;
-	private Player[] receivers;
+	private List<String> messages;
+	private List<Player> receivers;
 
 	@Override
 	public void run() {
@@ -33,7 +36,7 @@ public class PublicMessagePrinter extends Thread {
 		}
 	}
 
-	public void start(String[] messages, Player[] receivers) {
+	public void start(List<String> messages, List<Player> receivers) {
 		this.messages = messages;
 		this.receivers = receivers;
 		super.start();

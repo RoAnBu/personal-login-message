@@ -4,7 +4,7 @@ import com.gmail.fantasticskythrow.PLM
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 
-class AppConfiguration(private val configFile: File) {
+class AppConfiguration(private val configFile: File) : IAdvancedGeneratorAppConfiguration {
     private var cfg: YamlConfiguration? = null
 
     var pluginEnabled = true
@@ -21,7 +21,7 @@ class AppConfiguration(private val configFile: File) {
         private set
     var advancedStatus = false
         private set
-    var useRandom = false
+    override var useRandom = false
         private set
     var useEssentialsNick = false
         private set
