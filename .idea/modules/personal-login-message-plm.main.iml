@@ -49,7 +49,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../templibs/GeoIPTools.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../templibs/VanishNoPacket.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -58,7 +58,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../templibs/VanishNoPacket.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../templibs/GeoIPTools.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -69,17 +69,11 @@
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.61" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.3.61" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.61" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Gradle: net.ess3:EssentialsX:2.17.0" level="project" />
-    <orderEntry type="module-library" scope="PROVIDED">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../templibs/VanishNoPacket.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="library" scope="PROVIDED" name="Gradle: net.ess3:UpdatedMetaProvider:2.17.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: net.md-5:bungeecord-chat:1.13-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: com.google.guava:guava:21.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: net.ess3:ReflectionProvider:2.17.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: net.ess3:1_8_R1Provider:2.17.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: com.google.code.gson:gson:2.8.0" level="project" />
     <orderEntry type="module-library" scope="PROVIDED">
       <library>
         <CLASSES>
@@ -89,23 +83,29 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.hamcrest:hamcrest-core:1.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Gradle: com.google.guava:guava:21.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Gradle: net.ess3:ReflectionProvider:2.17.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Gradle: net.ess3:1_8_R1Provider:2.17.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Gradle: net.ess3:1_8_R2Provider:2.17.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: com.github.MilkBowl:VaultAPI:1.7" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: net.ess3:UpdatedMetaProvider:2.17.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: net.ess3:EssentialsX:2.17.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Gradle: junit:junit:4.10" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Gradle: net.ess3:LegacyProvider:2.17.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Gradle: net.ess3:FlattenedProvider:2.17.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Gradle: com.github.MilkBowl:VaultAPI:1.7" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.hamcrest:hamcrest-core:1.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Gradle: net.ess3:NMSProvider:2.17.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Gradle: com.googlecode.json-simple:json-simple:1.1.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Gradle: io.papermc:paperlib:1.0.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.spigotmc:spigot-api:1.15.1-R0.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Gradle: net.md-5:bungeecord-chat:1.13-SNAPSHOT" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Gradle: com.google.code.gson:gson:2.8.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: net.ess3:FlattenedProvider:2.17.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Gradle: org.yaml:snakeyaml:1.25" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Gradle: commons-lang:commons-lang:2.6" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: io.papermc:paperlib:1.0.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: com.googlecode.json-simple:json-simple:1.1.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.spigotmc:spigot-api:1.15.1-R0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Gradle: org.bukkit:bukkit:1.13.1-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../templibs/VanishNoPacket.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
