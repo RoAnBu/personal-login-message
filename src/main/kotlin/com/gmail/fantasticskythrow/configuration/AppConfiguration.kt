@@ -4,30 +4,30 @@ import com.gmail.fantasticskythrow.PLM
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 
-class AppConfiguration(private val configFile: File) : IAdvancedGeneratorAppConfiguration {
+class AppConfiguration(private val configFile: File) : IAdvancedGeneratorAppConfiguration, IAppConfiguration {
     private var cfg: YamlConfiguration? = null
 
-    var pluginEnabled = true
+    override var pluginEnabled = true
         private set
-    var usePermGeneral = false
+    override var usePermGeneral = false
         private set
-    var usePermPM = false
+    override var usePermPM = false
         private set
-    var useFakeJoinMsg = false
+    override var useFakeJoinMsg = false
         private set
-    var useFakeQuitMsg = false
+    override var useFakeQuitMsg = false
         private set
-    var replaceVnpFakeMsg = false
+    override var replaceVnpFakeMsg = false
         private set
-    var advancedStatus = false
+    override var advancedStatus = false
         private set
     override var useRandom = false
         private set
-    var useEssentialsNick = false
+    override var useEssentialsNick = false
         private set
-    var timeNames: TimeNames? = null
+    override var timeNames: TimeNames? = null
         private set
-    var delay = 0
+    override var delay = 0
         private set
 
     init {

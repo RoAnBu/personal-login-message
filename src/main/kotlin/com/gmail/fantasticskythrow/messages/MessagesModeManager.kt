@@ -48,19 +48,24 @@ class MessagesModeManager(private val plugin: PLM, advancedStatus: Boolean) {
         if (!advancedStatus) { // StandardMessages
             basicMessageGenerator = StandardModeMessageGenerator(plugin,
                     StandardMessagesFile(File(plugin.dataFolder, "messages.txt")),
-                    BasicPlaceholderReplacer(plugin, chat, permission, plmFile, vanishNoPacketManager, getTimeNames(), server = plugin.server))
+                    BasicPlaceholderReplacer(chat, permission, plmFile, vanishNoPacketManager, getTimeNames(),
+                            null,  plugin.server, appConfiguration, plugin.plmPluginConnector))
         } else { // Advanced messages mode
             basicMessageGenerator = try {
+                val advancedMessagesFile = AdvancedMessagesFile(File(plugin.dataFolder, "AdvancedMessages.yml"), plmFile)
+
                 AdvancedModeMessageGenerator(appConfiguration, permission!!,
-                        AdvancedMessagesFile(File(plugin.dataFolder, "AdvancedMessages.yml"), plmFile),
-                        FullPlaceholderReplacer(plugin, chat, permission, plmFile, vanishNoPacketManager, getTimeNames()),
+                        advancedMessagesFile,
+                        FullPlaceholderReplacer(chat, permission, plmFile, vanishNoPacketManager, getTimeNames(),
+                        advancedMessagesFile, plugin.server, appConfiguration, plugin.plmPluginConnector),
                         plmFile)
             } catch (e: Exception) {
                 logger.error("Could not initialize Advanced Messages Mode, using Standard Mode instead")
                 logger.error(e)
                 StandardModeMessageGenerator(plugin,
                         StandardMessagesFile(File(plugin.dataFolder, "messages.txt")),
-                        BasicPlaceholderReplacer(plugin, chat, permission, plmFile, vanishNoPacketManager, getTimeNames(), server = plugin.server))
+                        BasicPlaceholderReplacer(chat, permission, plmFile, vanishNoPacketManager, getTimeNames(),
+                                null,  plugin.server, appConfiguration, plugin.plmPluginConnector))
             }
         }
         additionalMessagesGenerator = if (basicMessageGenerator is AdvancedModeMessageGenerator) {

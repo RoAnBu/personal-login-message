@@ -1,10 +1,12 @@
 package com.gmail.fantasticskythrow.messages.replacer
 
 import com.gmail.fantasticskythrow.PLM
+import com.gmail.fantasticskythrow.configuration.IAppConfiguration
 import com.gmail.fantasticskythrow.configuration.TimeNames
 import com.gmail.fantasticskythrow.messages.IPLMFile
 import com.gmail.fantasticskythrow.messages.config.IWorldRenameConfig
-import com.gmail.fantasticskythrow.other.VanishNoPacketManager
+import com.gmail.fantasticskythrow.other.IVanishManager
+import com.gmail.fantasticskythrow.other.plugins.IPLMPluginConnector
 import net.milkbowl.vault.chat.Chat
 import net.milkbowl.vault.permission.Permission
 import org.apache.commons.lang.WordUtils
@@ -13,14 +15,15 @@ import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Damageable
 import org.bukkit.entity.Player
 
-class BasicPlaceholderReplacer(private val plugin: PLM,
-                               private val chat: Chat?,
+class BasicPlaceholderReplacer(private val chat: Chat?,
                                private val permission: Permission?,
                                private val plmFile: IPLMFile,
-                               private val vanishNoPacketManager: VanishNoPacketManager,
+                               private val vanishNoPacketManager: IVanishManager,
                                private val timeNames: TimeNames,
                                private val worldRenameConfig: IWorldRenameConfig? = null,
-                               private val server: Server
+                               private val server: Server,
+                               private val appConfiguration: IAppConfiguration,
+                               private val pluginConnector: IPLMPluginConnector
 ): IPlaceholderReplacer {
 
 
@@ -71,8 +74,8 @@ class BasicPlaceholderReplacer(private val plugin: PLM,
      */
     private fun getEssentialsNick(player: Player): String? {
         var nickName: String? = null
-        val essentials = plugin.plmPluginConnector.essentials
-        if (essentials != null && plugin.cfg.useEssentialsNick) {
+        val essentials = pluginConnector.essentials
+        if (essentials != null && appConfiguration.useEssentialsNick) {
             try {
                 nickName = essentials.userMap.getUser(player.name).nickname
                 if (nickName != null && nickName != player.name) {
@@ -178,7 +181,7 @@ class BasicPlaceholderReplacer(private val plugin: PLM,
     private fun getReplacedCountry(inputText: String, player: Player): String {
         var text = inputText
         return if (text.contains("%country")) {
-            val geoIP = plugin.plmPluginConnector.ipLookup
+            val geoIP = pluginConnector.ipLookup
             if (geoIP != null) {
                 var country: String
                 country = plmFile.getCountryName(geoIP.getCountry(player.address!!.address).name)

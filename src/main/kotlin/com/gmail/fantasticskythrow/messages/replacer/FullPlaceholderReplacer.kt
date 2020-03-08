@@ -1,23 +1,30 @@
 package com.gmail.fantasticskythrow.messages.replacer
 
-import com.gmail.fantasticskythrow.PLM
+import com.gmail.fantasticskythrow.configuration.IAppConfiguration
 import com.gmail.fantasticskythrow.configuration.TimeNames
 import com.gmail.fantasticskythrow.messages.PLMFile
-import com.gmail.fantasticskythrow.other.VanishNoPacketManager
+import com.gmail.fantasticskythrow.messages.config.IWorldRenameConfig
+import com.gmail.fantasticskythrow.other.IVanishManager
+import com.gmail.fantasticskythrow.other.plugins.IPLMPluginConnector
 import net.milkbowl.vault.chat.Chat
 import net.milkbowl.vault.permission.Permission
+import org.bukkit.Server
 import org.bukkit.entity.Player
 
 class FullPlaceholderReplacer(
-        private val plugin: PLM,
         private val chat: Chat?,
         private val permission: Permission?,
         plmFile: PLMFile,
-        private val vanishNoPacketManager: VanishNoPacketManager,
-        timeNames: TimeNames
+        private val vanishNoPacketManager: IVanishManager,
+        timeNames: TimeNames,
+        worldRenameConfig: IWorldRenameConfig?,
+        private val server: Server,
+        appConfiguration: IAppConfiguration,
+        pluginConnector: IPLMPluginConnector
 ) : IPlaceholderReplacer {
 
-    private val basicPlaceholderReplacer = BasicPlaceholderReplacer(plugin, chat, permission, plmFile, vanishNoPacketManager, timeNames, server = plugin.server)
+    private val basicPlaceholderReplacer = BasicPlaceholderReplacer(chat, permission, plmFile, vanishNoPacketManager,
+            timeNames, worldRenameConfig, server, appConfiguration, pluginConnector)
 
     override fun replacePlaceholders(message: String, player: Player, isQuitting: Boolean): String {
         var modMessage = message
@@ -42,7 +49,7 @@ class FullPlaceholderReplacer(
         return if (text.contains("%groupchatplayerlist")) {
             if (permission != null && chat != null) {
                 var m = ""
-                val playerList = plugin.server.onlinePlayers
+                val playerList = server.onlinePlayers
                         .toTypedArray()
                 for (i in 0 until playerList.size - 1) {
                     val p = playerList[i]
@@ -75,16 +82,13 @@ class FullPlaceholderReplacer(
     /**
      * Replaces %chatplayerlist with the list of players who are currently online in the chatplayername format. Vanished players are hidden
      * @param text the string which can contain %chatplayerlist
-     * @param chat the Chat object
-     * @param vnpHandler the VanishNoPacketManager which provides isVanished()
-     * @param server the server taken from the main plugin (PLM - JavaPlugin)
      * @return the replaced %chatplayerlist or %playerlist if chat is null
      */
     private fun getReplacedChatplayerList(text: String): String {
         return if (text.contains("chatplayerlist")) {
             if (chat != null) {
                 var m = ""
-                val playerlist = plugin.server.onlinePlayers
+                val playerlist = server.onlinePlayers
                         .toTypedArray()
                 for (i in 0 until playerlist.size - 1) {
                     val p = playerlist[i]
@@ -118,9 +122,6 @@ class FullPlaceholderReplacer(
      * Replaces %groupplayerlist with the list of players who are currently online in the same group like the concerning player.
      * Vanished players are hidden
      * @param text the string which can contain %groupplayerlist
-     * @param vnpHandler the VanishNoPacketManager which provides isVanished()
-     * @param permission the Permission object taken from Vault
-     * @param server the server taken from the main plugin (PLM - JavaPlugin)
      * @param player the concerning player to get the first group
      * @return the replaced %groupplayerlist if a group was found. Otherwise it will return "&4ERROR"
      */
@@ -128,7 +129,7 @@ class FullPlaceholderReplacer(
         return if (text.contains("%groupplayerlist")) {
             if (permission != null) {
                 var m = ""
-                val playerList = plugin.server.onlinePlayers
+                val playerList = server.onlinePlayers
                         .toTypedArray()
                 for (i in 0 until playerList.size - 1) {
                     val p = playerList[i]
@@ -165,7 +166,7 @@ class FullPlaceholderReplacer(
     private fun getReplacedPlayerList(text: String): String {
         return if (text.contains("%playerlist")) {
             var m = ""
-            val playerList = plugin.server.onlinePlayers
+            val playerList = server.onlinePlayers
                     .toTypedArray()
             for (i in 0 until playerList.size - 1) {
                 val p = playerList[i]

@@ -1,15 +1,15 @@
 package com.gmail.fantasticskythrow.other;
 
-import java.util.Collection;
-import java.util.HashMap;
-
+import com.gmail.fantasticskythrow.PLM;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.kitteh.vanish.VanishPlugin;
 
-import com.gmail.fantasticskythrow.PLM;
+import java.util.Collection;
+import java.util.HashMap;
 
-public class VanishNoPacketManager {
+public class VanishNoPacketManager implements IVanishManager
+{
 
 	private PLM plugin;
 	private final HashMap<String, Boolean> players;
@@ -36,7 +36,7 @@ public class VanishNoPacketManager {
 	 * @param name the player's name, not only the lowercase name!
 	 * @return true if vanished, false anything else
 	 */
-	public boolean isVanished(String name) {
+	@Override public boolean isVanished(String name) {
 		Plugin pl = plugin.getServer().getPluginManager().getPlugin("VanishNoPacket");
 		if (pl != null) {
 			try {
@@ -49,7 +49,7 @@ public class VanishNoPacketManager {
 		}
 	}
 
-	public void addJoinedPlayer(final String name) {
+	@Override public void addJoinedPlayer(final String name) {
 		Plugin pl = plugin.getServer().getPluginManager().getPlugin("VanishNoPacket");
 		if (pl != null) {
 			players.put(name, true);
@@ -61,7 +61,7 @@ public class VanishNoPacketManager {
 	 * @param name - the player's name
 	 * @return true if he already passed the first VanishStatusChangeEvent
 	 */
-	public boolean isJustJoinedPlayer(final String name) {
+	@Override public boolean isJustJoinedPlayer(final String name) {
 		if (players != null) {
 			if (players.containsKey(name)) {
 				if (players.get(name)) {
@@ -78,7 +78,7 @@ public class VanishNoPacketManager {
 		}
 	}
 
-	public void removeJoinedPlayer(final String name) {
+	@Override public void removeJoinedPlayer(final String name) {
 		if (players != null) {
 			if (players.containsKey(name)) {
 				players.remove(name);
@@ -86,7 +86,7 @@ public class VanishNoPacketManager {
 		}
 	}
 
-	public boolean isPluginInstalled() {
+	@Override public boolean isPluginInstalled() {
 		Plugin pl = plugin.getServer().getPluginManager().getPlugin("VanishNoPacket");
 		return pl != null;
 	}
