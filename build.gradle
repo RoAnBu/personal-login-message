@@ -37,6 +37,10 @@ dependencies {
 
     testImplementation "io.mockk:mockk:1.9.3"
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testImplementation "com.github.MilkBowl:VaultAPI:1.7"
+    testImplementation "net.ess3:EssentialsX:2.17.0"
+    testImplementation "org.spigotmc:spigot-api:1.15.1-R0.1-SNAPSHOT"
+    testImplementation fileTree('templibs') { include '*.jar' }
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.0'
 }
 

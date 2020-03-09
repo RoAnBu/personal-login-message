@@ -161,6 +161,9 @@ class BasicPlaceholderReplacer(private val chat: Chat?,
      * @return
      */
     private fun getReplacedWorld(inputText: String, player: Player): String {
+        if (!inputText.contains("%world|%World".toRegex())) {
+            return inputText
+        }
         var text = inputText
         val worldName = player.world.name
         if (worldRenameConfig != null) {

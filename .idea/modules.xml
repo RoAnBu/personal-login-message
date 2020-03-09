@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/personal-login-message-plm.iml" filepath="$PROJECT_DIR$/.idea/modules/personal-login-message-plm.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/personal-login-message-plm.main.iml" filepath="$PROJECT_DIR$/.idea/modules/personal-login-message-plm.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/personal-login-message-plm.test.iml" filepath="$PROJECT_DIR$/.idea/modules/personal-login-message-plm.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/personal-login-message.iml" filepath="$PROJECT_DIR$/.idea/modules/personal-login-message.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/personal-login-message.main.iml" filepath="$PROJECT_DIR$/.idea/modules/personal-login-message.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/personal-login-message.test.iml" filepath="$PROJECT_DIR$/.idea/modules/personal-login-message.test.iml" />
     </modules>
   </component>
 </project>
