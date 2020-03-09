@@ -54,7 +54,7 @@ public class PLMFile implements IPLMFile, Runnable {
 	}
 
 	@Override
-	public long getDifference(Player player) {
+	public long getTimeSinceLastLoginMs(Player player) {
 		final long lastLogin = getLastLogin(player);
 		if (lastLogin != 0L) {
 			return (long) (System.currentTimeMillis() - lastLogin);

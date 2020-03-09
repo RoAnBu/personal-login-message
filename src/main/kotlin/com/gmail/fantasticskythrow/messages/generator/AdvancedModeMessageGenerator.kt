@@ -26,7 +26,7 @@ class AdvancedModeMessageGenerator(private val appConfig: IAdvancedGeneratorAppC
         if (!appConfig.useRandom) {
             message = advancedMessagesFile.getNewPlayerMessage(playerName, groupName)
             if (message == null) {
-                message = advancedMessagesFile.getJoinMessage(playerName, groupName, plmFile.getLastLogin(player))
+                message = advancedMessagesFile.getJoinMessage(playerName, groupName, plmFile.getTimeSinceLastLoginMs(player))
             }
         } else {
             var messages = advancedMessagesFile.getAllNewPlayerMessages(playerName, groupName)

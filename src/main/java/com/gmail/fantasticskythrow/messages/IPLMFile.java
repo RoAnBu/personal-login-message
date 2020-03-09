@@ -9,7 +9,7 @@ public interface IPLMFile
 
 	long getLastLogin(Player player);
 
-	long getDifference(Player player);
+	long getTimeSinceLastLoginMs(Player player);
 
 	int getPlayerLogins(Player player);
 
