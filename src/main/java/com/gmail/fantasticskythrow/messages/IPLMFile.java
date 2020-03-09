@@ -5,9 +5,9 @@ import org.bukkit.entity.Player;
 public interface IPLMFile
 {
 
-	void setPlayerQuitTime(Player player);
+	void setPlayerQuitTimeToCurrentTime(Player player);
 
-	long getLastLogin(Player player);
+	long getLastLoginTimeMs(Player player);
 
 	long getTimeSinceLastLoginMs(Player player);
 
@@ -17,15 +17,13 @@ public interface IPLMFile
 
 	int getUniquePlayerLogins();
 
-	void setPlayerLogin(Player player);
+	void addPlayerLogin(Player player);
 
-	boolean getFirstEnabled();
+	boolean isPluginFirstEnabled();
 
 	void setFirstEnabled(boolean b);
 
-	String getCountryName(String englishName);
-
-	boolean getErrorStatus();
+	String getAlternateNameForCountry(String englishName);
 
 	void save();
 }

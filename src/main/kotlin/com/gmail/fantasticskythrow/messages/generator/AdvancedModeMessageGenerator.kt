@@ -33,7 +33,7 @@ class AdvancedModeMessageGenerator(private val appConfig: IAdvancedGeneratorAppC
             if (messages.isNotEmpty()) {
                 message = messages.random()
             } else {
-                messages = advancedMessagesFile.getAllJoinMessages(playerName, groupName, plmFile.getLastLogin(player))
+                messages = advancedMessagesFile.getAllJoinMessages(playerName, groupName, plmFile.getLastLoginTimeMs(player))
                 if (messages.isNotEmpty()) {
                     message = messages.random()
                 }

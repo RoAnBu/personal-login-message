@@ -27,7 +27,7 @@ public class PLMFile implements IPLMFile, Runnable {
 	}
 
 	@Override
-	public void setPlayerQuitTime(Player player) {
+	public void setPlayerQuitTimeToCurrentTime(Player player) {
 		if (!errorStatus) {
 			final String path = String.format("Players.%s", player.getUniqueId().toString());
 			if (PConfig.contains("Players." + player.getName().toLowerCase())) {
@@ -38,7 +38,7 @@ public class PLMFile implements IPLMFile, Runnable {
 	}
 
 	@Override
-	public long getLastLogin(Player player) {
+	public long getLastLoginTimeMs(Player player) {
 		if (!errorStatus) {
 			final String path = String.format("Players.%s", player.getUniqueId().toString());
 			long oldLogin;
@@ -55,7 +55,7 @@ public class PLMFile implements IPLMFile, Runnable {
 
 	@Override
 	public long getTimeSinceLastLoginMs(Player player) {
-		final long lastLogin = getLastLogin(player);
+		final long lastLogin = getLastLoginTimeMs(player);
 		if (lastLogin != 0L) {
 			return (long) (System.currentTimeMillis() - lastLogin);
 		} else {
@@ -98,7 +98,7 @@ public class PLMFile implements IPLMFile, Runnable {
 	}
 
 	@Override
-	public void setPlayerLogin(Player player) {
+	public void addPlayerLogin(Player player) {
 		if (!errorStatus) {
 			final String path = String.format("logins.%s", player.getUniqueId().toString());
 			if (!PConfig.contains("logins." + player.getUniqueId().toString()) && !PConfig.contains("logins." + player.getName().toLowerCase())) {
@@ -122,7 +122,7 @@ public class PLMFile implements IPLMFile, Runnable {
 	}
 
 	@Override
-	public boolean getFirstEnabled() {
+	public boolean isPluginFirstEnabled() {
 		if (PConfig.getString("firstenabled").equalsIgnoreCase("true") && !errorStatus) {
 			return true;
 		} else {
@@ -130,7 +130,6 @@ public class PLMFile implements IPLMFile, Runnable {
 		}
 	}
 
-	@Override
 	public void setFirstEnabled(boolean b) {
 		if (!errorStatus) {
 			if (b)
@@ -141,7 +140,7 @@ public class PLMFile implements IPLMFile, Runnable {
 	}
 
 	@Override
-	public String getCountryName(String englishName) {
+	public String getAlternateNameForCountry(String englishName) {
 		if (!errorStatus) {
 			if (PConfig.contains("Countries" + englishName)) {
 				return PConfig.getString("Countries" + englishName);
@@ -151,11 +150,6 @@ public class PLMFile implements IPLMFile, Runnable {
 		} else {
 			return englishName;
 		}
-	}
-
-	@Override
-	public boolean getErrorStatus() {
-		return errorStatus;
 	}
 
 	@Override public void save() {

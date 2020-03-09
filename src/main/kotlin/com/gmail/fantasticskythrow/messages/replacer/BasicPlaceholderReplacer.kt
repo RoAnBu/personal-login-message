@@ -187,7 +187,7 @@ class BasicPlaceholderReplacer(private val chat: Chat?,
             val geoIP = pluginConnector.ipLookup
             if (geoIP != null) {
                 var country: String
-                country = plmFile.getCountryName(geoIP.getCountry(player.address!!.address).name)
+                country = plmFile.getAlternateNameForCountry(geoIP.getCountry(player.address!!.address).name)
                 if (country.equals("N/A", ignoreCase = true)) {
                     country = "local network"
                 }

@@ -130,7 +130,7 @@ class MessagesModeManager(private val plugin: PLM, advancedStatus: Boolean) {
                     if (fakeQuitMessage != null) {
                         plugin.server.broadcastMessage(fakeQuitMessage)
                     }
-                    plmFile.setPlayerQuitTime(player)
+                    plmFile.setPlayerQuitTimeToCurrentTime(player)
                 } else if (!event.isVanishing && (appConfiguration.useFakeJoinMsg || vnpFakeCmdUser)) { // Join  message (Fake)
                     val fakeJoinMessage = getFinalJoinMessageAndSendAdditionalMessages(player, true)
                     if (fakeJoinMessage != null) {
@@ -174,7 +174,7 @@ class MessagesModeManager(private val plugin: PLM, advancedStatus: Boolean) {
     private fun getFinalJoinMessageAndSendAdditionalMessages(player: Player, ignoreVanish: Boolean): String? {
         try {
             vanishNoPacketManager.addJoinedPlayer(player.name)
-            plmFile.setPlayerLogin(player)
+            plmFile.addPlayerLogin(player)
             val isVanished = if (ignoreVanish) {
                 false
             } else {
@@ -216,7 +216,7 @@ class MessagesModeManager(private val plugin: PLM, advancedStatus: Boolean) {
 
     private fun getFinalQuitMessageIfAvailable(player: Player): String? {
         try {
-            plmFile.setPlayerQuitTime(player)
+            plmFile.setPlayerQuitTimeToCurrentTime(player)
             if (!PLMToolbox.getPermissionQuit(appConfiguration.usePermGeneral, player)) {
                 logger.trace("Displaying no quit message for player ${player.name} because of missing permission")
                 return null

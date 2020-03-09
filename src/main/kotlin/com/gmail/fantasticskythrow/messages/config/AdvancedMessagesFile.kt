@@ -10,7 +10,6 @@ import com.gmail.fantasticskythrow.messages.data.SectionTypes
 import org.bukkit.configuration.Configuration
 import java.io.File
 import java.io.IOException
-import kotlin.math.log
 
 class AdvancedMessagesFile(private val advancedConfigFile: File,
                            private val plmFile: IPLMFile
@@ -38,7 +37,7 @@ class AdvancedMessagesFile(private val advancedConfigFile: File,
         try {
             val yamlConfiguration = ExtendedYamlConfiguration.loadConfiguration(advancedConfigFile)
             advancedMessagesYML = yamlConfiguration
-            if (!plmFile.firstEnabled || !advancedConfigFile.exists()) {
+            if (!plmFile.isPluginFirstEnabled || !advancedConfigFile.exists()) {
                 advancedMessagesYML.set("Default.JM1", "%chatplayername &ejoined the game")
                 advancedMessagesYML.set("Default.QM1", "%chatplayername &eleft the game")
                 advancedMessagesYML.set("Groups.examplegroup.JM1", "&4Admin %playername joined the game")
@@ -61,7 +60,7 @@ class AdvancedMessagesFile(private val advancedConfigFile: File,
                 advancedMessagesYML.set("players.exampleplayer2.PM1", "&eThis is a message for the other players on the server.")
                 advancedMessagesYML.set("players.exampleplayer2.PM2", "&aYou can create more than one here, too")
                 advancedMessagesYML.set("World names.exampleworld", "main world")
-                plmFile.firstEnabled = true
+                plmFile.setFirstEnabled(true)
                 yamlConfiguration.save(advancedConfigFile)
             }
         } catch (ex: IllegalStateException) {
