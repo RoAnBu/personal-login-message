@@ -254,9 +254,7 @@ class MessagesModeManager(private val plugin: PLM, advancedStatus: Boolean) {
     private fun getTimeNames(): TimeNames {
         var timeNames = appConfiguration.timeNames
         if (timeNames == null) {
-            timeNames = TimeNames("second", "seconds", "minute", "minutes",
-                    "hour", "hours", "day", "days", "month", "months",
-                    "No last login")
+            timeNames = TimeNames.createEnglishTimeNames()
         }
         return timeNames
     }
