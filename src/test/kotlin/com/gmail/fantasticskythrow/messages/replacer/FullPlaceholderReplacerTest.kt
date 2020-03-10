@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
-class BasicPlaceholderReplacerTest {
+class FullPlaceholderReplacerTest {
 
     @MockK
     lateinit var chat: Chat
@@ -53,21 +53,21 @@ class BasicPlaceholderReplacerTest {
 
     @Test
     fun `Message with no Placeholder, message should be unchanged`() {
-        val basicPlaceholderReplacer = BasicPlaceholderReplacer(chat, permission, plmFile, vanishManager, timeNames,
+        val fullPlaceholderReplacer = FullPlaceholderReplacer(chat, permission, plmFile, vanishManager, timeNames,
                 server, appConfiguration, pluginConnector, null)
 
         val message = "This is a test message"
-        val result = basicPlaceholderReplacer.replacePlaceholders(message, player)
+        val result = fullPlaceholderReplacer.replacePlaceholders(message, player)
         Assertions.assertEquals(message, result)
     }
 
     @Test
     fun `Message with no Placeholder, with WorldRenameConfig, message should be unchanged`() {
-        val basicPlaceholderReplacer = BasicPlaceholderReplacer(chat, permission, plmFile, vanishManager, timeNames,
+        val fullPlaceholderReplacer = FullPlaceholderReplacer(chat, permission, plmFile, vanishManager, timeNames,
                 server, appConfiguration, pluginConnector, worldRenameConfig)
 
         val message = "This is a test message"
-        val result = basicPlaceholderReplacer.replacePlaceholders(message, player)
+        val result = fullPlaceholderReplacer.replacePlaceholders(message, player)
         Assertions.assertEquals(message, result)
     }
 }

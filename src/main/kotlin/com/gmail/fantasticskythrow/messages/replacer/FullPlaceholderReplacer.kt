@@ -17,10 +17,10 @@ class FullPlaceholderReplacer(
         plmFile: PLMFile,
         vanishManager: IVanishManager,
         timeNames: TimeNames,
-        worldRenameConfig: IWorldRenameConfig?,
         server: Server,
         appConfiguration: IAppConfiguration,
-        pluginConnector: IPLMPluginConnector
+        pluginConnector: IPLMPluginConnector,
+        worldRenameConfig: IWorldRenameConfig?
 ) : IPlaceholderReplacer {
 
     private val basicPlaceholderReplacer = BasicPlaceholderReplacer(chat, permission, plmFile, vanishManager,

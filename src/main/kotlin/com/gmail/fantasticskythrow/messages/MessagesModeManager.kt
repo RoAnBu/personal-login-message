@@ -56,7 +56,7 @@ class MessagesModeManager(private val plugin: PLM, advancedStatus: Boolean) {
                 AdvancedModeMessageGenerator(appConfiguration, permission!!,
                         advancedMessagesFile,
                         FullPlaceholderReplacer(chat, permission, plmFile, vanishNoPacketManager, getTimeNames(),
-                        advancedMessagesFile, plugin.server, appConfiguration, plugin.plmPluginConnector),
+                        plugin.server, appConfiguration, plugin.plmPluginConnector, advancedMessagesFile),
                         plmFile)
             } catch (e: Exception) {
                 logger.error("Could not initialize Advanced Messages Mode, using Standard Mode instead")
