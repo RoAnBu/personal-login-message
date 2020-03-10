@@ -3,6 +3,7 @@ package com.gmail.fantasticskythrow.messages
 import com.gmail.fantasticskythrow.PLM
 import com.gmail.fantasticskythrow.commands.PLMCommandHandler
 import com.gmail.fantasticskythrow.configuration.AppConfiguration
+import com.gmail.fantasticskythrow.configuration.PLMFile
 import com.gmail.fantasticskythrow.configuration.TimeNames
 import com.gmail.fantasticskythrow.messages.config.AdvancedMessagesFile
 import com.gmail.fantasticskythrow.messages.config.StandardMessagesFile
@@ -33,15 +34,13 @@ class MessagesModeManager(private val plugin: PLM, advancedStatus: Boolean) {
     private val chat: Chat? = plugin.chat
     private val permission: Permission? = plugin.permission
     private val appConfiguration: AppConfiguration = plugin.cfg
-    val plmFile: IPLMFile
-    val vanishNoPacketManager: VanishNoPacketManager
+    val plmFile: PLMFile = PLMFile(PLMSavableYaml(File(plugin.dataFolder, "PLM.yml"), plugin.server.scheduler, plugin))
+    val vanishNoPacketManager: VanishNoPacketManager = VanishNoPacketManager(plugin)
     private val vnpFakeMsg: MutableList<String> = ArrayList()
     private val basicMessageGenerator: IBasicMessageGenerator
     private val additionalMessagesGenerator: IAdditionalMessagesGenerator?
 
     init {
-        plmFile = PLMFile(plugin)
-        vanishNoPacketManager = VanishNoPacketManager(plugin)
         val commandHandler = PLMCommandHandler(plugin, advancedStatus)
         plugin.getCommand("plm")!!.setExecutor(commandHandler)
 
@@ -49,7 +48,7 @@ class MessagesModeManager(private val plugin: PLM, advancedStatus: Boolean) {
             basicMessageGenerator = StandardModeMessageGenerator(plugin,
                     StandardMessagesFile(File(plugin.dataFolder, "messages.txt")),
                     BasicPlaceholderReplacer(chat, permission, plmFile, vanishNoPacketManager, getTimeNames(),
-                            null,  plugin.server, appConfiguration, plugin.plmPluginConnector))
+                            plugin.server, appConfiguration, plugin.plmPluginConnector, null))
         } else { // Advanced messages mode
             basicMessageGenerator = try {
                 val advancedMessagesFile = AdvancedMessagesFile(File(plugin.dataFolder, "AdvancedMessages.yml"), plmFile)
@@ -65,7 +64,7 @@ class MessagesModeManager(private val plugin: PLM, advancedStatus: Boolean) {
                 StandardModeMessageGenerator(plugin,
                         StandardMessagesFile(File(plugin.dataFolder, "messages.txt")),
                         BasicPlaceholderReplacer(chat, permission, plmFile, vanishNoPacketManager, getTimeNames(),
-                                null,  plugin.server, appConfiguration, plugin.plmPluginConnector))
+                                plugin.server, appConfiguration, plugin.plmPluginConnector, null))
             }
         }
         additionalMessagesGenerator = if (basicMessageGenerator is AdvancedModeMessageGenerator) {

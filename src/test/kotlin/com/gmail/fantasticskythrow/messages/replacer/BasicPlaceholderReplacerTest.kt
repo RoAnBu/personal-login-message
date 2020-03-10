@@ -1,12 +1,12 @@
 package com.gmail.fantasticskythrow.messages.replacer
 
 import com.gmail.fantasticskythrow.configuration.IAppConfiguration
+import com.gmail.fantasticskythrow.configuration.PLMFile
 import com.gmail.fantasticskythrow.configuration.TimeNames
-import com.gmail.fantasticskythrow.messages.IPLMFile
 import com.gmail.fantasticskythrow.messages.config.IWorldRenameConfig
 import com.gmail.fantasticskythrow.other.IVanishManager
+import com.gmail.fantasticskythrow.other.plugins.IIPAddressLookup
 import com.gmail.fantasticskythrow.other.plugins.IPLMPluginConnector
-import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -27,7 +27,7 @@ class BasicPlaceholderReplacerTest {
     @MockK
     lateinit var permission: Permission
     @MockK
-    lateinit var plmFile: IPLMFile
+    lateinit var plmFile: PLMFile
     @MockK
     lateinit var vanishManager: IVanishManager
     @MockK
@@ -40,6 +40,8 @@ class BasicPlaceholderReplacerTest {
     lateinit var pluginConnector: IPLMPluginConnector
     @MockK
     lateinit var player: Player
+    @MockK
+    lateinit var ipLookup: IIPAddressLookup
 
     val timeNames = TimeNames.createEnglishTimeNames()
 
@@ -47,15 +49,25 @@ class BasicPlaceholderReplacerTest {
 
     @BeforeEach
     fun setup() {
-
-        basicPlaceholderReplacer = BasicPlaceholderReplacer(chat, permission, plmFile, vanishManager, timeNames,
-                worldRenameConfig, server, appConfiguration, pluginConnector)
-
         every { player.name } returns "Mike"
+        every { pluginConnector.ipLookup } returns ipLookup
     }
 
     @Test
     fun `Message with no Placeholder, message should be unchanged`() {
+        basicPlaceholderReplacer = BasicPlaceholderReplacer(chat, permission, plmFile, vanishManager, timeNames,
+                server, appConfiguration, pluginConnector, null)
+
+        val message = "This is a test message"
+        val result = basicPlaceholderReplacer.replacePlaceholders(message, player)
+        Assertions.assertEquals(message, result)
+    }
+
+    @Test
+    fun `Message with no Placeholder, with WorldRenameConfig, message should be unchanged`() {
+        basicPlaceholderReplacer = BasicPlaceholderReplacer(chat, permission, plmFile, vanishManager, timeNames,
+                server, appConfiguration, pluginConnector, worldRenameConfig)
+
         val message = "This is a test message"
         val result = basicPlaceholderReplacer.replacePlaceholders(message, player)
         Assertions.assertEquals(message, result)

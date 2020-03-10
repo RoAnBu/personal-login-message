@@ -1,7 +1,7 @@
 package com.gmail.fantasticskythrow.messages.generator
 
 import com.gmail.fantasticskythrow.configuration.IAdvancedGeneratorAppConfiguration
-import com.gmail.fantasticskythrow.messages.IPLMFile
+import com.gmail.fantasticskythrow.configuration.IPlayerLogins
 import com.gmail.fantasticskythrow.messages.config.IAdvancedMessagesFile
 import com.gmail.fantasticskythrow.messages.data.MessageData
 import com.gmail.fantasticskythrow.messages.data.SectionSubTypes
@@ -15,7 +15,7 @@ class AdvancedModeMessageGenerator(private val appConfig: IAdvancedGeneratorAppC
                                    private val permission: Permission,
                                    private val advancedMessagesFile: IAdvancedMessagesFile,
                                    private val placeholderReplacer: IPlaceholderReplacer,
-                                   private val plmFile: IPLMFile
+                                   private val playerLogins: IPlayerLogins
 ) : IBasicMessageGenerator, IAdditionalMessagesGenerator {
 
     override fun getJoinMessageDataForPlayer(player: Player): MessageData {
@@ -26,14 +26,14 @@ class AdvancedModeMessageGenerator(private val appConfig: IAdvancedGeneratorAppC
         if (!appConfig.useRandom) {
             message = advancedMessagesFile.getNewPlayerMessage(playerName, groupName)
             if (message == null) {
-                message = advancedMessagesFile.getJoinMessage(playerName, groupName, plmFile.getTimeSinceLastLoginMs(player))
+                message = advancedMessagesFile.getJoinMessage(playerName, groupName, playerLogins.getTimeSinceLastLoginMs(player))
             }
         } else {
             var messages = advancedMessagesFile.getAllNewPlayerMessages(playerName, groupName)
             if (messages.isNotEmpty()) {
                 message = messages.random()
             } else {
-                messages = advancedMessagesFile.getAllJoinMessages(playerName, groupName, plmFile.getLastLoginTimeMs(player))
+                messages = advancedMessagesFile.getAllJoinMessages(playerName, groupName, playerLogins.getLastLoginTimeMs(player))
                 if (messages.isNotEmpty()) {
                     message = messages.random()
                 }

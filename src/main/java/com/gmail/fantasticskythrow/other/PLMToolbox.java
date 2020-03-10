@@ -101,45 +101,4 @@ public class PLMToolbox {
 		}
 	}
 
-	public static YamlConfiguration loadPLMFile(final File PLMFileData, final PLM plugin) {
-		YamlConfiguration PConfig = YamlConfiguration.loadConfiguration(PLMFileData);
-		if (!PConfig.contains("firstenabled")) {
-			PConfig.set("firstenabled", "false");
-		}
-		if (!PConfig.contains("Countries")) {
-			PConfig.set("Countries.United States", "United States");
-			PConfig.set("Countries.France", "France");
-			PConfig.set("Countries.Germany", "Germany");
-			PConfig.set("Countries.Brazil", "Brazil");
-			PConfig.set("Countries.Netherlands", "Netherlands");
-			PConfig.set("Countries.United Kingdom", "United Kingdom");
-			PConfig.set("Countries.Slovenia", "Slovenia");
-			PConfig.set("Countries.Bulgaria", "Bulgaria");
-			PConfig.set("Countries.Canada", "Canada");
-			PConfig.set("Countries.Mexico", "Mexico");
-			PConfig.set("Countries.Italy", "Italy");
-			PConfig.set("Countries.Spain", "Spain");
-			PConfig.set("Countries.Australia", "Australia");
-			PConfig.set("Countries.India", "India");
-			PConfig.set("Countries.Russian Federation", "Russian Federation");
-			PConfig.set("Countries.Your Country", "Your Country");
-		}
-		if (!PConfig.contains("totallogins")) {
-			PConfig.set("totallogins", 0L);
-		}
-		if (!PConfig.contains("uniqueplayers")) {
-			PConfig.set("uniqueplayers", 0);
-		}
-		try {
-			PConfig.save(PLMFileData);
-			return PConfig;
-		} catch (IOException ex) {
-			logger.error(ex.getMessage());
-			logger.error("PLM.yml is not available!");
-			logger.error("Please check whether PLM is permitted to write in PLM.yml!");
-			// TODO duplicate code, null return
-			return null;
-		}
-	}
-
 }

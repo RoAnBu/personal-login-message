@@ -1,174 +1,90 @@
-package com.gmail.fantasticskythrow.messages;
+package com.gmail.fantasticskythrow.configuration
 
-import com.gmail.fantasticskythrow.PLM;
-import com.gmail.fantasticskythrow.other.PLMToolbox;
-import com.gmail.fantasticskythrow.other.logging.ILoggerWrapper;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
+import com.gmail.fantasticskythrow.other.SavableYaml
+import org.bukkit.entity.Player
 
-import java.io.File;
-import java.io.IOException;
+class PLMFile(private val savableYaml: SavableYaml) : IPluginFirstEnabled, ICountryAlternateNames, IPlayerLogins {
+    private val yamlConfiguration = savableYaml.yamlConfiguration
 
-public class PLMFile implements IPLMFile, Runnable {
-	private static final ILoggerWrapper logger = PLM.logger();
+    override fun setPlayerQuitTimeToCurrentTime(player: Player) {
+        val path = String.format("Players.%s", player.uniqueId.toString())
+        if (yamlConfiguration.contains("Players." + player.name.toLowerCase())) {
+            yamlConfiguration["Players." + player.name.toLowerCase()] = null
+        }
+        yamlConfiguration[path] = System.currentTimeMillis()
+    }
 
-	private final File PLMFileData;
-	private YamlConfiguration PConfig;
-	private boolean errorStatus = false;
+    override fun getLastLoginTimeMs(player: Player): Long {
+        val path = String.format("Players.%s", player.uniqueId.toString())
+        val oldLogin: Long
+        if (!yamlConfiguration.contains(path) && yamlConfiguration.contains("Players." + player.name.toLowerCase())) {
+            oldLogin = yamlConfiguration.getLong("Players." + player.name.toLowerCase())
+            yamlConfiguration["Players." + player.name.toLowerCase()] = null
+            yamlConfiguration[path] = oldLogin
+        }
+        return yamlConfiguration.getLong(path)
+    }
 
-	public PLMFile(PLM plm) {
-		PLMFileData = new File(plm.getDataFolder(), "PLM.yml");
-		PConfig = PLMToolbox.loadPLMFile(PLMFileData, plm);
-		if (PConfig == null) {
-			errorStatus = true;
-		} else {
-			plm.getServer().getScheduler().scheduleSyncRepeatingTask(plm, this, 12000, 12000);
-		}
-	}
+    override fun getTimeSinceLastLoginMs(player: Player): Long {
+        val lastLogin = getLastLoginTimeMs(player)
+        return if (lastLogin != 0L) {
+            (System.currentTimeMillis() - lastLogin)
+        } else {
+            0L
+        }
+    }
 
-	@Override
-	public void setPlayerQuitTimeToCurrentTime(Player player) {
-		if (!errorStatus) {
-			final String path = String.format("Players.%s", player.getUniqueId().toString());
-			if (PConfig.contains("Players." + player.getName().toLowerCase())) {
-				PConfig.set("Players." + player.getName().toLowerCase(), null);
-			}
-			PConfig.set(path, System.currentTimeMillis());
-		}
-	}
+    override fun getPlayerLogins(player: Player): Int {
+        val path = String.format("logins.%s", player.uniqueId.toString())
+        val oldLogins: Long
+        if (yamlConfiguration.contains("logins." + player.name.toLowerCase())) {
+            oldLogins = yamlConfiguration.getLong("logins." + player.name.toLowerCase())
+            yamlConfiguration["logins." + player.name.toLowerCase()] = null
+            yamlConfiguration[path] = oldLogins
+        }
+        return yamlConfiguration.getInt(path)
+    }
 
-	@Override
-	public long getLastLoginTimeMs(Player player) {
-		if (!errorStatus) {
-			final String path = String.format("Players.%s", player.getUniqueId().toString());
-			long oldLogin;
-			if (!PConfig.contains(path) && PConfig.contains("Players." + player.getName().toLowerCase())) {
-				oldLogin = PConfig.getLong("Players." + player.getName().toLowerCase());
-				PConfig.set("Players." + player.getName().toLowerCase(), null);
-				PConfig.set(path, oldLogin);
-			}
-			return PConfig.getLong(path);
-		} else {
-			return 0L;
-		}
-	}
+    override val totalLogins = yamlConfiguration.getLong("totallogins")
 
-	@Override
-	public long getTimeSinceLastLoginMs(Player player) {
-		final long lastLogin = getLastLoginTimeMs(player);
-		if (lastLogin != 0L) {
-			return (long) (System.currentTimeMillis() - lastLogin);
-		} else {
-			return 0L;
-		}
-	}
+    override val uniquePlayerLogins = yamlConfiguration.getInt("uniqueplayers")
 
-	@Override
-	public int getPlayerLogins(Player player) {
-		if (!errorStatus) {
-			final String path = String.format("logins.%s", player.getUniqueId().toString());
-			final long oldLogins;
-			if (PConfig.contains("logins." + player.getName().toLowerCase())) {
-				oldLogins = PConfig.getLong("logins." + player.getName().toLowerCase());
-				PConfig.set("logins." + player.getName().toLowerCase(), null);
-				PConfig.set(path, oldLogins);
-			}
-			return PConfig.getInt(path);
-		} else {
-			return 0;
-		}
-	}
+    override fun addPlayerLogin(player: Player) {
+        val path = String.format("logins.%s", player.uniqueId.toString())
+        if (!yamlConfiguration.contains("logins." + player.uniqueId.toString())
+                && !yamlConfiguration.contains("logins." + player.name.toLowerCase())) {
+            val newUniqueValue = if (yamlConfiguration.contains("uniqueplayers")) {
+                yamlConfiguration.getInt("uniqueplayers") + 1
+            } else {
+                1
+            }
+            yamlConfiguration["uniqueplayers"] = newUniqueValue
+        } else if (yamlConfiguration.contains("logins." + player.name.toLowerCase())) {
+            val oldValue = yamlConfiguration.getInt("logins." + player.name.toLowerCase())
+            yamlConfiguration["logins." + player.name.toLowerCase()] = null
+            yamlConfiguration[path] = oldValue
+        }
+        val newValue = yamlConfiguration.getInt(path) + 1
+        yamlConfiguration[path] = newValue
+        val newTotalValue = yamlConfiguration.getLong("totallogins") + 1L
+        yamlConfiguration["totallogins"] = newTotalValue
+    }
 
-	@Override
-	public long getTotalLogins() {
-		if (!errorStatus) {
-			return PConfig.getLong("totallogins");
-		} else {
-			return 0L;
-		}
-	}
+    override val isPluginFirstEnabled = yamlConfiguration.getString("firstenabled").equals("true", ignoreCase = true)
 
-	@Override
-	public int getUniquePlayerLogins() {
-		if (!errorStatus) {
-			return PConfig.getInt("uniqueplayers");
-		} else {
-			return 0;
-		}
-	}
+    override fun setFirstEnabled(b: Boolean) {
+        if (b) yamlConfiguration["firstenabled"] = "true" else yamlConfiguration["firstenabled"] = "false"
+    }
 
-	@Override
-	public void addPlayerLogin(Player player) {
-		if (!errorStatus) {
-			final String path = String.format("logins.%s", player.getUniqueId().toString());
-			if (!PConfig.contains("logins." + player.getUniqueId().toString()) && !PConfig.contains("logins." + player.getName().toLowerCase())) {
-				final int newUniqueValue;
-				if (PConfig.contains("uniqueplayers")) {
-					newUniqueValue = PConfig.getInt("uniqueplayers") + 1;
-				} else {
-					newUniqueValue = 1;
-				}
-				PConfig.set("uniqueplayers", newUniqueValue);
-			} else if (PConfig.contains("logins." + player.getName().toLowerCase())) {
-				int oldValue = PConfig.getInt("logins." + player.getName().toLowerCase());
-				PConfig.set("logins." + player.getName().toLowerCase(), null);
-				PConfig.set(path, oldValue);
-			}
-			final int newValue = PConfig.getInt(path) + 1;
-			PConfig.set(path, newValue);
-			final long newTotalValue = PConfig.getLong("totallogins") + 1L;
-			PConfig.set("totallogins", newTotalValue);
-		}
-	}
+    override fun getAlternateNameForCountry(englishName: String): String {
+        return if (yamlConfiguration.contains("Countries$englishName")) {
+            yamlConfiguration.getString("Countries$englishName")!!
+        } else {
+            englishName
+        }
+    }
 
-	@Override
-	public boolean isPluginFirstEnabled() {
-		if (PConfig.getString("firstenabled").equalsIgnoreCase("true") && !errorStatus) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	public void setFirstEnabled(boolean b) {
-		if (!errorStatus) {
-			if (b)
-				PConfig.set("firstenabled", "true");
-			else
-				PConfig.set("firstenabled", "false");
-		}
-	}
-
-	@Override
-	public String getAlternateNameForCountry(String englishName) {
-		if (!errorStatus) {
-			if (PConfig.contains("Countries" + englishName)) {
-				return PConfig.getString("Countries" + englishName);
-			} else {
-				return englishName;
-			}
-		} else {
-			return englishName;
-		}
-	}
-
-	@Override public void save() {
-		this.run();
-	}
-
-	@Override
-	public void run() {
-		try {
-			PConfig.save(PLMFileData);
-			PConfig = YamlConfiguration.loadConfiguration(PLMFileData);
-			logger.debug("[PLM] PLM.yml has been saved successfully.");
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-			logger.warn("PLM.yml could not be saved!");
-			logger.warn("Please check whether PLM is permitted to write in PLM.yml!");
-		} catch (NullPointerException ne) {
-			logger.warn("PLM.yml could not be loaded or saved. Login and logout information will be lost");
-		}
-	}
-
+    fun save() {
+        savableYaml.save()
+    }
 }

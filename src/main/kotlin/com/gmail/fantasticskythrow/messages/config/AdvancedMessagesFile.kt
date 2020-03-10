@@ -2,7 +2,7 @@ package com.gmail.fantasticskythrow.messages.config
 
 import com.gmail.fantasticskythrow.PLM
 import com.gmail.fantasticskythrow.configuration.ExtendedYamlConfiguration
-import com.gmail.fantasticskythrow.messages.IPLMFile
+import com.gmail.fantasticskythrow.configuration.IPluginFirstEnabled
 import com.gmail.fantasticskythrow.messages.config.exceptions.AdvancedMessagesFileException
 import com.gmail.fantasticskythrow.messages.data.MessageData
 import com.gmail.fantasticskythrow.messages.data.SectionSubTypes
@@ -12,7 +12,7 @@ import java.io.File
 import java.io.IOException
 
 class AdvancedMessagesFile(private val advancedConfigFile: File,
-                           private val plmFile: IPLMFile
+                           private val plmFile: IPluginFirstEnabled
                            ) : IAdvancedMessagesFile, IWorldRenameConfig {
 
     private lateinit var advancedMessagesYML: Configuration
