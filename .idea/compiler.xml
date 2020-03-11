@@ -4,8 +4,6 @@
     <bytecodeTargetLevel>
       <module name="personal-login-message-plm.main" target="1.8" />
       <module name="personal-login-message-plm.test" target="1.8" />
-      <module name="personal-login-message.main" target="1.8" />
-      <module name="personal-login-message.test" target="1.8" />
       <module name="PLM" target="1.5" />
     </bytecodeTargetLevel>
   </component>
