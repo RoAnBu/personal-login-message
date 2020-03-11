@@ -3,6 +3,7 @@ package com.gmail.fantasticskythrow.messages.replacer
 import com.gmail.fantasticskythrow.configuration.IPlayerLogins
 import org.bukkit.entity.Player
 
+// TODO format numbers in a readable style
 class LoginStatsReplacer(private val logins: IPlayerLogins): IPlaceholderReplacer {
     override fun replacePlaceholders(message: String, player: Player, isQuitting: Boolean): String {
         var modMessage = message

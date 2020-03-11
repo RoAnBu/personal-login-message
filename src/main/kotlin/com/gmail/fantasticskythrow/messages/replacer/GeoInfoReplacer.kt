@@ -4,7 +4,6 @@ import com.gmail.fantasticskythrow.PLM
 import com.gmail.fantasticskythrow.configuration.ICountryAlternateNames
 import com.gmail.fantasticskythrow.other.plugins.IIPAddressLookup
 import org.bukkit.entity.Player
-import uk.org.whoami.geoip.GeoIPLookup
 
 class GeoInfoReplacer(private val ipLookup: IIPAddressLookup?,
                       private val countryAlternates: ICountryAlternateNames?): IPlaceholderReplacer {
