@@ -34,7 +34,7 @@ class PlayerNameGroupReplacer(private val chat: Chat?, private val permission: P
         val essentials = pluginConnector.essentials
         if (essentials != null && appConfiguration.useEssentialsNick) {
             try {
-                nickName = essentials.userMap.getUser(player.name).nickname
+                nickName = essentials.userMap.getUser(player.uniqueId).nickname
                 if (nickName != null && nickName != player.name) {
                     nickName = essentials.settings.nicknamePrefix + nickName
                 }
@@ -65,13 +65,11 @@ class PlayerNameGroupReplacer(private val chat: Chat?, private val permission: P
      */
     internal fun getReplacedChatplayername(text: String, player: Player): String {
         return if (chat != null && text.contains("%chatplayername")) {
-            var name = getEssentialsNick(player)
-            if (name == null) //Use the normal name if no essentials name was available
-                name = player.name
+            val name: String = getEssentialsNick(player) ?: player.name
             text.replace("%chatplayername", (chat.getPlayerPrefix(player) + name + chat.getPlayerSuffix(player)))
         } else if (chat == null && text.contains("%chatplayername")) {
-            println("[PLM] PLM was not able to identify a chat format for this player!")
-            println("[PLM] Possible reason: No vault compatible chat plugin is available!")
+            logger.info("PLM was not able to identify a chat format for player ${player.name}!")
+            logger.info("Possible reason: No vault compatible chat plugin is available!")
             getReplacedPlayername(text.replace("%chatplayername", "%playername"), player)
         } else {
             text
@@ -90,7 +88,8 @@ class PlayerNameGroupReplacer(private val chat: Chat?, private val permission: P
             if (name == null) { //Use the normal name if no essentials name was available
                 name = player.name
             }
-            text.replace("%nickname", name)
+            text.replace("%nickname", name) // IDE shows an error probably due to a bug in
+            // the intellij kotlin plugin, version 1.3.70-release-IJ2019.3-1
         } else {
             text
         }
@@ -104,7 +103,12 @@ class PlayerNameGroupReplacer(private val chat: Chat?, private val permission: P
      */
     private fun getReplacedGroup(text: String, player: Player): String {
         return if (text.contains("%group") && permission != null) {
-            text.replace("%group", permission.getPlayerGroups(player)[0])
+            val groups = permission.getPlayerGroups(player)
+            if (groups.isNotEmpty()) {
+                text.replace("%group", groups[0])
+            } else {
+                text.replace("%group", "no group")
+            }
         } else if (text.contains("%group") && permission == null) {
             text.replace("%group", "unknown group")
         } else {
@@ -123,7 +127,7 @@ class PlayerNameGroupReplacer(private val chat: Chat?, private val permission: P
             val prefix = chat.getPlayerPrefix(player)
             text.replace("%prefix", prefix)
         } else if (chat == null && text.contains("%prefix")) {
-            println("[PLM] PLM was not able to identify a prefix for this player!")
+            logger.info("PLM was not able to identify a prefix for player ${player.name}!")
             text.replace("%prefix", "")
         } else {
             text.replace("%prefix", "")
@@ -141,7 +145,7 @@ class PlayerNameGroupReplacer(private val chat: Chat?, private val permission: P
             val suffix = chat.getPlayerSuffix(player)
             text.replace("%suffix", suffix)
         } else if (chat == null && text.contains("%suffix")) {
-            println("[PLM] PLM was not able to identify a suffix for this player!")
+            logger.info("PLM was not able to identify a suffix for player ${player.name}!")
             text.replace("%suffix", "")
         } else {
             text.replace("%suffix", "")
