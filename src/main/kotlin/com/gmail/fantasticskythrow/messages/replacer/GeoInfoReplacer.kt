@@ -26,7 +26,11 @@ class GeoInfoReplacer(private val ipLookup: IIPAddressLookup?,
     private fun getReplacedIP(inputText: String, player: Player): String {
         var text = inputText
         if (text.contains("%IP")) {
-            text = text.replace("%IP", player.address.toString().replace("/".toRegex(), ""))
+            val formattedIPAddress = player.address
+                    .toString()
+                    .replace("/".toRegex(), "")
+                    .substringBefore(':')
+            text = text.replace("%IP", formattedIPAddress)
         }
         return text
     }
