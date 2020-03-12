@@ -92,13 +92,20 @@ class PlayerStatsReplacer(private val worldRenameConfig: IWorldRenameConfig? = n
         }
         var text = inputText
         val worldName = player.world.name
-        if (worldRenameConfig != null) {
-            worldRenameConfig.getRenamedWorld(worldName)?.let { text = text.replace("%world|%World", it) }
+        val alternateWorldName = worldRenameConfig?.getRenamedWorld(worldName)
+        text = if (alternateWorldName != null) {
+            text.replace("%world|%World".toRegex(), alternateWorldName)
         } else {
-            text = text.replace("%world", worldName)
-            text = text.replace("%World", getCapitalWord(worldName))
+            replaceWorldWithDefaultFormat(text, worldName)
         }
         return text
+    }
+
+    private fun replaceWorldWithDefaultFormat(text: String, worldName: String): String {
+        var modText = text
+        modText = modText.replace("%world", worldName)
+        modText = modText.replace("%World", getCapitalWord(worldName))
+        return modText
     }
 
     /**
