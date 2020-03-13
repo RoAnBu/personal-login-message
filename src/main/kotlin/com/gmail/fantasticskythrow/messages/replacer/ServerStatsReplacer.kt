@@ -8,7 +8,7 @@ class ServerStatsReplacer(private val server: Server, private val vanishManager:
 
     override fun replacePlaceholders(message: String, player: Player, isQuitting: Boolean): String {
         var modMessage = message
-        modMessage = getReplacedOnlinePlayerNumber(modMessage, false)
+        modMessage = getReplacedOnlinePlayerNumber(modMessage, player, isQuitting)
         modMessage = getReplacedSlots(modMessage)
         return modMessage
     }
@@ -18,20 +18,13 @@ class ServerStatsReplacer(private val server: Server, private val vanishManager:
      * @param inputText The string which can contain %onlineplayers
      * @return
      */
-    private fun getReplacedOnlinePlayerNumber(inputText: String, isQuitting: Boolean): String {
+    private fun getReplacedOnlinePlayerNumber(inputText: String, player: Player, isQuitting: Boolean): String {
         var text = inputText
         if (text.contains("%onlineplayers")) {
-            val playerList = server.onlinePlayers
-            var number = 0
-            for (p in playerList) {
-                if (!vanishManager.isVanished(p.name)) {
-                    number++
-                }
-            }
-            if (isQuitting) {
-                number--
-            }
-            text = text.replace("%onlineplayers", number.toString())
+            val playerCount = server.onlinePlayers
+                    .filter { !vanishManager.isVanished(it.name) && !( isQuitting && it == player )  }
+                    .size
+            text = text.replace("%onlineplayers", playerCount.toString())
         }
         return text
     }
