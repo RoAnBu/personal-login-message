@@ -49,6 +49,11 @@ public class VanishNoPacketManager implements IVanishManager
 		}
 	}
 
+	@Override
+	public boolean isVanished(Player player) {
+		return isVanished(player.getName());
+	}
+
 	@Override public void addJoinedPlayer(final String name) {
 		Plugin pl = plugin.getServer().getPluginManager().getPlugin("VanishNoPacket");
 		if (pl != null) {

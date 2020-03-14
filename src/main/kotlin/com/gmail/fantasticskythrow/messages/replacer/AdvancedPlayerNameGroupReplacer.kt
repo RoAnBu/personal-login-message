@@ -1,5 +1,6 @@
 package com.gmail.fantasticskythrow.messages.replacer
 
+import com.gmail.fantasticskythrow.PLM
 import com.gmail.fantasticskythrow.other.IVanishManager
 import net.milkbowl.vault.chat.Chat
 import net.milkbowl.vault.permission.Permission
@@ -11,6 +12,9 @@ class AdvancedPlayerNameGroupReplacer(private val chat: Chat?,
                                       private val server: Server,
                                       private val vanishManager: IVanishManager,
                                       private val playerNameGroupReplacer: PlayerNameGroupReplacer): IPlaceholderReplacer {
+
+    private val logger = PLM.logger()
+
     override fun replacePlaceholders(message: String, player: Player, isQuitting: Boolean): String {
         var modMessage = message
         modMessage = getReplacedGroupChatPlayerList(modMessage, player)
@@ -31,36 +35,23 @@ class AdvancedPlayerNameGroupReplacer(private val chat: Chat?,
     private fun getReplacedGroupChatPlayerList(text: String, player: Player): String {
         return if (text.contains("%groupchatplayerlist")) {
             if (permission != null && chat != null) {
-                var m = ""
-                val playerList = server.onlinePlayers
-                        .toTypedArray()
-                for (i in 0 until playerList.size - 1) {
-                    val p = playerList[i]
-                    if (permission.getPlayerGroups(p)[0] == permission.getPlayerGroups(player)[0] && !vanishManager.isVanished(p.name)) {
-                        m = m + playerNameGroupReplacer.getReplacedChatplayername("%chatplayername", p) + ", "
-                    }
-                }
-                val p = playerList[playerList.size - 1]
-                if (permission.getPlayerGroups(p)[0] == permission.getPlayerGroups(player)[0] && !vanishManager.isVanished(p.name)) {
-                    m += (chat.getPlayerPrefix(p) + p.name + chat.getPlayerSuffix(p))
-                } else {
-                    val s1 = StringBuffer()
-                    s1.append(m)
-                    m = s1.reverse().toString()
-                    m = m.replaceFirst(" ,".toRegex(), "")
-                    val s2 = StringBuffer()
-                    s2.append(m)
-                    m = s2.reverse().toString()
-                }
-                text.replace("%groupchatplayerlist".toRegex(), m)
+                val replacement = server.onlinePlayers
+                        .mapNotNull {
+                            if(permission.getPrimaryGroup(it) == permission.getPrimaryGroup(player) && !vanishManager.isVanished(it))
+                                playerNameGroupReplacer.getReplacedChatplayername("%chatplayername", it)
+                            else
+                                null
+                        }
+                        .sorted()
+                        .joinToString()
+                text.replace("%groupchatplayerlist", replacement)
             } else {
-                text.replace("%groupchatplayerlist".toRegex(), "&4ERROR")
+                text.replace("%groupchatplayerlist", "&4ERROR")
             }
         } else {
             text
         }
     }
-
 
     /**
      * Replaces %chatplayerlist with the list of players who are currently online in the chatplayername format. Vanished players are hidden
@@ -70,36 +61,21 @@ class AdvancedPlayerNameGroupReplacer(private val chat: Chat?,
     private fun getReplacedChatplayerList(text: String): String {
         return if (text.contains("chatplayerlist")) {
             if (chat != null) {
-                var m = ""
-                val playerlist = server.onlinePlayers
-                        .toTypedArray()
-                for (i in 0 until playerlist.size - 1) {
-                    val p = playerlist[i]
-                    if (!vanishManager.isVanished(p.name)) {
-                        m = m + playerNameGroupReplacer.getReplacedChatplayername("%chatplayername", p) + ", "
-                    }
-                }
-                val p = playerlist[playerlist.size - 1]
-                if (!vanishManager.isVanished(p.name)) {
-                    m += (chat.getPlayerPrefix(p) + p.name + chat.getPlayerSuffix(p))
-                } else {
-                    val s1 = StringBuffer()
-                    s1.append(m)
-                    m = s1.reverse().toString()
-                    m = m.replaceFirst(" ,".toRegex(), "")
-                    val s2 = StringBuffer()
-                    s2.append(m)
-                    m = s2.reverse().toString()
-                }
-                text.replace("%chatplayerlist".toRegex(), m)
+                val replacement = server.onlinePlayers
+                        .mapNotNull { if(!vanishManager.isVanished(it))
+                            playerNameGroupReplacer.getReplacedChatplayername("%chatplayername", it)
+                        else null
+                        }
+                        .sorted()
+                        .joinToString()
+                text.replace("%chatplayerlist", replacement)
             } else {
-                getReplacedPlayerList(text.replace("%chatplayerlist".toRegex(), "%playerlist"))
+                getReplacedPlayerList(text.replace("%chatplayerlist", "%playerlist"))
             }
         } else {
             text
         }
     }
-
 
     /**
      * Replaces %groupplayerlist with the list of players who are currently online in the same group like the concerning player.
@@ -111,30 +87,14 @@ class AdvancedPlayerNameGroupReplacer(private val chat: Chat?,
     private fun getReplacedGroupPlayerList(text: String, player: Player): String {
         return if (text.contains("%groupplayerlist")) {
             if (permission != null) {
-                var m = ""
-                val playerList = server.onlinePlayers
-                        .toTypedArray()
-                for (i in 0 until playerList.size - 1) {
-                    val p = playerList[i]
-                    if (permission.getPlayerGroups(p)[0] == permission.getPlayerGroups(player)[0] && !vanishManager.isVanished(p.name)) {
-                        m = m + p.name + ", "
-                    }
-                }
-                val p = playerList[playerList.size - 1]
-                if (permission.getPlayerGroups(p)[0] == permission.getPlayerGroups(player)[0] && !vanishManager.isVanished(p.name)) {
-                    m += p.name
-                } else {
-                    val s1 = StringBuffer()
-                    s1.append(m)
-                    m = s1.reverse().toString()
-                    m = m.replaceFirst(" ,".toRegex(), "")
-                    val s2 = StringBuffer()
-                    s2.append(m)
-                    m = s2.reverse().toString()
-                }
-                text.replace("%groupplayerlist".toRegex(), m)
+                val replacement = server.onlinePlayers
+                        .filter { permission.getPrimaryGroup(it) == permission.getPrimaryGroup(player)
+                                && !vanishManager.isVanished(it)}
+                        .sortedBy { it.name }
+                        .joinToString { it.name }
+                text.replace("%groupplayerlist", replacement)
             } else {
-                text.replace("%groupplayerlist".toRegex(), "&4ERROR")
+                text.replace("%groupplayerlist", "&4ERROR")
             }
         } else {
             text
@@ -148,28 +108,11 @@ class AdvancedPlayerNameGroupReplacer(private val chat: Chat?,
      */
     private fun getReplacedPlayerList(text: String): String {
         return if (text.contains("%playerlist")) {
-            var m = ""
-            val playerList = server.onlinePlayers
-                    .toTypedArray()
-            for (i in 0 until playerList.size - 1) {
-                val p = playerList[i]
-                if (!vanishManager.isVanished(p.name)) {
-                    m = m + p.name + ", "
-                }
-            }
-            val p = playerList[playerList.size - 1]
-            if (!vanishManager.isVanished(p.name)) {
-                m += p.name
-            } else {
-                val s1 = StringBuffer()
-                s1.append(m)
-                m = s1.reverse().toString()
-                m = m.replaceFirst(" ,".toRegex(), "")
-                val s2 = StringBuffer()
-                s2.append(m)
-                m = s2.reverse().toString()
-            }
-            text.replace("%playerlist".toRegex(), m)
+            val replacement = server.onlinePlayers
+                    .filter { !vanishManager.isVanished(it) }
+                    .sortedBy { it.name }
+                    .joinToString { it.name }
+            text.replace("%playerlist", replacement)
         } else {
             text
         }

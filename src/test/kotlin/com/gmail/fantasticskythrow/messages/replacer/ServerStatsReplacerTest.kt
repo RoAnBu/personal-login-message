@@ -59,7 +59,7 @@ class ServerStatsReplacerTest {
     }
 
     private fun noPlayerVanished() {
-        every { vanishManager.isVanished(any()) } returns false
+        every { vanishManager.isVanished(any() as String) } returns false
     }
 
     @Test
