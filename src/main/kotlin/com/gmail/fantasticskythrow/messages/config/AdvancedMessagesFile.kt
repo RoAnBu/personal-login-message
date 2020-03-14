@@ -12,7 +12,7 @@ import java.io.File
 import java.io.IOException
 
 class AdvancedMessagesFile(private val advancedConfigFile: File,
-                           private val plmFile: IPluginFirstEnabled
+                           private val pluginFirstEnabled: IPluginFirstEnabled
                            ) : IAdvancedMessagesFile, IWorldRenameConfig {
 
     private lateinit var advancedMessagesYML: Configuration
@@ -23,6 +23,8 @@ class AdvancedMessagesFile(private val advancedConfigFile: File,
     private val quitMsgPath = ".QM"
     private val welcomeMsgPath = ".WM"
     private val publicMsgPath = ".PM"
+
+    private val logger = PLM.logger()
 
     init {
         loadAdvancedMessagesFile()
@@ -37,7 +39,7 @@ class AdvancedMessagesFile(private val advancedConfigFile: File,
         try {
             val yamlConfiguration = ExtendedYamlConfiguration.loadConfiguration(advancedConfigFile)
             advancedMessagesYML = yamlConfiguration
-            if (!plmFile.isPluginFirstEnabled || !advancedConfigFile.exists()) {
+            if (pluginFirstEnabled.isPluginFirstEnabled || !advancedConfigFile.exists()) {
                 advancedMessagesYML.set("Default.JM1", "%chatplayername &ejoined the game")
                 advancedMessagesYML.set("Default.QM1", "%chatplayername &eleft the game")
                 advancedMessagesYML.set("Groups.examplegroup.JM1", "&4Admin %playername joined the game")
@@ -60,7 +62,7 @@ class AdvancedMessagesFile(private val advancedConfigFile: File,
                 advancedMessagesYML.set("players.exampleplayer2.PM1", "&eThis is a message for the other players on the server.")
                 advancedMessagesYML.set("players.exampleplayer2.PM2", "&aYou can create more than one here, too")
                 advancedMessagesYML.set("World names.exampleworld", "main world")
-                plmFile.setFirstEnabled(true)
+                pluginFirstEnabled.setFirstEnabled(true)
                 yamlConfiguration.save(advancedConfigFile)
             }
         } catch (ex: IllegalStateException) {
@@ -274,10 +276,6 @@ class AdvancedMessagesFile(private val advancedConfigFile: File,
 
     private fun getGroupPath(groupName: String): String {
         return String.format("Groups.%s", groupName)
-    }
-
-    companion object {
-        private val logger = PLM.logger()
     }
 
 }
