@@ -45,9 +45,11 @@ class PLMFile(private val savableYaml: SavableYaml) : IPluginFirstEnabled, ICoun
         return yamlConfiguration.getInt(path)
     }
 
-    override val totalLogins = yamlConfiguration.getLong("totallogins")
+    override val totalLogins: Long
+        get() = yamlConfiguration.getLong("totallogins")
 
-    override val uniquePlayerLogins = yamlConfiguration.getInt("uniqueplayers")
+    override val uniquePlayerLogins: Int
+        get() = yamlConfiguration.getInt("uniqueplayers")
 
     override fun addPlayerLogin(player: Player) {
         val path = String.format("logins.%s", player.uniqueId.toString())
@@ -70,7 +72,8 @@ class PLMFile(private val savableYaml: SavableYaml) : IPluginFirstEnabled, ICoun
         yamlConfiguration["totallogins"] = newTotalValue
     }
 
-    override val isPluginFirstEnabled = yamlConfiguration.getString("firstenabled").equals("true", ignoreCase = true)
+    override val isPluginFirstEnabled: Boolean
+        get() = yamlConfiguration.getString("firstenabled").equals("true", ignoreCase = true)
 
     override fun setFirstEnabled(b: Boolean) {
         if (b) yamlConfiguration["firstenabled"] = "true" else yamlConfiguration["firstenabled"] = "false"
