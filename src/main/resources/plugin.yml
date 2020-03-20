@@ -1,5 +1,6 @@
 name: PLM
 version: 0.7.0 pr
+api-version: '1.15'
 author: FantasticSkyThrow
 softdepend: [Vault, GeoIPTools, VanishNoPacket, Essentials]
 
