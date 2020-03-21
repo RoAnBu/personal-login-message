@@ -65,7 +65,7 @@ class PlayerStatsReplacerTest {
         val message = "Player joined (health: %comparedHealth)"
 
         every { player.health } returns 12.0
-        every { player.getAttribute(Attribute.GENERIC_MAX_HEALTH).toString() } returns "20.0"
+        every { player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.value } returns 20.0
 
         val result = createPlayerStatsReplacerNullArg().replacePlaceholders(message, player)
 

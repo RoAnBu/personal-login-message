@@ -47,7 +47,7 @@ class PlayerStatsReplacer(private val worldRenameConfig: IWorldRenameConfig? = n
         if (text.contains("%comparedHealth")) {
             val damageable = player as Damageable
             text = text.replace("%comparedHealth", damageable.health.toString() + "/" +
-                    player.getAttribute(Attribute.GENERIC_MAX_HEALTH).toString())
+                    player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.value)
         }
         return text
     }
