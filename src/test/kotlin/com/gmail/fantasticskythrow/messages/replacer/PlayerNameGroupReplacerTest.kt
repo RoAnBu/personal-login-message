@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import java.lang.UnsupportedOperationException
 import java.util.*
 
 @ExtendWith(MockKExtension::class)
@@ -191,7 +192,7 @@ class PlayerNameGroupReplacerTest {
     fun `%group, full arguments, but no group provided, should return error message`() {
         val message = "%playername (%group) joined!"
 
-        every { permission.getPlayerGroups(player) } returns emptyArray()
+        every { permission.getPrimaryGroup(player) } throws UnsupportedOperationException()
 
         val replacer = createReplacerFullArgs()
 
@@ -203,7 +204,7 @@ class PlayerNameGroupReplacerTest {
     fun `%group, full arguments, 1 group provided, should return only group`() {
         val message = "%playername (%group) joined!"
 
-        every { permission.getPlayerGroups(player) } returns arrayOf("Warriors")
+        every { permission.getPrimaryGroup(player) } returns "Warriors"
 
         val replacer = createReplacerFullArgs()
 
@@ -215,7 +216,7 @@ class PlayerNameGroupReplacerTest {
     fun `%group, full arguments, 2 groups provided, should return 1st group`() {
         val message = "%playername (%group) joined!"
 
-        every { permission.getPlayerGroups(player) } returns arrayOf("Warriors", "2ndGroup")
+        every { permission.getPrimaryGroup(player) } returns "Warriors"
 
         val replacer = createReplacerFullArgs()
 

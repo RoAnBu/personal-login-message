@@ -6,6 +6,7 @@ import com.gmail.fantasticskythrow.other.plugins.IPLMPluginConnector
 import net.milkbowl.vault.chat.Chat
 import net.milkbowl.vault.permission.Permission
 import org.bukkit.entity.Player
+import java.lang.UnsupportedOperationException
 
 class PlayerNameGroupReplacer(private val chat: Chat?, private val permission: Permission?,
                               private val pluginConnector: IPLMPluginConnector,
@@ -103,9 +104,15 @@ class PlayerNameGroupReplacer(private val chat: Chat?, private val permission: P
      */
     private fun getReplacedGroup(text: String, player: Player): String {
         return if (text.contains("%group") && permission != null) {
-            val groups = permission.getPlayerGroups(player)
-            if (groups.isNotEmpty()) {
-                text.replace("%group", groups[0])
+            val group: String? = try {
+                permission.getPrimaryGroup(player)
+            } catch (e: UnsupportedOperationException) {
+                logger.trace(e)
+                logger.trace("Could not get primary group for player, unsupported operation")
+                null
+            }
+            if (group != null) {
+                text.replace("%group", group)
             } else {
                 text.replace("%group", "no group")
             }
