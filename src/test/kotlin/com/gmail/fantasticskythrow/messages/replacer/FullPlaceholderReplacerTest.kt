@@ -48,7 +48,6 @@ class FullPlaceholderReplacerTest {
     @BeforeEach
     fun setup() {
         every { player.name } returns "Mike"
-        every { pluginConnector.ipLookup } returns ipLookup
     }
 
     @Test

@@ -2,7 +2,6 @@ package com.gmail.fantasticskythrow.messages.replacer
 
 import com.gmail.fantasticskythrow.configuration.ICountryAlternateNames
 import com.gmail.fantasticskythrow.other.plugins.IIPAddressLookup
-import com.maxmind.geoip.Country
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -66,7 +65,7 @@ class GeoInfoReplacerTest {
         val address = InetSocketAddress("13.32.10.149", 123)
 
         every { player.address } returns address
-        every { ipLookup.getCountry(address.address) } returns Country("FR", "France")
+        every { ipLookup.getCountry(address.address) } returns "France"
 
         val result = replacer.replacePlaceholders(message, player)
 
@@ -83,7 +82,7 @@ class GeoInfoReplacerTest {
         val address = InetSocketAddress("13.32.10.149", 123)
 
         every { player.address } returns address
-        every { ipLookup.getCountry(address.address) } returns Country("FR", "France")
+        every { ipLookup.getCountry(address.address) } returns "France"
         every { countryAlternateNames.getAlternateNameForCountry("France") } returns "France"
 
         val result = replacer.replacePlaceholders(message, player)
@@ -117,7 +116,7 @@ class GeoInfoReplacerTest {
         val address = InetSocketAddress("13.32.10.149", 123)
 
         every { player.address } returns address
-        every { ipLookup.getCountry(address.address) } returns Country("FR", "France")
+        every { ipLookup.getCountry(address.address) } returns "France"
         every { countryAlternateNames.getAlternateNameForCountry("France") } returns "Frankreich"
 
         val result = replacer.replacePlaceholders(message, player)

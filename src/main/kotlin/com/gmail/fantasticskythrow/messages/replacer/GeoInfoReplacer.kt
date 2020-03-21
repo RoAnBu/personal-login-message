@@ -45,7 +45,7 @@ class GeoInfoReplacer(private val ipLookup: IIPAddressLookup?,
         return if (text.contains("%country")) {
             val geoIP = ipLookup
             if (geoIP != null) {
-                var country: String = geoIP.getCountry(player.address!!.address).name
+                var country: String = geoIP.getCountry(player.address!!.address)
                 countryAlternates?.let { country = it.getAlternateNameForCountry(country) }
                 if (country.equals("N/A", ignoreCase = true)) {
                     country = "local network"

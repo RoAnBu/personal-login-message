@@ -40,15 +40,12 @@ class BasicPlaceholderReplacerTest {
     lateinit var pluginConnector: IPLMPluginConnector
     @MockK
     lateinit var player: Player
-    @MockK
-    lateinit var ipLookup: IIPAddressLookup
 
     val timeNames = TimeNames.createEnglishTimeNames()
 
     @BeforeEach
     fun setup() {
         every { player.name } returns "Mike"
-        every { pluginConnector.ipLookup } returns ipLookup
     }
 
     @Test

@@ -4,5 +4,4 @@ import com.earth2me.essentials.Essentials
 
 interface IPLMPluginConnector {
     val essentials: Essentials?
-    val ipLookup: IIPAddressLookup?
 }

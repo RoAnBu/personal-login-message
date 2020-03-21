@@ -22,7 +22,7 @@ class BasicPlaceholderReplacer(chat: Chat?,
                                worldRenameConfig: IWorldRenameConfig? = null
 ): IPlaceholderReplacer {
 
-    private val geoInfoReplacer = GeoInfoReplacer(pluginConnector.ipLookup, plmFile)
+    private val geoInfoReplacer = GeoInfoReplacer(null, plmFile)
     private val loginStatsReplacer = LoginStatsReplacer(plmFile)
     val playerNameGroupReplacer = PlayerNameGroupReplacer(chat, permission, pluginConnector, appConfiguration)
     private val playerStatsReplacer = PlayerStatsReplacer(worldRenameConfig)
