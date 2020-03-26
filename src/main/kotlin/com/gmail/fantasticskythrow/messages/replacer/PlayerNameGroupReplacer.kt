@@ -33,7 +33,7 @@ class PlayerNameGroupReplacer(private val chat: Chat?, private val permission: P
     private fun getEssentialsNick(player: Player): String? {
         var nickName: String? = null
         val essentials = pluginConnector.essentials
-        if (essentials != null && appConfiguration.useEssentialsNick) {
+        if (essentials != null && appConfiguration.useEssentialsNickName) {
             try {
                 nickName = essentials.userMap.getUser(player.uniqueId).nickname
                 if (nickName != null && nickName != player.name) {

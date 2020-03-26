@@ -3,7 +3,7 @@ package com.gmail.fantasticskythrow.configuration
 import com.gmail.fantasticskythrow.other.SavableYaml
 import org.bukkit.entity.Player
 
-class PLMFile(private val savableYaml: SavableYaml) : IPluginFirstEnabled, ICountryAlternateNames, IPlayerLogins {
+class PLMFile(private val savableYaml: SavableYaml) : IPluginFirstEnabled, IPlayerLogins {
     private val yamlConfiguration = savableYaml.yamlConfiguration
 
     override fun setPlayerQuitTimeToCurrentTime(player: Player) {
@@ -77,14 +77,6 @@ class PLMFile(private val savableYaml: SavableYaml) : IPluginFirstEnabled, ICoun
 
     override fun setFirstEnabled(b: Boolean) {
         if (b) yamlConfiguration["firstenabled"] = "true" else yamlConfiguration["firstenabled"] = "false"
-    }
-
-    override fun getAlternateNameForCountry(englishName: String): String {
-        return if (yamlConfiguration.contains("Countries$englishName")) {
-            yamlConfiguration.getString("Countries$englishName")!!
-        } else {
-            englishName
-        }
     }
 
     fun save() {

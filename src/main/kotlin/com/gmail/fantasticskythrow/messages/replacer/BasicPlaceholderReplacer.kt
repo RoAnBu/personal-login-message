@@ -1,8 +1,6 @@
 package com.gmail.fantasticskythrow.messages.replacer
 
-import com.gmail.fantasticskythrow.configuration.IAppConfiguration
-import com.gmail.fantasticskythrow.configuration.PLMFile
-import com.gmail.fantasticskythrow.configuration.TimeNames
+import com.gmail.fantasticskythrow.configuration.*
 import com.gmail.fantasticskythrow.messages.config.IWorldRenameConfig
 import com.gmail.fantasticskythrow.other.IVanishManager
 import com.gmail.fantasticskythrow.other.plugins.IPLMPluginConnector
@@ -13,7 +11,8 @@ import org.bukkit.entity.Player
 
 class BasicPlaceholderReplacer(chat: Chat?,
                                permission: Permission?,
-                               plmFile: PLMFile,
+                               playerLogins: IPlayerLogins,
+                               countryAlternateNames: ICountryAlternateNames,
                                vanishManager: IVanishManager,
                                timeNames: TimeNames,
                                server: Server,
@@ -22,12 +21,13 @@ class BasicPlaceholderReplacer(chat: Chat?,
                                worldRenameConfig: IWorldRenameConfig? = null
 ): IPlaceholderReplacer {
 
-    private val geoInfoReplacer = GeoInfoReplacer(null, plmFile)
-    private val loginStatsReplacer = LoginStatsReplacer(plmFile)
-    val playerNameGroupReplacer = PlayerNameGroupReplacer(chat, permission, pluginConnector, appConfiguration)
+    private val geoInfoReplacer = GeoInfoReplacer(null, countryAlternateNames)
+    private val loginStatsReplacer = LoginStatsReplacer(playerLogins)
     private val playerStatsReplacer = PlayerStatsReplacer(worldRenameConfig)
     private val serverStatsReplacer = ServerStatsReplacer(server, vanishManager)
-    private val timeReplacer = TimeReplacer(timeNames, plmFile)
+    private val timeReplacer = TimeReplacer(timeNames, playerLogins)
+
+    val playerNameGroupReplacer = PlayerNameGroupReplacer(chat, permission, pluginConnector, appConfiguration)
 
     override fun replacePlaceholders(message: String, player: Player, isQuitting: Boolean): String {
         var modMessage = message

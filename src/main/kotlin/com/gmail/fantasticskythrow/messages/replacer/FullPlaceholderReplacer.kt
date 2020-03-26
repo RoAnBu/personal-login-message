@@ -1,6 +1,7 @@
 package com.gmail.fantasticskythrow.messages.replacer
 
 import com.gmail.fantasticskythrow.configuration.IAppConfiguration
+import com.gmail.fantasticskythrow.configuration.ICountryAlternateNames
 import com.gmail.fantasticskythrow.configuration.TimeNames
 import com.gmail.fantasticskythrow.configuration.PLMFile
 import com.gmail.fantasticskythrow.messages.config.IWorldRenameConfig
@@ -15,6 +16,7 @@ class FullPlaceholderReplacer(
         chat: Chat?,
         permission: Permission?,
         plmFile: PLMFile,
+        countryAlternateNames: ICountryAlternateNames,
         vanishManager: IVanishManager,
         timeNames: TimeNames,
         server: Server,
@@ -23,7 +25,7 @@ class FullPlaceholderReplacer(
         worldRenameConfig: IWorldRenameConfig?
 ) : IPlaceholderReplacer {
 
-    private val basicPlaceholderReplacer = BasicPlaceholderReplacer(chat, permission, plmFile, vanishManager,
+    private val basicPlaceholderReplacer = BasicPlaceholderReplacer(chat, permission, plmFile, countryAlternateNames, vanishManager,
             timeNames, server, appConfiguration, pluginConnector, worldRenameConfig)
 
     private val advancedPlayerNameGroupReplacer = AdvancedPlayerNameGroupReplacer(chat, permission, server, vanishManager,

@@ -17,7 +17,7 @@ import java.io.IOException;
  */
 public class PLMToolbox {
 
-	private static final ILoggerWrapper logger = PLM.logger();
+	private static final ILoggerWrapper logger = PLM.Companion.logger();
 
 	/**
 	 * Checks whether the player has permission 'plm.join'

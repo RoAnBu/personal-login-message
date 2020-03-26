@@ -77,7 +77,7 @@ class PlayerNameGroupReplacerTest {
     fun `%chatplayername placeholder, null arguments & essentials disabled, should return player name`() {
         val message = "%chatplayername joined the game"
 
-        every { appConfiguration.useEssentialsNick } returns false
+        every { appConfiguration.useEssentialsNickName } returns false
         every { pluginConnector.essentials } returns null
 
         val replacer = createReplacerNullArgs()
@@ -90,7 +90,7 @@ class PlayerNameGroupReplacerTest {
     fun `%chatplayername placeholder, full arguments & essentials setup with empty prefix, should return essentials player name`() {
         val message = "%chatplayername joined the game"
 
-        every { appConfiguration.useEssentialsNick } returns true
+        every { appConfiguration.useEssentialsNickName } returns true
         every { pluginConnector.essentials } returns essentials
         every { essentials.userMap.getUser(playerUUID).nickname } returns "Mike"
         every { essentials.settings.nicknamePrefix } returns ""
@@ -107,7 +107,7 @@ class PlayerNameGroupReplacerTest {
     fun `%chatplayername placeholder, full arguments & essentials setup with essentials prefix, should return essentials player name with prefix`() {
         val message = "%chatplayername joined the game"
 
-        every { appConfiguration.useEssentialsNick } returns true
+        every { appConfiguration.useEssentialsNickName } returns true
         every { pluginConnector.essentials } returns essentials
         every { essentials.userMap.getUser(playerUUID).nickname } returns "Mike"
         every { essentials.settings.nicknamePrefix } returns "[Ess]"
@@ -124,7 +124,7 @@ class PlayerNameGroupReplacerTest {
     fun `%chatplayername placeholder, full arguments & essentials setup with chat prefix and suffix, should return essentials player name WITH prefix and suffix`() {
         val message = "%chatplayername joined the game"
 
-        every { appConfiguration.useEssentialsNick } returns true
+        every { appConfiguration.useEssentialsNickName } returns true
         every { pluginConnector.essentials } returns essentials
         every { essentials.userMap.getUser(playerUUID).nickname } returns "Mike"
         every { essentials.settings.nicknamePrefix } returns ""
@@ -141,7 +141,7 @@ class PlayerNameGroupReplacerTest {
     fun `%nickname placeholder, full arguments & essentials setup with chat prefix and suffix, should return essentials player name WITHOUT prefix and suffix`() {
         val message = "%nickname joined the game"
 
-        every { appConfiguration.useEssentialsNick } returns true
+        every { appConfiguration.useEssentialsNickName } returns true
         every { pluginConnector.essentials } returns essentials
         every { essentials.userMap.getUser(playerUUID).nickname } returns "Mike"
         every { essentials.settings.nicknamePrefix } returns ""
@@ -158,7 +158,7 @@ class PlayerNameGroupReplacerTest {
     fun `%nickname and %prefix placeholder, full arguments & essentials setup with chat prefix and suffix, should return essentials player name WITHOUT suffix`() {
         val message = "%nickname joined the game %prefix"
 
-        every { appConfiguration.useEssentialsNick } returns true
+        every { appConfiguration.useEssentialsNickName } returns true
         every { pluginConnector.essentials } returns essentials
         every { essentials.userMap.getUser(playerUUID).nickname } returns "Mike"
         every { essentials.settings.nicknamePrefix } returns ""
@@ -175,7 +175,7 @@ class PlayerNameGroupReplacerTest {
     fun `%nickname and %suffix placeholder, full arguments & essentials setup with chat prefix and suffix, should return essentials player name WITHOUT prefix`() {
         val message = "%suffix %nickname joined the game"
 
-        every { appConfiguration.useEssentialsNick } returns true
+        every { appConfiguration.useEssentialsNickName } returns true
         every { pluginConnector.essentials } returns essentials
         every { essentials.userMap.getUser(playerUUID).nickname } returns "Mike"
         every { essentials.settings.nicknamePrefix } returns ""

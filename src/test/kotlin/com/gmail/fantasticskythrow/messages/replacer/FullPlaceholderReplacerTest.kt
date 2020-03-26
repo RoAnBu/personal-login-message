@@ -1,6 +1,7 @@
 package com.gmail.fantasticskythrow.messages.replacer
 
 import com.gmail.fantasticskythrow.configuration.IAppConfiguration
+import com.gmail.fantasticskythrow.configuration.Localisation
 import com.gmail.fantasticskythrow.configuration.PLMFile
 import com.gmail.fantasticskythrow.configuration.TimeNames
 import com.gmail.fantasticskythrow.messages.config.IWorldRenameConfig
@@ -42,6 +43,8 @@ class FullPlaceholderReplacerTest {
     lateinit var player: Player
     @MockK
     lateinit var ipLookup: IIPAddressLookup
+    @MockK
+    lateinit var localisation: Localisation
 
     val timeNames = TimeNames.createEnglishTimeNames()
 
@@ -52,7 +55,7 @@ class FullPlaceholderReplacerTest {
 
     @Test
     fun `Message with no Placeholder, message should be unchanged`() {
-        val fullPlaceholderReplacer = FullPlaceholderReplacer(chat, permission, plmFile, vanishManager, timeNames,
+        val fullPlaceholderReplacer = FullPlaceholderReplacer(chat, permission, plmFile, localisation, vanishManager, timeNames,
                 server, appConfiguration, pluginConnector, null)
 
         val message = "This is a test message"
@@ -62,7 +65,7 @@ class FullPlaceholderReplacerTest {
 
     @Test
     fun `Message with no Placeholder, with WorldRenameConfig, message should be unchanged`() {
-        val fullPlaceholderReplacer = FullPlaceholderReplacer(chat, permission, plmFile, vanishManager, timeNames,
+        val fullPlaceholderReplacer = FullPlaceholderReplacer(chat, permission, plmFile, localisation, vanishManager, timeNames,
                 server, appConfiguration, pluginConnector, worldRenameConfig)
 
         val message = "This is a test message"

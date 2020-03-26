@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 public class PLMCommandHandler implements CommandExecutor {
 
-	private static final ILoggerWrapper logger = PLM.logger();
+	private static final ILoggerWrapper logger = PLM.Companion.logger();
 
 	private boolean advancedStatus;
 	private PLM plugin;

@@ -1,6 +1,7 @@
-package com.gmail.fantasticskythrow.other
+package com.gmail.fantasticskythrow.configuration
 
 import com.gmail.fantasticskythrow.PLM
+import com.gmail.fantasticskythrow.other.SavableYaml
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.Plugin
 import org.bukkit.scheduler.BukkitScheduler
@@ -39,24 +40,6 @@ class PLMSavableYaml(private val file: File, scheduler: BukkitScheduler, plugin:
         val configuration: YamlConfiguration = YamlConfiguration.loadConfiguration(file)
         if (!configuration.contains("firstenabled")) {
             configuration["firstenabled"] = "false"
-        }
-        if (!configuration.contains("Countries")) {
-            configuration["Countries.United States"] = "United States"
-            configuration["Countries.France"] = "France"
-            configuration["Countries.Germany"] = "Germany"
-            configuration["Countries.Brazil"] = "Brazil"
-            configuration["Countries.Netherlands"] = "Netherlands"
-            configuration["Countries.United Kingdom"] = "United Kingdom"
-            configuration["Countries.Slovenia"] = "Slovenia"
-            configuration["Countries.Bulgaria"] = "Bulgaria"
-            configuration["Countries.Canada"] = "Canada"
-            configuration["Countries.Mexico"] = "Mexico"
-            configuration["Countries.Italy"] = "Italy"
-            configuration["Countries.Spain"] = "Spain"
-            configuration["Countries.Australia"] = "Australia"
-            configuration["Countries.India"] = "India"
-            configuration["Countries.Russian Federation"] = "Russian Federation"
-            configuration["Countries.Your Country"] = "Your Country"
         }
         if (!configuration.contains("totallogins")) {
             configuration["totallogins"] = 0L

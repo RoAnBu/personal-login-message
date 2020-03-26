@@ -2,13 +2,12 @@ package com.gmail.fantasticskythrow.configuration
 
 interface IAppConfiguration {
     val pluginEnabled: Boolean
-    val usePermGeneral: Boolean
-    val usePermPM: Boolean
+    val usePermissions: Boolean
+    val usePermissionsForPublicMessages: Boolean
     val useFakeJoinMsg: Boolean
     val useFakeQuitMsg: Boolean
     val replaceVnpFakeMsg: Boolean
-    val advancedStatus: Boolean
-    val useEssentialsNick: Boolean
-    val timeNames: TimeNames?
-    val delay: Int
+    val advancedStatusEnabled: Boolean
+    val useEssentialsNickName: Boolean
+    val welcomeMessagesDelayMs: Int
 }

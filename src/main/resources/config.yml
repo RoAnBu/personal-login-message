@@ -1,0 +1,15 @@
+general:
+  enabled: true
+  usePermissions: false
+  useEssentialsNickName: true
+advancedMessages:
+  enabled: false
+  useRandom: false
+welcomeMessages:
+  delayMS: 200
+publicMessages:
+  usePermissions: false
+vanish:
+  usefakejoinmessage: false
+  usefakequitmessage: false
+  replaceVNPfakemessages: false

@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 public class PLMReloadCommand {
 
-	private static final ILoggerWrapper logger = PLM.logger();
+	private static final ILoggerWrapper logger = PLM.Companion.logger();
 
 	public static void onCommand(CommandSender sender, String[] args, PLM plugin) {
 		if (sender instanceof Player) {

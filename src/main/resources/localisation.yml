@@ -1,0 +1,29 @@
+time:
+  second: second
+  seconds: seconds
+  minute: minute
+  minutes: minutes
+  hour: hour
+  hours: hours
+  day: day
+  days: days
+  month: month
+  months: months
+  no last login: no last login
+countries:
+  United States: United States
+  France: France
+  Germany: Germany
+  Brazil: Brazil
+  Netherlands: Netherlands
+  United Kingdom: United Kingdom
+  Slovenia: Slovenia
+  Bulgaria: Bulgaria
+  Canada: Canada
+  Mexico: Mexico
+  Italy: Italy
+  Spain: Spain
+  Australia: Australia
+  India: India
+  Russian Federation: Russian Federation
+  Your Country: Your Country

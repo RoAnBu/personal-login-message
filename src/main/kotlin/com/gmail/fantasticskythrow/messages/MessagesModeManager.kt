@@ -2,9 +2,7 @@ package com.gmail.fantasticskythrow.messages
 
 import com.gmail.fantasticskythrow.PLM
 import com.gmail.fantasticskythrow.commands.PLMCommandHandler
-import com.gmail.fantasticskythrow.configuration.AppConfiguration
-import com.gmail.fantasticskythrow.configuration.PLMFile
-import com.gmail.fantasticskythrow.configuration.TimeNames
+import com.gmail.fantasticskythrow.configuration.*
 import com.gmail.fantasticskythrow.messages.config.AdvancedMessagesFile
 import com.gmail.fantasticskythrow.messages.config.StandardMessagesFile
 import com.gmail.fantasticskythrow.messages.generator.AdvancedModeMessageGenerator
@@ -31,9 +29,12 @@ import java.util.*
  * the wanted string
  */
 class MessagesModeManager(private val plugin: PLM, advancedStatus: Boolean) {
+
+    private val logger = PLM.logger()
+
     private val chat: Chat? = plugin.chat
     private val permission: Permission? = plugin.permission
-    private val appConfiguration: AppConfiguration = plugin.cfg
+    private val appConfiguration: AppConfiguration = plugin.appConfiguration
     val plmFile: PLMFile = PLMFile(PLMSavableYaml(File(plugin.dataFolder, "PLM.yml"), plugin.server.scheduler, plugin))
     val vanishNoPacketManager: VanishNoPacketManager = VanishNoPacketManager(plugin)
     private val vnpFakeMsg: MutableList<String> = ArrayList()
@@ -41,30 +42,27 @@ class MessagesModeManager(private val plugin: PLM, advancedStatus: Boolean) {
     private val additionalMessagesGenerator: IAdditionalMessagesGenerator?
 
     init {
+        val localisation = Localisation(LocalisationFile(File(plugin.dataFolder, "localisation.yml")).yamlConfiguration)
         val commandHandler = PLMCommandHandler(plugin, advancedStatus)
         plugin.getCommand("plm")!!.setExecutor(commandHandler)
 
         if (!advancedStatus) { // StandardMessages
-            basicMessageGenerator = StandardModeMessageGenerator(plugin,
-                    StandardMessagesFile(File(plugin.dataFolder, "messages.txt")),
-                    BasicPlaceholderReplacer(chat, permission, plmFile, vanishNoPacketManager, getTimeNames(),
-                            plugin.server, appConfiguration, plugin.plmPluginConnector, null))
+            basicMessageGenerator = createStandardModeMessageGenerator(localisation)
         } else { // Advanced messages mode
             basicMessageGenerator = try {
                 val advancedMessagesFile = AdvancedMessagesFile(File(plugin.dataFolder, "AdvancedMessages.yml"), plmFile)
 
-                AdvancedModeMessageGenerator(appConfiguration, permission!!,
-                        advancedMessagesFile,
-                        FullPlaceholderReplacer(chat, permission, plmFile, vanishNoPacketManager, getTimeNames(),
-                        plugin.server, appConfiguration, plugin.plmPluginConnector, advancedMessagesFile),
-                        plmFile)
+                AdvancedModeMessageGenerator(
+                        appConfig = appConfiguration,
+                        permission = permission!!,
+                        advancedMessagesFile = advancedMessagesFile,
+                        placeholderReplacer = createFullPlaceholderReplacer(localisation, advancedMessagesFile),
+                        playerLogins = plmFile
+                )
             } catch (e: Exception) {
                 logger.error("Could not initialize Advanced Messages Mode, using Standard Mode instead")
                 logger.error(e)
-                StandardModeMessageGenerator(plugin,
-                        StandardMessagesFile(File(plugin.dataFolder, "messages.txt")),
-                        BasicPlaceholderReplacer(chat, permission, plmFile, vanishNoPacketManager, getTimeNames(),
-                                plugin.server, appConfiguration, plugin.plmPluginConnector, null))
+                createStandardModeMessageGenerator(localisation)
             }
         }
         additionalMessagesGenerator = if (basicMessageGenerator is AdvancedModeMessageGenerator) {
@@ -72,6 +70,41 @@ class MessagesModeManager(private val plugin: PLM, advancedStatus: Boolean) {
         } else {
             null
         }
+    }
+
+    private fun createBasicPlaceholderReplacer(localisation: Localisation) =
+            BasicPlaceholderReplacer(
+                    chat = chat,
+                    permission = permission,
+                    playerLogins = plmFile,
+                    countryAlternateNames = localisation,
+                    vanishManager = vanishNoPacketManager,
+                    timeNames = localisation.timeNames,
+                    server = plugin.server,
+                    appConfiguration = appConfiguration,
+                    pluginConnector = plugin.plmPluginConnector,
+                    worldRenameConfig = null
+            )
+
+    private fun createFullPlaceholderReplacer(localisation: Localisation, advancedMessagesFile: AdvancedMessagesFile) =
+            FullPlaceholderReplacer(
+                    chat = chat,
+                    permission = permission,
+                    plmFile = plmFile,
+                    countryAlternateNames = localisation,
+                    vanishManager = vanishNoPacketManager,
+                    timeNames = localisation.timeNames,
+                    server = plugin.server,
+                    appConfiguration = appConfiguration,
+                    pluginConnector = plugin.plmPluginConnector,
+                    worldRenameConfig = advancedMessagesFile
+            )
+
+    private fun createStandardModeMessageGenerator(localisation: Localisation): StandardModeMessageGenerator {
+        return StandardModeMessageGenerator(
+                plm = plugin,
+                standardMessagesFile = StandardMessagesFile(File(plugin.dataFolder, "messages.txt")),
+                placeholderReplacer = createBasicPlaceholderReplacer(localisation))
     }
 
     /**
@@ -179,7 +212,7 @@ class MessagesModeManager(private val plugin: PLM, advancedStatus: Boolean) {
             } else {
                 vanishNoPacketManager.isVanished(player.name)
             }
-            if (!PLMToolbox.getPermissionJoin(appConfiguration.usePermGeneral, player) || isVanished) {
+            if (!PLMToolbox.getPermissionJoin(appConfiguration.usePermissions, player) || isVanished) {
                 logger.trace("Displaying no join message for player ${player.name} because of missing permission or" +
                         " player is vanished")
                 return null
@@ -216,7 +249,7 @@ class MessagesModeManager(private val plugin: PLM, advancedStatus: Boolean) {
     private fun getFinalQuitMessageIfAvailable(player: Player): String? {
         try {
             plmFile.setPlayerQuitTimeToCurrentTime(player)
-            if (!PLMToolbox.getPermissionQuit(appConfiguration.usePermGeneral, player)) {
+            if (!PLMToolbox.getPermissionQuit(appConfiguration.usePermissions, player)) {
                 logger.trace("Displaying no quit message for player ${player.name} because of missing permission")
                 return null
             }
@@ -245,21 +278,12 @@ class MessagesModeManager(private val plugin: PLM, advancedStatus: Boolean) {
         pmPrinter.start(messages, receivers)
     }
 
-    private fun sendWelcomeMessages(messages: List<String>, player: Player, delayMs: Int = appConfiguration.delay) {
+    private fun sendWelcomeMessages(messages: List<String>, player: Player, delayMs: Int = appConfiguration.welcomeMessagesDelayMs) {
         val wmPrinter = WelcomeMessagePrinter()
         wmPrinter.start(delayMs, messages, player)
     }
 
-    private fun getTimeNames(): TimeNames {
-        var timeNames = appConfiguration.timeNames
-        if (timeNames == null) {
-            timeNames = TimeNames.createEnglishTimeNames()
-        }
-        return timeNames
-    }
-
     companion object {
         private var alreadyQuit = false
-        private val logger = PLM.logger()
     }
 }

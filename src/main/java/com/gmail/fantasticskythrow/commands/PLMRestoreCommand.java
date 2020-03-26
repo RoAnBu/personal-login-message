@@ -10,7 +10,7 @@ import com.gmail.fantasticskythrow.other.PLMToolbox;
 
 public class PLMRestoreCommand {
 
-	private static final ILoggerWrapper logger = PLM.logger();
+	private static final ILoggerWrapper logger = PLM.Companion.logger();
 
 	protected static void onCommand(PLM plugin, CommandSender sender, String[] args) {
 		if (sender instanceof Player) {
