@@ -1,0 +1,29 @@
+time:
+  second: 秒
+  seconds: 秒
+  minute: 分
+  minutes: 分
+  hour: 時間
+  hours: 時間
+  day: 日
+  days: 日
+  month: ヶ月
+  months: ヶ月
+  no last login: 見たことがない
+countries:
+  United States: United States
+  France: France
+  Germany: Deutschland
+  Brazil: Brazil
+  Netherlands: Netherlands
+  United Kingdom: United Kingdom
+  Slovenia: Slovenia
+  Bulgaria: Bulgaria
+  Canada: Canada
+  Mexico: Mexico
+  Italy: Italy
+  Spain: Spain
+  Australia: Australia
+  India: India
+  Russian Federation: Russian Federation
+  Your Country: Your Country
