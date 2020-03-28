@@ -4,8 +4,6 @@ import com.gmail.fantasticskythrow.configuration.AppConfiguration
 import com.gmail.fantasticskythrow.configuration.AppConfigurationFile
 import com.gmail.fantasticskythrow.messages.MessagesModeManager
 import com.gmail.fantasticskythrow.messages.listener.CommonListener
-import com.gmail.fantasticskythrow.messages.listener.VanishStatusChangeEventFakeMessageListener
-import com.gmail.fantasticskythrow.messages.listener.VanishStatusChangeEventListener
 import com.gmail.fantasticskythrow.other.logging.BukkitLoggerWrapper
 import com.gmail.fantasticskythrow.other.logging.ILoggerWrapper
 import com.gmail.fantasticskythrow.other.plugins.PLMPluginConnector
@@ -95,19 +93,7 @@ class PLM : JavaPlugin() {
     }
 
     private fun registerEventListeners() {
-        if (messagesModeManager.vanishNoPacketManager.isPluginInstalled && !appConfiguration.replaceVnpFakeMsg) {
-            server
-                    .pluginManager
-                    .registerEvents(VanishStatusChangeEventListener(messagesModeManager), this)
-        } else if (messagesModeManager.vanishNoPacketManager.isPluginInstalled && appConfiguration.replaceVnpFakeMsg) {
-            server
-                    .pluginManager
-                    .registerEvents(VanishStatusChangeEventFakeMessageListener(messagesModeManager), this)
-        } else {
-            server
-                    .pluginManager
-                    .registerEvents(CommonListener(messagesModeManager), this)
-        }
+        server.pluginManager.registerEvents(CommonListener(messagesModeManager.messageEventProcessor), this)
     }
 
     /**

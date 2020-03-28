@@ -8,11 +8,5 @@ public interface IVanishManager
 
 	boolean isVanished(Player player);
 
-	void addJoinedPlayer(String name);
-
-	boolean isJustJoinedPlayer(String name);
-
-	void removeJoinedPlayer(String name);
-
 	boolean isPluginInstalled();
 }
