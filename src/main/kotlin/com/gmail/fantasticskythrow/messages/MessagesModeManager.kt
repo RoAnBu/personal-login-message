@@ -3,7 +3,8 @@ package com.gmail.fantasticskythrow.messages
 import com.gmail.fantasticskythrow.PLM
 import com.gmail.fantasticskythrow.commands.PLMCommandHandler
 import com.gmail.fantasticskythrow.configuration.*
-import com.gmail.fantasticskythrow.messages.config.AdvancedMessagesFile
+import com.gmail.fantasticskythrow.messages.config.AdvancedMessagesConfiguration
+import com.gmail.fantasticskythrow.configuration.YAMLFileLoader
 import com.gmail.fantasticskythrow.messages.config.StandardMessagesFile
 import com.gmail.fantasticskythrow.messages.generator.AdvancedModeMessageGenerator
 import com.gmail.fantasticskythrow.messages.generator.IAdditionalMessagesGenerator
@@ -30,7 +31,7 @@ class MessagesModeManager(private val plugin: PLM, advancedStatus: Boolean) {
     val messageEventProcessor: MessageEventProcessor
 
     init {
-        val localisation = Localisation(LocalisationFile(File(plugin.dataFolder, "localisation.yml")).yamlConfiguration)
+        val localisation = Localisation(YAMLFileLoader(File(plugin.dataFolder, "localisation.yml"), "/localisation.yml").yamlConfiguration)
         val commandHandler = PLMCommandHandler(plugin, advancedStatus)
         plugin.getCommand("plm")!!.setExecutor(commandHandler)
 
@@ -38,9 +39,11 @@ class MessagesModeManager(private val plugin: PLM, advancedStatus: Boolean) {
             basicMessageGenerator = createStandardModeMessageGenerator(localisation)
         } else { // Advanced messages mode
             basicMessageGenerator = try {
-                val advancedMessagesFile = AdvancedMessagesFile(File(plugin.dataFolder, "AdvancedMessages.yml"), plmFile)
+                val advancedMessagesConfiguration = AdvancedMessagesConfiguration(
+                        YAMLFileLoader(File(plugin.dataFolder, "messages.yml"), "/messages.yml").yamlConfiguration
+                )
 
-                createAdvancedModeMessageGenerator(advancedMessagesFile, localisation)
+                createAdvancedModeMessageGenerator(advancedMessagesConfiguration, localisation)
             } catch (e: Exception) {
                 logger.error("Could not initialize Advanced Messages Mode, using Standard Mode instead")
                 logger.error(e)
@@ -59,6 +62,7 @@ class MessagesModeManager(private val plugin: PLM, advancedStatus: Boolean) {
                 basicMessageGenerator = basicMessageGenerator,
                 additionalMessagesGenerator = additionalMessagesGenerator
         )
+        YAMLFileLoader.loadAndSaveResourceToFileIfNotExists("/messages_examples.yml", File(plugin.dataFolder, "messages_examples.yml"))
     }
 
     private fun createBasicPlaceholderReplacer(localisation: Localisation) =
@@ -75,7 +79,7 @@ class MessagesModeManager(private val plugin: PLM, advancedStatus: Boolean) {
                     worldRenameConfig = null
             )
 
-    private fun createFullPlaceholderReplacer(localisation: Localisation, advancedMessagesFile: AdvancedMessagesFile) =
+    private fun createFullPlaceholderReplacer(localisation: Localisation, advancedMessagesFile: AdvancedMessagesConfiguration) =
             FullPlaceholderReplacer(
                     chat = chat,
                     permission = permission,
@@ -96,12 +100,12 @@ class MessagesModeManager(private val plugin: PLM, advancedStatus: Boolean) {
                 placeholderReplacer = createBasicPlaceholderReplacer(localisation))
     }
 
-    private fun createAdvancedModeMessageGenerator(advancedMessagesFile: AdvancedMessagesFile, localisation: Localisation): AdvancedModeMessageGenerator {
+    private fun createAdvancedModeMessageGenerator(advancedMessagesConfiguration: AdvancedMessagesConfiguration, localisation: Localisation): AdvancedModeMessageGenerator {
         return AdvancedModeMessageGenerator(
                 appConfig = appConfiguration,
                 permission = permission!!,
-                advancedMessagesFile = advancedMessagesFile,
-                placeholderReplacer = createFullPlaceholderReplacer(localisation, advancedMessagesFile),
+                advancedMessagesConfiguration = advancedMessagesConfiguration,
+                placeholderReplacer = createFullPlaceholderReplacer(localisation, advancedMessagesConfiguration),
                 playerLogins = plmFile
         )
     }
@@ -110,7 +114,7 @@ class MessagesModeManager(private val plugin: PLM, advancedStatus: Boolean) {
         if (basicMessageGenerator is StandardModeMessageGenerator) {
             basicMessageGenerator.reload()
         } else if (basicMessageGenerator is AdvancedModeMessageGenerator) {
-            basicMessageGenerator.reload()
+            // TODO basicMessageGenerator.reload()
         }
     }
 }

@@ -2,7 +2,7 @@ package com.gmail.fantasticskythrow.messages.config
 
 import com.gmail.fantasticskythrow.messages.data.MessageData
 
-interface IAdvancedMessagesFile {
+interface IAdvancedMessagesConfiguration {
     fun getNewPlayerMessage(playerName: String, groupName: String? = null): MessageData?
     fun getAllNewPlayerMessages(playerName: String, groupName: String? = null): List<MessageData>
     fun getJoinMessage(playerName: String, groupName: String? = null, timeSinceLastLoginMs: Long? = null): MessageData?
@@ -11,6 +11,4 @@ interface IAdvancedMessagesFile {
     fun getAllQuitMessages(playerName: String, groupName: String? = null): List<MessageData>
     fun getWelcomeMessages(playerName: String, groupName: String?): List<String>
     fun getPublicMessages(playerName: String, groupName: String?): List<String>
-
-    fun reload()
 }

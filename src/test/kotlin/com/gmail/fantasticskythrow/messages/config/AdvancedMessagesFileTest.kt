@@ -1,6 +1,7 @@
 package com.gmail.fantasticskythrow.messages.config
 
 import com.gmail.fantasticskythrow.configuration.IPluginFirstEnabled
+import com.gmail.fantasticskythrow.configuration.YAMLFileLoader
 import com.gmail.fantasticskythrow.messages.data.MessageData
 import com.gmail.fantasticskythrow.messages.data.SectionSubTypes
 import com.gmail.fantasticskythrow.messages.data.SectionTypes
@@ -21,7 +22,7 @@ class AdvancedMessagesFileTest {
 
     private val file = File("src/test/resources/advancedMessages1.yml")
 
-    private fun createAdvancedMessagesFile() = AdvancedMessagesFile(file, pluginFirstEnabled)
+    private fun createAdvancedMessagesFile() = AdvancedMessagesConfiguration(YAMLFileLoader(file).yamlConfiguration)
 
     @BeforeEach
     fun init() {

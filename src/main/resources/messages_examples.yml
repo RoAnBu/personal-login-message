@@ -1,0 +1,28 @@
+Default:
+  JM1: '%chatplayername &ejoined the game'
+  QM1: '%chatplayername &eleft the game'
+Groups:
+  examplegroup:
+    JM1: '&4Admin %playername joined the game'
+    QM1: '&4Admin %playername left the game'
+    BM1: '&4Admin &a%playername is back after more than one day!'
+    BM1T: '1440'
+    BM2: '&4Admin &a%playername is back after some hours'
+    BM2T: '60'
+    BM3: '&4Admin &a%playername is back after less than one hour!'
+    BM3T: '-59'
+players:
+  exampleplayer:
+    JM1: '&6The king Peter &2joined the server!'
+    QM1: '&6The king Peter &2left the server!'
+    JM2: '&2Our premium player Peter logged in!'
+    QM2: '&2Our premium player Peter is now offline!'
+  exampleplayer2:
+    JM1: '&aThis is the public join message'
+    QM1: '&aThis is the public quit/leave message'
+    WM1: '&eThis message is for the player who is joining'
+    WM2: '&2This would be another line just under WM1'
+    PM1: '&eThis is a message for the other players on the server.'
+    PM2: '&aYou can create more than one here, too'
+World names:
+  exampleworld: main world
