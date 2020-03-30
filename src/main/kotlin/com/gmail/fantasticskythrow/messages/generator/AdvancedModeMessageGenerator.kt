@@ -18,7 +18,7 @@ class AdvancedModeMessageGenerator(private val appConfig: IAdvancedGeneratorAppC
                                    private val advancedMessagesConfiguration: IAdvancedMessagesConfiguration,
                                    private val placeholderReplacer: IPlaceholderReplacer,
                                    private val playerLogins: IPlayerLogins
-) : IBasicMessageGenerator, IAdditionalMessagesGenerator {
+) : IFullMessagesGenerator {
 
     private val logger = PLM.logger()
 

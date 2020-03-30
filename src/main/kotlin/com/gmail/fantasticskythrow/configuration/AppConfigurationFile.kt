@@ -40,11 +40,7 @@ class AppConfigurationFile(private val configFile: File) {
             yaml["general.useEssentialsNickName"] = true
             contentChanged = true
         }
-        if (!yaml.contains("advancedMessages.enabled")) {
-            yaml["advancedmessages.enabled"] = false
-            contentChanged = true
-        }
-        if (!yaml.contains("advancedMessages.useRandom")) {
+        if (!yaml.contains("general.useRandomMessageSelection")) {
             yaml["advancedmessages.userandom"] = false
             contentChanged = true
         }

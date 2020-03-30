@@ -1,0 +1,3 @@
+package com.gmail.fantasticskythrow.messages.generator
+
+interface IFullMessagesGenerator: IBasicMessageGenerator, IAdditionalMessagesGenerator

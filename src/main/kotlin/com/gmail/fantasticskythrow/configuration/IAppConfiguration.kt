@@ -7,7 +7,6 @@ interface IAppConfiguration {
     val useFakeJoinMsg: Boolean
     val useFakeQuitMsg: Boolean
     val replaceVnpFakeMsg: Boolean
-    val advancedStatusEnabled: Boolean
     val useEssentialsNickName: Boolean
     val welcomeMessagesDelayMs: Int
 }

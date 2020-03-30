@@ -2,9 +2,7 @@ general:
   enabled: true
   usePermissions: false
   useEssentialsNickName: true
-advancedMessages:
-  enabled: false
-  useRandom: false
+  useRandomMessageSelection: false
 welcomeMessages:
   delayMS: 200
 publicMessages:

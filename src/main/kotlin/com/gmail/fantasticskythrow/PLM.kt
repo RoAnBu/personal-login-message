@@ -25,9 +25,6 @@ class PLM : JavaPlugin() {
         private set
     private var pluginEnabled = true
 
-    /**
-     * Decides whether to use StandardMode or AdvancedMessagesMode after it enabled the main configuration.
-     */
     override fun onEnable() {
         setupLogging()
         if (!isMinecraftVersionSupported) {
@@ -40,11 +37,7 @@ class PLM : JavaPlugin() {
             loadAppConfiguration()
             this.plmPluginConnector = PLMPluginConnector(server.pluginManager)
             if (appConfiguration.pluginEnabled) {
-                if (!appConfiguration.advancedStatusEnabled) { //Standard mode
-                    initStandardMode()
-                } else { //Advanced messages mode
-                    initAdvancedMode()
-                }
+                initAdvancedMode()
             } else {
                 Companion.logger.info("Personal Login Message is not enabled in config")
                 pluginEnabled = false
@@ -68,20 +61,13 @@ class PLM : JavaPlugin() {
         Companion.logger.logger = this.logger
     }
 
-    private fun initStandardMode() {
-        setupProviders()
-        messagesModeManager = MessagesModeManager(this, false)
-        registerEventListeners()
-        Companion.logger.info("Personal Login Message is enabled")
-    }
-
     private fun initAdvancedMode() {
         setupProviders()
         if (isVaultUnavailable || permission == null) { //If vault or permission/chat plugin is not available -> Standard setup
             Companion.logger.warn("Sorry, you need Vault and a compatible permissions plugin to use the advanced messages mode!")
-            initStandardMode()
+            // TODO handle this or remove check
         } else { //Activate AdvancedMessages, because vault is active and it's enabled
-            messagesModeManager = MessagesModeManager(this, true)
+            messagesModeManager = MessagesModeManager(this)
             registerEventListeners()
             Companion.logger.info("Advanced messages mode is enabled")
         }
@@ -96,9 +82,6 @@ class PLM : JavaPlugin() {
         server.pluginManager.registerEvents(CommonListener(messagesModeManager.messageEventProcessor), this)
     }
 
-    /**
-     * setupChat tries to find a chat plugin hooked by vault. It sends a message to console if no chat plugin was found or vault is not installed.
-     */
     private fun setupChatProvider() {
         try {
             val chatProvider = server.servicesManager.getRegistration(Chat::class.java)
