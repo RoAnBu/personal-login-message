@@ -4,7 +4,6 @@ os: linux
 install: true
 
 script:
-  - ./downloadDependencies.sh
   - ./gradlew build -s
 
 before_cache:
