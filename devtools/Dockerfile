@@ -13,10 +13,10 @@ WORKDIR /spigot/
 COPY --from=0 /spigot-build/spigot-*.jar ./
 RUN mv $(find spigot-*.jar) spigot.jar
 
-COPY eula.txt .
+COPY server-config/eula.txt .
 COPY start.sh .
-COPY server.properties .
-COPY spigot.yml .
+COPY server-config/server.properties .
+COPY server-config/spigot.yml .
 
 RUN chown -R 1000:1000 /spigot
 
